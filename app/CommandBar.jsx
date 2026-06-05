@@ -21,8 +21,10 @@ export default function CommandBar() {
       if ((e.metaKey || e.ctrlKey) && e.key.toLowerCase() === "k") { e.preventDefault(); setOpen((o) => !o); }
       if (e.key === "Escape") setOpen(false);
     }
+    const onOpen = () => setOpen(true);
     window.addEventListener("keydown", onKey);
-    return () => window.removeEventListener("keydown", onKey);
+    window.addEventListener("cc:cmdk", onOpen);
+    return () => { window.removeEventListener("keydown", onKey); window.removeEventListener("cc:cmdk", onOpen); };
   }, []);
   useEffect(() => { if (open) setTimeout(() => inputRef.current?.focus(), 30); else setVal(""); }, [open]);
 

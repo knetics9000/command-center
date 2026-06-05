@@ -64,9 +64,24 @@ a{color:var(--acc-deep)}
 .sb-av.img{object-fit:cover;background:none}
 .sb-uwrap{min-width:0}
 .sb-uname{font-size:12.5px;font-weight:700;color:#E7E9F0}.sb-umail{font-size:10.5px;color:var(--side-muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:150px}
-.workspace{flex:1;min-width:0;background:var(--bg)}
+.workspace{flex:1;min-width:0;background:var(--bg);position:relative}
+/* top utility bar (ST3) */
+.tutil{position:sticky;top:0;z-index:40;display:flex;align-items:center;justify-content:space-between;gap:18px;height:60px;padding:0 30px;background:rgba(246,247,250,.85);backdrop-filter:blur(10px);border-bottom:1px solid var(--line)}
+.tsearch{display:flex;align-items:center;gap:10px;flex:1;max-width:420px;background:var(--paper);border:1px solid transparent;border-radius:999px;padding:9px 14px;cursor:text;color:var(--muted);font:inherit;font-size:13.5px;transition:.14s}
+.tsearch:hover{background:#fff;border-color:var(--line)}
+.tsearch .material-symbols-outlined{font-size:20px}
+.tsearch-ph{flex:1;text-align:left} .tsearch-kbd{font-family:var(--font-mono);font-size:11px;background:#fff;border:1px solid var(--line);border-radius:6px;padding:1px 6px;color:var(--ink2)}
+.tutil-right{display:flex;align-items:center;gap:10px}
+.ticon{position:relative;border:none;background:none;color:var(--ink2);cursor:pointer;width:38px;height:38px;border-radius:10px;display:grid;place-items:center;transition:.14s}
+.ticon:hover{background:var(--paper);color:var(--acc)}.ticon .material-symbols-outlined{font-size:22px}
+.tbadge{position:absolute;top:8px;right:9px;width:8px;height:8px;background:var(--error);border-radius:50%;border:2px solid var(--bg)}
+.tdivide{width:1px;height:26px;background:var(--line);margin:0 3px}
 .topbar{display:flex;align-items:flex-end;justify-content:space-between;gap:16px;margin-bottom:20px;flex-wrap:wrap}
-.tb-right{display:flex;flex-direction:column;align-items:flex-end;gap:6px}
+.tb-right{display:flex;align-items:center;gap:12px}
+/* FAB */
+.fab{position:fixed;bottom:30px;right:30px;z-index:60;width:56px;height:56px;border:none;border-radius:50%;background:var(--acc);color:#fff;cursor:pointer;display:grid;place-items:center;box-shadow:0 10px 28px rgba(70,72,212,.4);transition:transform .14s,box-shadow .14s}
+.fab:hover{transform:scale(1.08);box-shadow:0 14px 34px rgba(70,72,212,.5)}.fab:active{transform:scale(.96)}
+.fab .material-symbols-outlined{font-size:28px}
 .tb-actions{display:flex;align-items:center;gap:12px}
 .tb-account{display:flex;align-items:center;gap:9px;background:var(--card);border:1px solid var(--line);border-radius:999px;padding:4px 12px 4px 4px;box-shadow:0 1px 2px rgba(30,34,51,.04)}
 .tb-av{width:34px;height:34px;border-radius:50%;object-fit:cover;flex:none}

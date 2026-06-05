@@ -2,6 +2,8 @@ import { getStats, getInbox, getHandledInbox, getProjects, getTodoGroups, getLat
 import { connectionStatus, listEvents } from "@/lib/google";
 import RefreshButton from "./RefreshButton";
 import Sidebar from "./Sidebar";
+import TopUtility from "./TopUtility";
+import Fab from "./Fab";
 import Donut from "./Donut";
 import Briefing from "./Briefing";
 import Projects from "./Projects";
@@ -71,6 +73,7 @@ export default async function Home() {
     <div className="appshell">
       <Sidebar connected={connected} email={personal.email} pic={personal.picture} />
       <main className="workspace">
+        <TopUtility actCount={stats.act} pic={personal.picture} email={personal.email} />
         <div className="wrap">
           <header className="topbar">
             <div>
@@ -78,13 +81,7 @@ export default async function Home() {
               <div className="sub">{now.toLocaleDateString(undefined, { weekday: "long", month: "long", day: "numeric" })} · here's where you left off</div>
             </div>
             <div className="tb-right">
-              <div className="tb-actions">
-                <RefreshButton />
-                <div className="tb-account">
-                  {personal.picture ? <img className="tb-av" src={personal.picture} alt="" referrerPolicy="no-referrer" /> : <span className="tb-av ph">KW</span>}
-                  <div className="tb-acwrap"><div className="tb-acname">Kurt</div><div className="tb-acmail">{personal.email || ""}</div></div>
-                </div>
-              </div>
+              <RefreshButton />
               <div className="synced">{connected ? "both accounts connected ✓" : <a href="/connect">connect accounts →</a>}</div>
             </div>
           </header>
@@ -170,6 +167,7 @@ export default async function Home() {
         <Inbox tiers={inbox.tiers} byTier={inbox.byTier} risky={inbox.risky} handled={handled} projects={projects.map((p) => ({ tag: p.tag, name: p.name }))} />
       </div>
         </div>
+        <Fab />
       </main>
     </div>
   );
