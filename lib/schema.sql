@@ -60,6 +60,7 @@ CREATE TABLE IF NOT EXISTS projects (
 CREATE TABLE IF NOT EXISTS standing_rules (
   id           INTEGER PRIMARY KEY AUTOINCREMENT,
   project_id   INTEGER REFERENCES projects(id),
+  context_id   TEXT,                     -- project tag this rule belongs to
   instruction  TEXT NOT NULL,
   enabled      INTEGER DEFAULT 1,
   last_run     TEXT,

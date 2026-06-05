@@ -121,4 +121,15 @@ h1.hello{font-family:"Iowan Old Style",Palatino,Georgia,serif;font-weight:600;fo
 .pev{border-top:1px dashed var(--line);padding:5px 0} .pev:first-of-type{border-top:none}
 .pev .ps{font-weight:700;font-size:13px} .pev .pm{font-size:12px;color:var(--ink2)}
 .pacts{display:flex;gap:7px;margin-top:9px}
+
+/* standing rules (Phase 3d) */
+.rules{margin-top:10px;border-top:1px dashed var(--line);padding-top:8px}
+.rlbl{font-size:11px;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);font-weight:700;margin-bottom:6px}
+.rlbl .rsub{text-transform:none;letter-spacing:0;font-weight:500;opacity:.8;margin-left:6px}
+.rule{display:flex;align-items:center;gap:7px;padding:5px 0;border-top:1px solid var(--line)}
+.rule:first-of-type{border-top:none} .rule.off{opacity:.5}
+.rule .rtext{flex:1;font-size:12.5px;min-width:0}
+.rule .rmeta{font-size:10.5px;color:var(--muted);white-space:nowrap}
+.rmini{border:1px solid var(--line);background:#fff;border-radius:7px;padding:2px 8px;font:inherit;font-size:11px;font-weight:700;color:var(--ink2);cursor:pointer}
+.rmini:hover{background:#FCFAF4;border-color:var(--acc)} .rmini.del:hover{border-color:#D2745A;color:#b0432a} .rmini:disabled{opacity:.6}
 @media(max-width:880px){.bento{grid-template-columns:1fr}.stats{grid-template-columns:repeat(2,1fr)}.projgrid{grid-template-columns:1fr 1fr}}
