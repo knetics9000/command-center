@@ -46,11 +46,13 @@ export default function Projects({ projects }) {
         )}
         {projects.map((p) => (
           <div className={"proj" + (open[p.tag] ? " exp" : "")} key={p.tag}>
-            <div className="pn">{p.name}<span className="badge">{p.open} open</span></div>
-            <div className="ring" data-p={p.pct} style={{ background: `conic-gradient(${ringColor(p.pct)} ${p.pct}%, #EEE7D7 0)` }} />
-            <div className="meta"><span className="k">Last</span> {p.last}</div>
-            <div className="next">Next: {p.next}</div>
-            <div className="open">{p.total} total · {p.pct}% done</div>
+            <div className="projhead" role="button" onClick={() => setOpen((o) => ({ ...o, [p.tag]: !o[p.tag] }))}>
+              <div className="pn">{p.name}<span className="badge">{p.open} open</span></div>
+              <div className="ring" data-p={p.pct} style={{ background: `conic-gradient(${ringColor(p.pct)} ${p.pct}%, #EEE7D7 0)` }} />
+              <div className="meta"><span className="k">Last</span> {p.last}</div>
+              <div className="next">Next: {p.next}</div>
+              <div className="open">{p.total} total · {p.pct}% done</div>
+            </div>
             <button className="exbtn" onClick={() => setOpen((o) => ({ ...o, [p.tag]: !o[p.tag] }))}>
               {open[p.tag] ? "Hide tasks ▲" : "Open ▾"}
             </button>

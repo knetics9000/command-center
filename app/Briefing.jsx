@@ -16,7 +16,19 @@ export default function Briefing({ briefing, existingTags = [] }) {
   const [openPrio, setOpenPrio] = useState(null);
   const [deltaOpen, setDeltaOpen] = useState(false);
   const [openTheme, setOpenTheme] = useState(null);
+  const [dbody, setDbody] = useState({});
   const b = briefing;
+
+  async function openDeltaItem(e) {
+    if (!e.id || !e.account) return;
+    if (dbody[e.id]) { setDbody((x) => { const n = { ...x }; delete n[e.id]; return n; }); return; }
+    setDbody((x) => ({ ...x, [e.id]: "loading" }));
+    try {
+      const r = await fetch(`/api/inbox/body?account=${e.account}&id=${e.id}`);
+      const j = await r.json();
+      setDbody((x) => ({ ...x, [e.id]: j.ok ? (j.body || "(empty)") : "⚠ " + (j.error || "failed") }));
+    } catch (err) { setDbody((x) => ({ ...x, [e.id]: "⚠ " + err.message })); }
+  }
 
   async function regenerate() {
     setBusy(true);
@@ -70,7 +82,15 @@ export default function Briefing({ briefing, existingTags = [] }) {
                 <>
                   <div className="deltadrill">
                     <div className="relbh">New since last briefing</div>
-                    {b.delta.newAct.map((e, i) => <div className="relrow" key={i}><span className="reldot" style={{ background: "#D2745A" }} /><span className="relsnd">{e.sender}</span> {e.subject}</div>)}
+                    {b.delta.newAct.map((e, i) => (
+                      <div key={i}>
+                        <div className={"relrow" + (e.id ? " clickable" : "")} onClick={() => openDeltaItem(e)}>
+                          {e.id && <span className={"relcaret" + (dbody[e.id] ? " open" : "")}>▸</span>}
+                          <span className="reldot" style={{ background: "#D2745A" }} /><span className="relsnd">{e.sender}</span> {e.subject}
+                        </div>
+                        {e.id && dbody[e.id] && <div className="relbody">{dbody[e.id] === "loading" ? <span className="bodyload">Loading…</span> : dbody[e.id]}</div>}
+                      </div>
+                    ))}
                   </div>
                   <RelatedDrawer title={b.delta.newAct.map((e) => e.subject).join(" ")} />
                 </>

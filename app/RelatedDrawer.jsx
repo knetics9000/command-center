@@ -10,6 +10,17 @@ function Block({ title, children }) {
 export default function RelatedDrawer({ title, projectTag, excludeEmailId }) {
   const [data, setData] = useState(null);
   const [loading, setLoading] = useState(true);
+  const [body, setBody] = useState({}); // email id -> 'loading' | text
+
+  async function openItem(e) {
+    if (body[e.id]) { setBody((b) => { const n = { ...b }; delete n[e.id]; return n; }); return; }
+    setBody((b) => ({ ...b, [e.id]: "loading" }));
+    try {
+      const r = await fetch(`/api/inbox/body?account=${e.account}&id=${e.id}`);
+      const j = await r.json();
+      setBody((b) => ({ ...b, [e.id]: j.ok ? (j.body || "(empty)") : "⚠ " + (j.error || "failed") }));
+    } catch (err) { setBody((b) => ({ ...b, [e.id]: "⚠ " + err.message })); }
+  }
 
   useEffect(() => {
     let on = true; setLoading(true);
@@ -37,7 +48,15 @@ export default function RelatedDrawer({ title, projectTag, excludeEmailId }) {
       <div className="relgrid">
         {n(data.emails) > 0 && (
           <Block title={`Related emails · ${data.emails.length}`}>
-            {data.emails.map((e) => <div className="relrow" key={e.id}><span className={"tag " + e.account}>{e.account === "work" ? "W" : "P"}</span><span className="relsnd">{e.sender}</span> {e.subject}</div>)}
+            {data.emails.map((e) => (
+              <div key={e.id}>
+                <div className="relrow clickable" onClick={() => openItem(e)}>
+                  <span className={"relcaret" + (body[e.id] ? " open" : "")}>▸</span>
+                  <span className={"tag " + e.account}>{e.account === "work" ? "W" : "P"}</span><span className="relsnd">{e.sender}</span> {e.subject}
+                </div>
+                {body[e.id] && <div className="relbody">{body[e.id] === "loading" ? <span className="bodyload">Loading…</span> : body[e.id]}</div>}
+              </div>
+            ))}
           </Block>
         )}
         {n(data.contacts) > 0 && (
