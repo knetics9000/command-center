@@ -68,8 +68,21 @@ h1.hello{font-family:"Iowan Old Style",Palatino,Georgia,serif;font-weight:600;fo
 .rbtn:hover{background:#FCFAF4}.rbtn:disabled{opacity:.6}
 
 /* interactive (Phase 2b) */
-.cbx{cursor:pointer;transition:.12s} .cbx:hover{border-color:var(--acc);background:var(--acc-soft)}
-.cbx.on{background:var(--acc);border-color:var(--acc)}
+.cbx{cursor:pointer;transition:.12s;position:relative} .cbx:hover{border-color:var(--acc);background:var(--acc-soft)}
+.cbx.on{background:var(--acc);border-color:var(--acc);animation:cbxpop .28s ease}
+.cbx.on::after{content:"✓";position:absolute;inset:0;display:grid;place-items:center;color:#fff;font-size:11px;font-weight:900}
+@keyframes cbxpop{0%{transform:scale(1)}45%{transform:scale(1.32)}100%{transform:scale(1)}}
+
+/* U2 motion */
+.mail{transition:box-shadow .15s ease}
+.mail.exit{animation:rowout .26s cubic-bezier(.4,0,1,1) forwards;overflow:hidden;pointer-events:none}
+@keyframes rowout{to{opacity:0;transform:translateX(14px);max-height:0;margin-bottom:0;padding-top:0;padding-bottom:0;border-width:0}}
+.task{transition:opacity .2s ease}
+.task.done{animation:taskdone .3s ease forwards;overflow:hidden}
+.task.done .tl{text-decoration:line-through;color:var(--muted)}
+@keyframes taskdone{0%{opacity:1}60%{opacity:.5}100%{opacity:0;max-height:0;padding-top:0;padding-bottom:0}}
+.projtasks{animation:expandin .22s ease}
+@keyframes expandin{from{opacity:0;transform:translateY(-6px)}to{opacity:1;transform:none}}
 .tl .sync{color:var(--acc-deep);font-style:normal;font-size:11px;font-weight:700;opacity:.8}
 .mailacts{display:flex;gap:7px;margin-top:9px}
 .mbtn{border:1px solid var(--line);background:#fff;border-radius:9px;padding:4px 11px;font:inherit;font-size:12px;font-weight:700;color:var(--ink2);cursor:pointer}

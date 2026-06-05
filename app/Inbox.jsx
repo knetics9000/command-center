@@ -21,7 +21,9 @@ export default function Inbox({ tiers, byTier, risky, handled = [] }) {
   const router = useRouter();
   const { toast } = useToast();
   const [removed, setRemoved] = useState({});   // optimistic-hidden email ids
+  const [exiting, setExiting] = useState({});   // ids mid exit-animation
   const [busy, setBusy] = useState({});
+  const clearKey = (set, id) => set((m) => { const n = { ...m }; delete n[id]; return n; });
   const [expandNoise, setExpandNoise] = useState(false);
   const [q, setQ] = useState("");
   const [acct, setAcct] = useState("both");                 // both | personal | work
@@ -96,7 +98,8 @@ export default function Inbox({ tiers, byTier, risky, handled = [] }) {
   }
   async function snooze(id, until, label) {
     setSnoozeFor(null);
-    setRemoved((m) => ({ ...m, [id]: true }));
+    setExiting((m) => ({ ...m, [id]: true }));
+    setTimeout(() => setRemoved((m) => ({ ...m, [id]: true })), 260);
     try {
       await fetch("/api/inbox", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ action: "snooze", id, until: until.toISOString() }) });
       toast(`Snoozed · back ${label.toLowerCase()}`);
@@ -111,24 +114,25 @@ export default function Inbox({ tiers, byTier, risky, handled = [] }) {
     if (!r.ok) { const j = await r.json().catch(() => ({})); throw new Error(j.error || r.status); }
   }
 
-  // Optimistic: hide immediately, fire in background, offer Undo. No full refresh (keeps the view snappy).
+  // Optimistic: animate out, hide, fire in background, offer Undo. No full refresh (keeps the view snappy).
   async function act(id, account, action) {
-    setRemoved((m) => ({ ...m, [id]: true }));
+    setExiting((m) => ({ ...m, [id]: true }));
+    setTimeout(() => setRemoved((m) => ({ ...m, [id]: true })), 260);
     try {
       await call(action, id, account);
       if (action === "restore") { toast("Restored to inbox"); router.refresh(); return; }
       toast({
         message: PAST[action] || "Done",
-        action: async () => { try { await call("restore", id, account); setRemoved((m) => { const n = { ...m }; delete n[id]; return n; }); } catch { router.refresh(); } },
+        action: async () => { try { await call("restore", id, account); clearKey(setRemoved, id); clearKey(setExiting, id); } catch { router.refresh(); } },
       });
     } catch (e) {
-      setRemoved((m) => { const n = { ...m }; delete n[id]; return n; });
+      clearKey(setRemoved, id); clearKey(setExiting, id);
       toast({ message: "Gmail action failed: " + e.message, tone: "error" });
     }
   }
 
   const Mail = ({ e, handledRow }) => (
-    <div className={"mail " + (e.triage_tier || "review")} key={e.id}>
+    <div className={"mail " + (e.triage_tier || "review") + (exiting[e.id] ? " exit" : "")} key={e.id}>
       <div className="mt">
         <span className={"tag " + e.account}>{e.account === "work" ? "Work" : "Personal"}</span>
         <span className="snd">{e.sender}</span><span className="addr">{e.sender_addr}</span>

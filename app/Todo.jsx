@@ -33,7 +33,8 @@ export default function Todo({ order, groups, openTotal }) {
     router.refresh();
   }
   async function check(id) {
-    setBusy((b) => ({ ...b, [id]: true }));
+    setBusy((b) => ({ ...b, [id]: true }));          // marks checkbox + triggers strike/collapse
+    await new Promise((r) => setTimeout(r, 280));    // let the animation play
     try { await post({ action: "check", id }); } finally { setBusy((b) => { const n = { ...b }; delete n[id]; return n; }); }
   }
   async function add(tag) {
@@ -58,7 +59,7 @@ export default function Todo({ order, groups, openTotal }) {
             <div className="cat-h"><span className="dot" style={{ background: dotFor(t) }} /><span className="nm">{t}</span><span className="c">{list.length}</span></div>
             {list.map((it) => (
               <div key={it.id}>
-                <div className="task">
+                <div className={"task" + (busy[it.id] ? " done" : "")}>
                   <span className={"cbx" + (busy[it.id] ? " on" : "")} role="button" onClick={() => check(it.id)} title="Mark done" />
                   <span className="tl">{it.text}{it.synced === 0 && <em className="sync"> · syncing</em>}</span>
                   <span className="tagrow">
