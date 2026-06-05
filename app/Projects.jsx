@@ -4,6 +4,7 @@ import { useRouter } from "next/navigation";
 import ProjectChat from "./ProjectChat";
 import StandingRules from "./StandingRules";
 import ProjectNotes from "./ProjectNotes";
+import RelatedDrawer from "./RelatedDrawer";
 import { useToast } from "./Toast";
 import Icon from "./Icon";
 
@@ -15,6 +16,7 @@ export default function Projects({ projects }) {
   const [open, setOpen] = useState({});     // tag -> bool
   const [text, setText] = useState({});     // tag -> draft
   const [busy, setBusy] = useState({});
+  const [relOpen, setRelOpen] = useState({}); // tag -> show workspace intelligence
 
   async function post(body) {
     const r = await fetch("/api/task", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify(body) });
@@ -66,6 +68,12 @@ export default function Projects({ projects }) {
                     onChange={(e) => setText((s) => ({ ...s, [p.tag]: e.target.value }))}
                     onKeyDown={(e) => { if (e.key === "Enter") add(p.tag); }} />
                   <button className="addbtn" onClick={() => add(p.tag)}>＋</button>
+                </div>
+                <div className="wsintel">
+                  <button className="wsbtn" onClick={() => setRelOpen((r) => ({ ...r, [p.tag]: !r[p.tag] }))}>
+                    {relOpen[p.tag] ? "Hide related emails & summary ▲" : "✦ Related emails, people & AI summary ▾"}
+                  </button>
+                  {relOpen[p.tag] && <RelatedDrawer title={p.name} projectTag={p.tag} />}
                 </div>
                 <ProjectNotes contextId={p.tag} />
                 <StandingRules contextId={p.tag} />

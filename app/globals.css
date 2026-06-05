@@ -170,6 +170,9 @@ h1.hello{font-family:"Iowan Old Style",Palatino,Georgia,serif;font-weight:600;fo
 .ptask{display:flex;align-items:center;gap:9px;font-size:13px;padding:5px 0}
 .ptask.muted{color:var(--muted)} .ptask .sync{color:var(--acc-deep);font-style:normal;font-size:11px;font-weight:700}
 .projtasks .addrow{padding:6px 0 2px}
+.wsintel{margin-top:10px;border-top:1px dashed var(--line);padding-top:8px}
+.wsbtn{border:none;background:none;color:var(--acc-deep);font:inherit;font-size:12px;font-weight:700;cursor:pointer;padding:2px 0}
+.wsbtn:hover{text-decoration:underline}
 
 /* project notes (F9) */
 .pnotes{margin-top:10px;border-top:1px dashed var(--line);padding-top:8px}
