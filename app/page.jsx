@@ -1,6 +1,9 @@
-import { getStats, getInbox, getProjects, getTodoGroups, tagsOf, tagClass } from "@/lib/queries";
+import { getStats, getInbox, getProjects, getTodoGroups } from "@/lib/queries";
 import { connectionStatus, listEvents } from "@/lib/google";
 import RefreshButton from "./RefreshButton";
+import Projects from "./Projects";
+import Todo from "./Todo";
+import Inbox from "./Inbox";
 
 export const dynamic = "force-dynamic";
 
@@ -28,14 +31,6 @@ async function getCalendar() {
   evs.sort((a, b) => new Date(a.start) - new Date(b.start));
   return { events: evs, connected: true };
 }
-const ringColor = (p) => (p >= 66 ? "#7E9A86" : p >= 33 ? "#E0A23C" : "#D2745A");
-const rel = (x) => {
-  const s = (Date.now() - new Date(x)) / 1000; if (isNaN(s)) return "";
-  if (s < 3600) return Math.max(1, Math.round(s / 60)) + "m";
-  if (s < 86400) return Math.round(s / 3600) + "h";
-  const d = Math.round(s / 86400); return d < 7 ? d + "d" : new Date(x).toLocaleDateString(undefined, { month: "short", day: "numeric" });
-};
-
 export default async function Home() {
   const stats = getStats();
   const inbox = getInbox();
@@ -71,42 +66,13 @@ export default async function Home() {
         <div className="stat"><div className="n"><b>{stats.projects}</b></div><div className="l">Active projects</div></div>
       </div>
 
-      <div className="card full" style={{ marginTop: 18 }}>
-        <div className="sec-h"><span className="star">★</span> Project Tracker — where you left off</div>
-        <div className="projgrid">
-          {projects.length === 0 && <div style={{ color: "var(--muted)" }}>No projects tagged in Offload yet.</div>}
-          {projects.map((p) => (
-            <div className="proj" key={p.tag}>
-              <div className="pn">{p.name}<span className="badge">{p.open} open</span></div>
-              <div className="ring" data-p={p.pct} style={{ background: `conic-gradient(${ringColor(p.pct)} ${p.pct}%, #EEE7D7 0)` }} />
-              <div className="meta"><span className="k">Last</span> {p.last}</div>
-              <div className="next">Next: {p.next}</div>
-              <div className="open">{p.total} total · {p.pct}% done</div>
-            </div>
-          ))}
-        </div>
+      <div style={{ marginTop: 18 }}>
+        <Projects projects={projects} />
       </div>
 
       <div className="bento" style={{ marginTop: 18 }}>
         <div className="col">
-          <div className="card">
-            <div className="sec-h">To-Do · by tag <span className="grow" /><span style={{ color: "var(--acc-deep)", fontWeight: 700 }}>{todo.openTotal} open</span></div>
-            {todo.order.map((t) => {
-              const list = todo.groups[t];
-              const dot = tagClass(t) === "personal" ? "#7E9A86" : tagClass(t) === "work" ? "#C2851E" : tagClass(t) === "project" ? "#6b5a8e" : "#b5ae9f";
-              return (
-                <div className="cat" key={t}>
-                  <div className="cat-h"><span className="dot" style={{ background: dot }} /><span className="nm">{t}</span><span className="c">{list.length}</span></div>
-                  {list.slice(0, 6).map((it) => (
-                    <div className="task" key={it.id}>
-                      <span className="cbx" /><span className="tl">{it.text}</span>
-                      <span className="tagrow">{tagsOf(it.tags).map((x) => <span className={"tagchip " + tagClass(x)} key={x}>{x}</span>)}</span>
-                    </div>
-                  ))}
-                </div>
-              );
-            })}
-          </div>
+          <Todo order={todo.order} groups={todo.groups} openTotal={todo.openTotal} />
         </div>
 
         <div className="col">
@@ -136,32 +102,7 @@ export default async function Home() {
         </div>
       </div>
 
-      <div className="card full" style={{ marginTop: 18 }}>
-        <div className="sec-h">Unified Inbox · personal + work</div>
-        {inbox.risky.length > 0 && (
-          <div className="alarm">
-            <h3>⚠ Possible phishing / fraud — verify before clicking</h3>
-            {inbox.risky.map((e) => <div className="it" key={e.id}><b>{e.sender}</b> &lt;{e.sender_addr}&gt; — {e.subject}{e.risk_why ? " · " + e.risk_why : ""}</div>)}
-          </div>
-        )}
-        {inbox.tiers.map((t) => {
-          const list = inbox.byTier[t.key]; if (!list.length) return null;
-          const show = t.key === "noise" ? list.slice(0, 4) : list;
-          return (
-            <div key={t.key}>
-              <div className="tier-h"><span>{t.emoji}</span><span className="n">{t.label}</span><span className="c">{list.length}</span><span className="rl" /></div>
-              {show.map((e) => (
-                <div className={"mail " + e.triage_tier} key={e.id}>
-                  <div className="mt"><span className={"tag " + e.account}>{e.account === "work" ? "Work" : "Personal"}</span><span className="snd">{e.sender}</span><span className="addr">{e.sender_addr}</span><span className="tmm">{rel(e.received_at)}</span></div>
-                  <div className="subj">{e.subject}</div><div className="why">{e.why}</div>
-                  {e.action && <div className="nx"><b>Next:</b> {e.action}</div>}
-                </div>
-              ))}
-              {t.key === "noise" && list.length > 4 && <div style={{ color: "var(--muted)", fontSize: 12, padding: "2px 4px" }}>+{list.length - 4} more</div>}
-            </div>
-          );
-        })}
-      </div>
+      <Inbox tiers={inbox.tiers} byTier={inbox.byTier} risky={inbox.risky} />
     </div>
   );
 }

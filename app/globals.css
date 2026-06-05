@@ -62,4 +62,28 @@ h1.hello{font-family:"Iowan Old Style",Palatino,Georgia,serif;font-weight:600;fo
 .alarm h3{margin:0 0 5px;font-size:12px;text-transform:uppercase;color:#b0432a}.alarm .it{font-size:12.5px;color:#8a3a26;margin-top:2px}
 .rbtn{border:1px solid var(--line);background:#fff;border-radius:11px;padding:8px 14px;font:inherit;font-size:12.5px;font-weight:700;color:var(--ink2);cursor:pointer;margin-top:7px}
 .rbtn:hover{background:#FCFAF4}.rbtn:disabled{opacity:.6}
+
+/* interactive (Phase 2b) */
+.cbx{cursor:pointer;transition:.12s} .cbx:hover{border-color:var(--acc);background:var(--acc-soft)}
+.cbx.on{background:var(--acc);border-color:var(--acc)}
+.tl .sync{color:var(--acc-deep);font-style:normal;font-size:11px;font-weight:700;opacity:.8}
+.mailacts{display:flex;gap:7px;margin-top:9px}
+.mbtn{border:1px solid var(--line);background:#fff;border-radius:9px;padding:4px 11px;font:inherit;font-size:12px;font-weight:700;color:var(--ink2);cursor:pointer}
+.mbtn:hover{background:#FCFAF4;border-color:var(--acc)} .mbtn.danger:hover{border-color:#D2745A;color:#b0432a;background:#fcf1ee}
+.mwait{font-size:12px;color:var(--acc-deep);font-weight:700;text-transform:capitalize}
+.morebtn{border:none;background:none;color:var(--acc-deep);font:inherit;font-size:12px;font-weight:700;cursor:pointer;padding:2px 4px;margin:2px 0 8px}
+.addrow{display:flex;gap:6px;padding:8px 13px 11px}
+.addinp{flex:1;border:1px solid var(--line);border-radius:9px;padding:6px 10px;font:inherit;font-size:13px;background:#FCFAF4}
+.addinp:focus{outline:none;border-color:var(--acc);background:#fff}
+.addbtn{border:1px solid var(--line);background:#fff;border-radius:9px;width:32px;font-size:16px;color:var(--acc-deep);cursor:pointer;font-weight:700}
+.addbtn:hover{background:var(--acc-soft)}
+.addtag{border:1px dashed #ccc3ae;background:none;border-radius:6px;font-size:9.5px;font-weight:700;color:var(--muted);cursor:pointer;padding:1px 6px}
+.addtag:hover{border-color:var(--acc);color:var(--acc-deep)}
+.taginp{border:1px solid var(--acc);border-radius:6px;font-size:11px;padding:1px 6px;width:74px;outline:none}
+.proj.exp{grid-column:1/-1}
+.exbtn{border:none;background:none;color:var(--acc-deep);font:inherit;font-size:11.5px;font-weight:700;cursor:pointer;padding:6px 0 0}
+.projtasks{margin-top:8px;border-top:1px dashed var(--line);padding-top:6px}
+.ptask{display:flex;align-items:center;gap:9px;font-size:13px;padding:5px 0}
+.ptask.muted{color:var(--muted)} .ptask .sync{color:var(--acc-deep);font-style:normal;font-size:11px;font-weight:700}
+.projtasks .addrow{padding:6px 0 2px}
 @media(max-width:880px){.bento{grid-template-columns:1fr}.stats{grid-template-columns:repeat(2,1fr)}.projgrid{grid-template-columns:1fr 1fr}}
