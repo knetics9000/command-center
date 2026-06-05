@@ -137,6 +137,22 @@ h1.hello{font-family:"Iowan Old Style",Palatino,Georgia,serif;font-weight:600;fo
 .fchip:hover{background:#FCFAF4} .fchip.off{opacity:.4;text-decoration:line-through}
 .fchip.handled.on{background:var(--ink);color:#fff;border-color:var(--ink)}
 .hstate{font-size:9.5px;font-weight:800;text-transform:uppercase;letter-spacing:.04em;background:#F2ECDF;color:#8a8475;border-radius:6px;padding:1px 7px}
+
+/* smart filter pills (R3) */
+.filterbar2{margin-bottom:14px}
+.filterbar2 .searchinp{width:100%;margin-bottom:9px}
+.pillrow{display:flex;align-items:center;gap:6px;flex-wrap:wrap}
+.pill{display:inline-flex;align-items:center;gap:6px;border:1px solid var(--line);background:#fff;border-radius:999px;font:inherit;font-size:12px;font-weight:700;color:var(--ink2);padding:5px 11px;cursor:pointer;transition:.13s}
+.pill:hover{background:#FCFAF4;border-color:#e3d6bb}
+.pill.on{background:var(--ink);color:#fff;border-color:var(--ink)}
+.pill .pc{font-size:10.5px;font-weight:800;background:#F1ECDF;color:#8a8475;border-radius:999px;padding:0 6px;min-width:18px;text-align:center;font-variant-numeric:tabular-nums}
+.pill.on .pc{background:rgba(255,255,255,.22);color:#fff}
+.pill.tierpill.on .tierdot{box-shadow:0 0 0 2px rgba(255,255,255,.35)}
+.pilldiv{width:1px;height:18px;background:var(--line);margin:0 3px}
+.projwrap{position:relative;display:inline-block}
+.projmenu{position:absolute;top:calc(100% + 5px);left:0;z-index:30;background:#fff;border:1px solid var(--line);border-radius:11px;box-shadow:0 12px 30px rgba(70,55,25,.16);padding:5px;min-width:180px;display:flex;flex-direction:column;max-height:280px;overflow-y:auto}
+.projopt{border:none;background:none;font:inherit;font-size:13px;font-weight:600;color:var(--ink);text-align:left;padding:7px 10px;border-radius:8px;cursor:pointer}
+.projopt:hover{background:var(--acc-soft)} .projopt.on{background:var(--ink);color:#fff}
 .kbhint{flex-basis:100%;font-size:11px;color:var(--muted);margin-top:2px}
 .kbhint kbd{display:inline-block;background:#fff;border:1px solid var(--line);border-bottom-width:2px;border-radius:5px;padding:0 5px;font:inherit;font-size:10.5px;font-weight:700;color:var(--ink2);margin:0 1px}
 .mail.kbfocus{border-left-color:var(--acc-deep);box-shadow:0 0 0 2px var(--acc) inset,0 4px 14px rgba(224,162,60,.18);scroll-margin:90px}

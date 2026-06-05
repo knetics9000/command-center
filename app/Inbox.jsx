@@ -17,8 +17,10 @@ const matches = (e, q) => {
 };
 
 const PAST = { archive: "Archived", done: "Marked done", spam: "Marked spam", restore: "Restored" };
+const PSTOP = new Set("the a an and or of to for project app".split(" "));
+const projTerms = (name) => (name || "").toLowerCase().replace(/[^a-z0-9\s]/g, " ").split(/\s+/).filter((w) => w.length >= 3 && !PSTOP.has(w));
 
-export default function Inbox({ tiers, byTier, risky, handled = [] }) {
+export default function Inbox({ tiers, byTier, risky, handled = [], projects = [] }) {
   const router = useRouter();
   const { toast } = useToast();
   const [removed, setRemoved] = useState({});   // optimistic-hidden email ids
@@ -30,6 +32,8 @@ export default function Inbox({ tiers, byTier, risky, handled = [] }) {
   const [acct, setAcct] = useState("both");                 // both | personal | work
   const [tierOff, setTierOff] = useState({});               // tier key -> hidden
   const [showHandled, setShowHandled] = useState(false);
+  const [projSel, setProjSel] = useState(null);             // selected project tag
+  const [projOpen, setProjOpen] = useState(false);
   const [bodies, setBodies] = useState({});                 // id -> 'loading' | text | {error}
   const [reply, setReply] = useState({});                   // id -> {text, gen, saving, saved}
   const [evt, setEvt] = useState({});                       // id -> {loading, summary, location, start, durationMin}
@@ -75,7 +79,14 @@ export default function Inbox({ tiers, byTier, risky, handled = [] }) {
   }
 
   const acctOk = (e) => acct === "both" || e.account === acct;
-  const filt = (list) => list.filter((e) => !removed[e.id] && acctOk(e) && matches(e, q));
+  const projTermList = projSel ? projTerms(projSel) : [];
+  const projOk = (e) => !projSel || (() => { const hay = (e.subject + " " + e.sender + " " + e.snippet).toLowerCase(); return projTermList.some((t) => hay.includes(t)); })();
+  const filt = (list) => list.filter((e) => !removed[e.id] && acctOk(e) && projOk(e) && matches(e, q));
+
+  // contextual counts for the pills
+  const allUnhandled = tiers.flatMap((t) => byTier[t.key]).filter((e) => !removed[e.id]);
+  const tierCount = (key) => allUnhandled.filter((e) => e.triage_tier === key && acctOk(e) && projOk(e) && matches(e, q)).length;
+  const acctCount = (a) => allUnhandled.filter((e) => (a === "both" || e.account === a) && projOk(e) && matches(e, q)).length;
 
   const visibleCount = useMemo(
     () => tiers.reduce((n, t) => (tierOff[t.key] ? n : n + filt(byTier[t.key]).length), 0),
@@ -242,23 +253,40 @@ export default function Inbox({ tiers, byTier, risky, handled = [] }) {
         </span>
       </div>
 
-      <div className="filterbar">
+      <div className="filterbar2">
         <input className="searchinp" placeholder="Search sender, subject, body…" value={q} onChange={(e) => setQ(e.target.value)} />
-        <div className="fseg">
+        <div className="pillrow">
           {["both", "personal", "work"].map((a) => (
-            <button key={a} className={"fsegb" + (acct === a ? " on" : "")} onClick={() => setAcct(a)}>{a === "both" ? "All" : a === "work" ? "Work" : "Personal"}</button>
-          ))}
-        </div>
-        <div className="fchips">
-          {tiers.map((t) => (
-            <button key={t.key} className={"fchip " + t.key + (tierOff[t.key] ? " off" : "")} onClick={() => setTierOff((o) => ({ ...o, [t.key]: !o[t.key] }))} title={t.label}>
-              <span className={"tierdot " + t.key} /> {t.label}
+            <button key={a} className={"pill acctpill" + (acct === a ? " on" : "")} onClick={() => setAcct(a)}>
+              {a === "both" ? "All" : a === "work" ? "Work" : "Personal"}<span className="pc">{acctCount(a)}</span>
             </button>
           ))}
+          <span className="pilldiv" />
+          {tiers.map((t) => (
+            <button key={t.key} className={"pill tierpill " + t.key + (tierOff[t.key] ? "" : " on")} onClick={() => setTierOff((o) => ({ ...o, [t.key]: !o[t.key] }))} title={t.label}>
+              <span className={"tierdot " + t.key} /> {t.label}<span className="pc">{tierCount(t.key)}</span>
+            </button>
+          ))}
+          <span className="pilldiv" />
+          {projects.length > 0 && (
+            <span className="projwrap">
+              <button className={"pill" + (projSel ? " on" : "")} onClick={() => setProjOpen((v) => !v)}>
+                {projSel ? projSel.replace(/\s*project\s*$/i, "") : "Projects"} ▾
+              </button>
+              {projOpen && (
+                <span className="projmenu">
+                  <button className="projopt" onClick={() => { setProjSel(null); setProjOpen(false); }}>All emails</button>
+                  {projects.map((p) => (
+                    <button key={p.tag} className={"projopt" + (projSel === p.tag ? " on" : "")} onClick={() => { setProjSel(p.tag); setProjOpen(false); }}>{p.name}</button>
+                  ))}
+                </span>
+              )}
+            </span>
+          )}
+          <button className={"pill" + (showHandled ? " on" : "")} onClick={() => setShowHandled((v) => !v)}>
+            {showHandled ? "← Inbox" : "Handled"}
+          </button>
         </div>
-        <button className={"fchip handled" + (showHandled ? " on" : "")} onClick={() => setShowHandled((v) => !v)}>
-          {showHandled ? "← Inbox" : "Show handled"}
-        </button>
         <span className="kbhint"><kbd>j</kbd><kbd>k</kbd> move · <kbd>e</kbd> {showHandled ? "restore" : "archive"}{!showHandled && <> · <kbd>d</kbd> done · <kbd>s</kbd> spam</>} · <kbd>o</kbd> read</span>
       </div>
 
@@ -276,7 +304,7 @@ export default function Inbox({ tiers, byTier, risky, handled = [] }) {
             </div>
           )}
           {visibleCount === 0 && (
-            (q || acct !== "both" || Object.values(tierOff).some(Boolean))
+            (q || acct !== "both" || projSel || Object.values(tierOff).some(Boolean))
               ? <div className="emptyhero sm"><div className="ehtitle">No matches</div><div className="ehsub">Nothing fits your current search or filters.</div></div>
               : <div className="emptyhero sm"><div className="ehicon">🌿</div><div className="ehtitle">Inbox zero</div><div className="ehsub">You're all caught up. Snoozed mail returns automatically when it's due.</div></div>
           )}

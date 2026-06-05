@@ -118,7 +118,7 @@ export default async function Home() {
       </div>
 
       <div id="sec-inbox" style={{ scrollMarginTop: 70 }}>
-        <Inbox tiers={inbox.tiers} byTier={inbox.byTier} risky={inbox.risky} handled={handled} />
+        <Inbox tiers={inbox.tiers} byTier={inbox.byTier} risky={inbox.risky} handled={handled} projects={projects.map((p) => ({ tag: p.tag, name: p.name }))} />
       </div>
     </div>
   );
