@@ -1,0 +1,12 @@
+# Command Center cron jobs. Install with:  crontab scripts/crontab.txt
+# Adjust /opt/command-center and the npm path (`which npm`) to your VPS.
+# Set the box timezone first:  sudo timedatectl set-timezone America/New_York
+
+# Watchers: sync mail/tasks + run standing rules, every 15 min
+*/15 * * * * cd /opt/command-center && /usr/bin/npm run watchers >> /opt/command-center/data/cron.log 2>&1
+
+# Briefing: regenerate hourly
+0 * * * * cd /opt/command-center && /usr/bin/npm run briefing >> /opt/command-center/data/cron.log 2>&1
+
+# Primary briefing (the day's headline) + self-email, at 7:30 AM
+30 7 * * * cd /opt/command-center && /usr/bin/npm run briefing -- --primary >> /opt/command-center/data/cron.log 2>&1
