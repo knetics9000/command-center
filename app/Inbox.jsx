@@ -3,6 +3,7 @@ import { useState, useMemo, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import EventComposer from "./EventComposer";
 import { useToast } from "./Toast";
+import Icon from "./Icon";
 
 function rel(x) {
   const s = (Date.now() - new Date(x)) / 1000; if (isNaN(s)) return "";
@@ -201,11 +202,11 @@ export default function Inbox({ tiers, byTier, risky, handled = [] }) {
           onClose={() => setEvt((x) => { const n = { ...x }; delete n[e.id]; return n; })} />
       )}
       <div className="mailacts">
-        {!handledRow && <button className="mbtn reply" onClick={() => genReply(e)}>{reply[e.id] ? "Close reply" : "✍ Reply"}</button>}
-        {!handledRow && <button className="mbtn" onClick={() => addEvent(e)}>{evt[e.id] ? "Close" : "📅 Calendar"}</button>}
+        {!handledRow && <button className="mbtn reply" onClick={() => genReply(e)}>{reply[e.id] ? "Close reply" : <><Icon name="reply" size={13} /> Reply</>}</button>}
+        {!handledRow && <button className="mbtn" onClick={() => addEvent(e)}>{evt[e.id] ? "Close" : <><Icon name="calendar" size={13} /> Calendar</>}</button>}
         {!handledRow && (
           <span className="snoozewrap">
-            <button className="mbtn" onClick={() => setSnoozeFor((id) => id === e.id ? null : e.id)}>💤 Snooze</button>
+            <button className="mbtn" onClick={() => setSnoozeFor((id) => id === e.id ? null : e.id)}><Icon name="moon" size={13} /> Snooze</button>
             {snoozeFor === e.id && (
               <span className="snoozemenu">
                 {snoozeOptions().map((o) => (
@@ -251,7 +252,7 @@ export default function Inbox({ tiers, byTier, risky, handled = [] }) {
         <div className="fchips">
           {tiers.map((t) => (
             <button key={t.key} className={"fchip " + t.key + (tierOff[t.key] ? " off" : "")} onClick={() => setTierOff((o) => ({ ...o, [t.key]: !o[t.key] }))} title={t.label}>
-              {t.emoji} {t.label}
+              <span className={"tierdot " + t.key} /> {t.label}
             </button>
           ))}
         </div>
@@ -285,7 +286,7 @@ export default function Inbox({ tiers, byTier, risky, handled = [] }) {
             const show = t.key === "noise" && !expandNoise && !q ? list.slice(0, 4) : list;
             return (
               <div key={t.key}>
-                <div className="tier-h"><span>{t.emoji}</span><span className="n">{t.label}</span><span className="c">{list.length}</span><span className="rl" /></div>
+                <div className="tier-h"><span className={"tierdot " + t.key} /><span className="n">{t.label}</span><span className="c">{list.length}</span><span className="rl" /></div>
                 {show.map((e) => <Mail e={e} key={e.id} />)}
                 {t.key === "noise" && !q && list.length > 4 && (
                   <button className="morebtn" onClick={() => setExpandNoise((v) => !v)}>

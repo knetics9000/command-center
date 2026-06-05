@@ -213,6 +213,15 @@ h1.hello{font-family:"Iowan Old Style",Palatino,Georgia,serif;font-weight:600;fo
 .rldot{width:6px;height:6px;border-radius:50%;background:#7E9A86;flex:none}
 .rltitle{flex:1;min-width:0;color:var(--ink)} .rlwhen{font-size:11px;color:var(--muted);white-space:nowrap}
 
+/* icons + tier dots (U9) */
+.ic{display:inline-block;vertical-align:-2px;flex:none}
+.mbtn .ic{vertical-align:-2px;margin-right:1px}
+.tierdot{display:inline-block;width:9px;height:9px;border-radius:50%;flex:none}
+.tierdot.act{background:#D2745A}.tierdot.review{background:#C8A85A}.tierdot.quick{background:#7E9A86}.tierdot.noise{background:#B5AE9F}
+.tier-h .tierdot{width:10px;height:10px}
+.fchip .tierdot{vertical-align:0}
+.sec-h .star .ic{vertical-align:-3px}
+
 /* depth + entrance (U8) */
 @keyframes rise{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:none}}
 .stats,#sec-briefing,#sec-projects,.bento,#sec-inbox{animation:rise .5s cubic-bezier(.2,.7,.2,1) both}

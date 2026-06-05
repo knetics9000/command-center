@@ -5,6 +5,7 @@ import ProjectChat from "./ProjectChat";
 import StandingRules from "./StandingRules";
 import ProjectNotes from "./ProjectNotes";
 import { useToast } from "./Toast";
+import Icon from "./Icon";
 
 const ringColor = (p) => (p >= 66 ? "#7E9A86" : p >= 33 ? "#E0A23C" : "#D2745A");
 
@@ -32,7 +33,7 @@ export default function Projects({ projects }) {
 
   return (
     <div className="card full">
-      <div className="sec-h"><span className="star">★</span> Project Tracker — where you left off</div>
+      <div className="sec-h"><span className="star"><Icon name="target" size={15} /></span> Project Tracker — where you left off</div>
       <div className="projgrid">
         {projects.length === 0 && (
           <div className="emptyhero sm">

@@ -2,6 +2,7 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { useToast } from "./Toast";
+import Icon from "./Icon";
 
 const tagFor = (name) => (/project/i.test(name) ? name : name + " Project").toLowerCase();
 const when = (ts) => { const d = new Date((ts || "").replace(" ", "T") + "Z"); return isNaN(d) ? "" : d.toLocaleTimeString([], { hour: "numeric", minute: "2-digit" }); };
@@ -32,7 +33,7 @@ export default function Briefing({ briefing, existingTags = [] }) {
   return (
     <div className="card full briefcard">
       <div className="sec-h">
-        <span className="star">✦</span> {b && b.is_primary ? "Morning Briefing" : "Briefing"}
+        <span className="star"><Icon name="sparkle" size={15} /></span> {b && b.is_primary ? "Morning Briefing" : "Briefing"}
         <span className="grow" />
         {b && b.generated_at && <span className="bts">updated {when(b.generated_at)}</span>}
         <button className="rbtn" style={{ marginTop: 0, marginLeft: 10 }} onClick={regenerate} disabled={busy}>{busy ? "Thinking…" : "↻ Regenerate"}</button>
