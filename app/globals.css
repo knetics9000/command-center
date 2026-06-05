@@ -123,6 +123,9 @@ h1.hello{font-family:"Iowan Old Style",Palatino,Georgia,serif;font-weight:600;fo
 .fchip:hover{background:#FCFAF4} .fchip.off{opacity:.4;text-decoration:line-through}
 .fchip.handled.on{background:var(--ink);color:#fff;border-color:var(--ink)}
 .hstate{font-size:9.5px;font-weight:800;text-transform:uppercase;letter-spacing:.04em;background:#F2ECDF;color:#8a8475;border-radius:6px;padding:1px 7px}
+.kbhint{flex-basis:100%;font-size:11px;color:var(--muted);margin-top:2px}
+.kbhint kbd{display:inline-block;background:#fff;border:1px solid var(--line);border-bottom-width:2px;border-radius:5px;padding:0 5px;font:inherit;font-size:10.5px;font-weight:700;color:var(--ink2);margin:0 1px}
+.mail.kbfocus{border-left-color:var(--acc-deep);box-shadow:0 0 0 2px var(--acc) inset,0 4px 14px rgba(224,162,60,.18);scroll-margin:90px}
 .addrow{display:flex;gap:6px;padding:8px 13px 11px}
 .addinp{flex:1;border:1px solid var(--line);border-radius:9px;padding:6px 10px;font:inherit;font-size:13px;background:#FCFAF4}
 .addinp:focus{outline:none;border-color:var(--acc);background:#fff}

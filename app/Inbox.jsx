@@ -1,5 +1,5 @@
 "use client";
-import { useState, useMemo } from "react";
+import { useState, useMemo, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import EventComposer from "./EventComposer";
 import { useToast } from "./Toast";
@@ -78,8 +78,37 @@ export default function Inbox({ tiers, byTier, risky, handled = [] }) {
 
   const visibleCount = useMemo(
     () => tiers.reduce((n, t) => (tierOff[t.key] ? n : n + filt(byTier[t.key]).length), 0),
-    [tiers, byTier, tierOff, q, acct]
+    [tiers, byTier, tierOff, q, acct, removed]
   );
+
+  // Flat ordered list of currently-visible emails, for keyboard navigation.
+  const navList = showHandled ? filt(handled) : tiers.filter((t) => !tierOff[t.key]).flatMap((t) => filt(byTier[t.key]));
+  const [focusIdx, setFocusIdx] = useState(-1);
+  const focusedId = focusIdx >= 0 && focusIdx < navList.length ? navList[focusIdx].id : null;
+
+  useEffect(() => {
+    if (focusedId) document.getElementById("m-" + focusedId)?.scrollIntoView({ block: "nearest" });
+  }, [focusedId]);
+
+  useEffect(() => {
+    function onKey(ev) {
+      const el = document.activeElement;
+      if (el && (el.tagName === "INPUT" || el.tagName === "TEXTAREA" || el.isContentEditable)) return;
+      if (ev.metaKey || ev.ctrlKey || ev.altKey) return;
+      const k = ev.key.toLowerCase();
+      if (k === "j" || ev.key === "ArrowDown") { ev.preventDefault(); setFocusIdx((i) => Math.min((i < 0 ? -1 : i) + 1, navList.length - 1)); }
+      else if (k === "k" || ev.key === "ArrowUp") { ev.preventDefault(); setFocusIdx((i) => Math.max((i < 0 ? navList.length : i) - 1, 0)); }
+      else if (focusedId) {
+        const e = navList[focusIdx];
+        if (k === "e") { ev.preventDefault(); act(e.id, e.account, showHandled ? "restore" : "archive"); }
+        else if (k === "d" && !showHandled) { ev.preventDefault(); act(e.id, e.account, "done"); }
+        else if (k === "s" && !showHandled) { ev.preventDefault(); act(e.id, e.account, "spam"); }
+        else if (k === "o" || ev.key === "Enter") { ev.preventDefault(); toggleBody(e); }
+      }
+    }
+    window.addEventListener("keydown", onKey);
+    return () => window.removeEventListener("keydown", onKey);
+  });
 
   const [snoozeFor, setSnoozeFor] = useState(null);   // email id with open snooze menu
 
@@ -132,7 +161,7 @@ export default function Inbox({ tiers, byTier, risky, handled = [] }) {
   }
 
   const Mail = ({ e, handledRow }) => (
-    <div className={"mail " + (e.triage_tier || "review") + (exiting[e.id] ? " exit" : "")} key={e.id}>
+    <div id={"m-" + e.id} className={"mail " + (e.triage_tier || "review") + (exiting[e.id] ? " exit" : "") + (focusedId === e.id ? " kbfocus" : "")} key={e.id}>
       <div className="mt">
         <span className={"tag " + e.account}>{e.account === "work" ? "Work" : "Personal"}</span>
         <span className="snd">{e.sender}</span><span className="addr">{e.sender_addr}</span>
@@ -229,6 +258,7 @@ export default function Inbox({ tiers, byTier, risky, handled = [] }) {
         <button className={"fchip handled" + (showHandled ? " on" : "")} onClick={() => setShowHandled((v) => !v)}>
           {showHandled ? "← Inbox" : "Show handled"}
         </button>
+        <span className="kbhint"><kbd>j</kbd><kbd>k</kbd> move · <kbd>e</kbd> {showHandled ? "restore" : "archive"}{!showHandled && <> · <kbd>d</kbd> done · <kbd>s</kbd> spam</>} · <kbd>o</kbd> read</span>
       </div>
 
       {showHandled ? (
