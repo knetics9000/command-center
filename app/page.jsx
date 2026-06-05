@@ -16,14 +16,22 @@ function weekRange() {
   const end = new Date(d); end.setDate(d.getDate() + 7);
   return { start: d, end };
 }
-async function getCalendar() {
+function monthGrid() {
+  const now = new Date();
+  const first = new Date(now.getFullYear(), now.getMonth(), 1);
+  const startWd = (first.getDay() + 6) % 7;          // Monday = 0
+  const gridStart = new Date(first); gridStart.setDate(1 - startWd); gridStart.setHours(0, 0, 0, 0);
+  const days = Array.from({ length: 42 }, (_, i) => { const d = new Date(gridStart); d.setDate(gridStart.getDate() + i); return d; });
+  const gridEnd = new Date(gridStart); gridEnd.setDate(gridStart.getDate() + 42);
+  return { days, gridStart, gridEnd, month: now.getMonth() };
+}
+async function getCalendar(timeMin, timeMax) {
   const conn = connectionStatus().find((c) => c.account === "personal");
   if (!conn || !conn.connected) return { events: [], connected: false };
-  const { start, end } = weekRange();
   let evs = [];
-  for (const [acc, color] of [["personal", "#7E9A86"], ["work", "#C2851E"]]) {
+  for (const [acc, color] of [["personal", "#6366F1"], ["work", "#14B8A6"]]) {
     try {
-      const items = await listEvents(acc, start.toISOString(), end.toISOString());
+      const items = await listEvents(acc, timeMin, timeMax);
       evs = evs.concat(items.map((e) => ({
         account: acc, color, summary: e.summary || "(busy)", location: e.location || "",
         allDay: !!(e.start && e.start.date && !e.start.dateTime),
@@ -42,19 +50,19 @@ export default async function Home() {
   const todo = getTodoGroups();
   const briefing = getLatestBriefing();
   const projectTags = getProjectTags();
-  const lastSync = getLastSync();
   const conn = connectionStatus();
-  const cal = await getCalendar();
-
   const now = new Date();
-  const { start, end } = weekRange();
-  const dueEvents = getDueTasks(start.toISOString().slice(0, 10), end.toISOString().slice(0, 10))
-    .map((t) => ({ summary: t.text, location: "", allDay: true, isTask: true, color: "#6b5a8e", start: t.due + "T12:00:00" }));
+  const grid = monthGrid();
+  const cal = await getCalendar(grid.gridStart.toISOString(), grid.gridEnd.toISOString());
+
+  const dueEvents = getDueTasks(grid.gridStart.toISOString().slice(0, 10), grid.gridEnd.toISOString().slice(0, 10))
+    .map((t) => ({ summary: t.text, location: "", allDay: true, isTask: true, color: "#8B5CF6", start: t.due + "T12:00:00" }));
   const events = [...cal.events, ...dueEvents].sort((a, b) => new Date(a.start) - new Date(b.start));
-  const days = Array.from({ length: 7 }, (_, i) => { const d = new Date(start); d.setDate(start.getDate() + i); return d; });
   const dn = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"];
-  const today = events.filter((e) => new Date(e.start).toDateString() === now.toDateString());
+  const sameDay = (a, b) => new Date(a).toDateString() === b.toDateString();
+  const today = events.filter((e) => sameDay(e.start, now));
   const nextEv = events.filter((e) => !e.allDay && new Date(e.start) > now)[0];
+  const monthLabel = now.toLocaleDateString(undefined, { month: "long", year: "numeric" });
 
   const connected = conn.every((c) => c.connected);
   const personal = conn.find((c) => c.account === "personal") || {};
@@ -109,34 +117,51 @@ export default async function Home() {
         <Projects projects={projects} />
       </div>
 
-      <div className="bento" style={{ marginTop: 18 }}>
-        <div className="col" id="sec-todo" style={{ scrollMarginTop: 70 }}>
-          <Todo order={todo.order} groups={todo.groups} openTotal={todo.openTotal} />
+      <div id="sec-todo" style={{ marginTop: 18, scrollMarginTop: 70 }}>
+        <Todo order={todo.order} groups={todo.groups} openTotal={todo.openTotal} />
+      </div>
+
+      <div id="sec-calendar" className="calsection" style={{ marginTop: 18, scrollMarginTop: 70 }}>
+        <div className="card calmonth">
+          <div className="sec-h">Calendar<span className="grow" /><span className="monthlbl">{monthLabel}</span></div>
+          {!cal.connected && <div style={{ color: "var(--muted)" }}><a href="/connect">Connect calendar →</a></div>}
+          <div className="mgrid mgrid-h">{dn.map((d) => <div className="mh" key={d}>{d}</div>)}</div>
+          <div className="mgrid">
+            {grid.days.map((d, i) => {
+              const dayEvs = events.filter((e) => sameDay(e.start, d));
+              const isT = sameDay(now, d);
+              const dim = d.getMonth() !== grid.month;
+              return (
+                <div className={"mcell" + (isT ? " today" : "") + (dim ? " dim" : "")} key={i}>
+                  <div className="mdate">{d.getDate()}</div>
+                  {dayEvs.slice(0, 3).map((e, j) => (
+                    <div className={"mchip" + (e.isTask ? " task" : "")} key={j} style={{ "--c": e.color }} title={e.summary}>
+                      {!e.allDay && <span className="mct">{new Date(e.start).toLocaleTimeString([], { hour: "numeric" })}</span>}{e.isTask ? "✓ " : ""}{e.summary}
+                    </div>
+                  ))}
+                  {dayEvs.length > 3 && <div className="mmore">+{dayEvs.length - 3}</div>}
+                </div>
+              );
+            })}
+          </div>
         </div>
 
-        <div className="col" id="sec-calendar" style={{ scrollMarginTop: 70 }}>
-          <div className="card">
-            <div className="sec-h">Calendar · this week</div>
-            {!cal.connected && <div style={{ color: "var(--muted)" }}><a href="/connect">Connect calendar →</a></div>}
-            <div className="week">
-              {days.map((d, i) => {
-                const isT = d.toDateString() === now.toDateString();
-                const has = events.some((e) => new Date(e.start).toDateString() === d.toDateString());
-                return <div className={"day" + (isT ? " today" : "")} key={i}><div className="dn">{dn[i]}</div><div className="dd">{d.getDate()}</div>{has && <div className="pip" />}</div>;
-              })}
-            </div>
-            {(today.length ? today : events.slice(0, 6)).map((e, i) => {
+        <div className="card caltoday">
+          <div className="sec-h">Today<span className="grow" /><span className="monthlbl">{now.toLocaleDateString(undefined, { weekday: "short", month: "short", day: "numeric" })}</span></div>
+          <div className="tline">
+            {today.filter((e) => !e.allDay).length === 0 && today.length === 0 && <div className="tlempty">Nothing scheduled today. 🌿</div>}
+            {today.map((e, i) => {
               const d = new Date(e.start);
               const tm = e.isTask ? "due" : e.allDay ? "all day" : d.toLocaleTimeString([], { hour: "numeric", minute: "2-digit" });
               const isNext = nextEv && e === nextEv;
               return (
-                <div className={"ev" + (isNext ? " next" : "") + (e.isTask ? " task" : "")} key={i}>
-                  <div className="tm">{tm}</div><span className="acctk" style={{ background: e.color }} />
-                  <div><div className="ti">{e.isTask ? "✓ " : ""}{isNext ? <b>{e.summary}</b> : e.summary}</div><div className="loc">{e.isTask ? "Task due" : (e.location || (e.account === "work" ? "Work" : "Personal"))}</div></div>
+                <div className={"tlrow" + (isNext ? " next" : "")} key={i}>
+                  <div className="tltime">{tm}</div>
+                  <div className="tlbar" style={{ background: e.color }} />
+                  <div className="tlbody"><div className="tlsum">{e.isTask ? "✓ " : ""}{e.summary}</div><div className="tlloc">{e.isTask ? "Task due" : (e.location || (e.account === "work" ? "Work" : "Personal"))}</div></div>
                 </div>
               );
             })}
-            {cal.connected && events.length === 0 && <div style={{ color: "var(--muted)", fontSize: 13 }}>Nothing scheduled. 🌿</div>}
           </div>
         </div>
       </div>
