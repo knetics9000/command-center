@@ -20,7 +20,8 @@ export async function POST(req) {
     db.prepare("INSERT INTO chat_messages (context_type,context_id,role,content) VALUES ('project',?,'user',?)").run(contextId, message);
 
     const today = new Date().toISOString().slice(0, 10);
-    const { reply, proposedEvents } = await chatTurn({ projectName: projectName || contextId, history, message, today });
+    const noteRow = db.prepare("SELECT notes FROM projects WHERE lower(tag)=lower(?)").get(contextId);
+    const { reply, proposedEvents } = await chatTurn({ projectName: projectName || contextId, history, message, today, notes: noteRow && noteRow.notes });
 
     db.prepare("INSERT INTO chat_messages (context_type,context_id,role,content) VALUES ('project',?,'assistant',?)").run(contextId, reply);
 

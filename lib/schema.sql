@@ -55,6 +55,7 @@ CREATE TABLE IF NOT EXISTS projects (
   cluster_id   INTEGER REFERENCES clusters(id),
   source       TEXT DEFAULT 'manual',    -- auto | suggested | manual
   status       TEXT DEFAULT 'active',
+  notes        TEXT,                     -- context the project chat reads (goals, people, constraints)
   created_at   TEXT DEFAULT (datetime('now'))
 );
 
