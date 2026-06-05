@@ -82,7 +82,7 @@ export default function Inbox({ tiers, byTier, risky, handled = [], projects = [
 
   const acctOk = (e) => acct === "both" || e.account === acct;
   const projTermList = projSel ? projTerms(projSel) : [];
-  const projOk = (e) => !projSel || (() => { const hay = (e.subject + " " + e.sender + " " + e.snippet).toLowerCase(); return projTermList.some((t) => hay.includes(t)); })();
+  const projOk = (e) => !projSel || assignedTag(e) === projSel || (() => { const hay = (e.subject + " " + e.sender + " " + e.snippet).toLowerCase(); return projTermList.some((t) => hay.includes(t)); })();
   const filt = (list) => list.filter((e) => !removed[e.id] && acctOk(e) && projOk(e) && matches(e, q));
 
   // contextual counts for the pills
@@ -142,6 +142,30 @@ export default function Inbox({ tiers, byTier, risky, handled = [], projects = [
   });
 
   const [snoozeFor, setSnoozeFor] = useState(null);   // email id with open snooze menu
+  const [assignFor, setAssignFor] = useState(null);   // email id with open assign menu
+  const [linked, setLinked] = useState({});           // id -> project tag (optimistic)
+  const [newProj, setNewProj] = useState("");
+
+  const assignedTag = (e) => (linked[e.id] !== undefined ? linked[e.id] : e.project_tag) || null;
+
+  async function assignProject(e, tag) {
+    setAssignFor(null); setLinked((m) => ({ ...m, [e.id]: tag }));
+    try {
+      const r = await fetch("/api/inbox", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ action: "link", id: e.id, projectTag: tag }) });
+      if (!r.ok) throw new Error((await r.json().catch(() => ({}))).error || r.status);
+      toast(tag ? `Assigned to ${tag.replace(/\s*project\s*$/i, "")}` : "Unassigned");
+    } catch (err) { setLinked((m) => { const n = { ...m }; delete n[e.id]; return n; }); toast({ message: "Assign failed: " + err.message, tone: "error" }); }
+  }
+  async function createAndAssign(e) {
+    const name = newProj.trim(); if (!name) return;
+    setNewProj("");
+    try {
+      const r = await fetch("/api/project", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ action: "create", name }) });
+      const j = await r.json();
+      if (j.ok && j.tag) { await assignProject(e, j.tag); router.refresh(); }
+      else toast({ message: "Create failed", tone: "error" });
+    } catch (err) { toast({ message: err.message, tone: "error" }); }
+  }
 
   function snoozeOptions() {
     const now = new Date();
@@ -197,6 +221,7 @@ export default function Inbox({ tiers, byTier, risky, handled = [], projects = [
         <span className={"tag " + e.account}>{e.account === "work" ? "Work" : "Personal"}</span>
         <span className="snd">{e.sender}</span><span className="addr">{e.sender_addr}</span>
         {handledRow && <span className="hstate">{e.handled_state}</span>}
+        {assignedTag(e) && <span className="projchip">★ {assignedTag(e).replace(/\s*project\s*$/i, "")}</span>}
         <span className="tmm">{rel(e.received_at)}</span>
       </div>
       <div className="subj">{e.subject}</div>
@@ -244,6 +269,23 @@ export default function Inbox({ tiers, byTier, risky, handled = [], projects = [
                     {o.label}<span className="st">{o.at.toLocaleString([], { weekday: "short", hour: "numeric", minute: "2-digit" })}</span>
                   </button>
                 ))}
+              </span>
+            )}
+          </span>
+        )}
+        {!handledRow && (
+          <span className="snoozewrap">
+            <button className="mbtn" onClick={() => setAssignFor((id) => id === e.id ? null : e.id)}>★ Assign</button>
+            {assignFor === e.id && (
+              <span className="snoozemenu assignmenu" onClick={(ev) => ev.stopPropagation()}>
+                {assignedTag(e) && <button className="snoozeopt" onClick={() => assignProject(e, "")}>✕ Unassign</button>}
+                {projects.map((p) => (
+                  <button key={p.tag} className={"snoozeopt" + (assignedTag(e) === p.tag ? " on" : "")} onClick={() => assignProject(e, p.tag)}>★ {p.name}</button>
+                ))}
+                <div className="assignnew">
+                  <input className="addinp" placeholder="New project…" value={assignFor === e.id ? newProj : ""} onChange={(ev) => setNewProj(ev.target.value)} onKeyDown={(ev) => { if (ev.key === "Enter") createAndAssign(e); }} />
+                  <button className="addbtn" onClick={() => createAndAssign(e)}>＋</button>
+                </div>
               </span>
             )}
           </span>

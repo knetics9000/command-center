@@ -13,8 +13,20 @@ const OPS = {
 
 export async function POST(req) {
   try {
-    const { action, id, account, until } = await req.json();
+    const { action, id, account, until, projectTag, etags } = await req.json();
     if (!id) return NextResponse.json({ ok: false, error: "bad request" }, { status: 400 });
+
+    // Assign an email to a project and/or set custom tags (Command-Center-only, survives sync).
+    if (action === "link") {
+      const db = getDb();
+      const sets = [], params = [];
+      if (projectTag !== undefined) { sets.push("project_tag=?"); params.push(projectTag || null); }
+      if (etags !== undefined) { sets.push("etags=?"); params.push(etags || null); }
+      if (!sets.length) return NextResponse.json({ ok: false, error: "nothing to set" }, { status: 400 });
+      params.push(id);
+      db.prepare(`UPDATE emails SET ${sets.join(", ")}, updated_at=datetime('now') WHERE id=?`).run(...params);
+      return NextResponse.json({ ok: true });
+    }
 
     // Snooze is Command-Center-only: hide from the board until `until`, no Gmail change.
     if (action === "snooze") {

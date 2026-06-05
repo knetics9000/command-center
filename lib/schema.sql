@@ -36,6 +36,8 @@ CREATE TABLE IF NOT EXISTS emails (
   handled      INTEGER DEFAULT 0,
   handled_state TEXT,                    -- archived|done|spam|snoozed
   snooze_until TEXT,                     -- ISO time to return a snoozed email to the board
+  project_tag  TEXT,                     -- manually assigned project (survives sync)
+  etags        TEXT,                     -- custom "; "-joined tags on the email
   updated_at   TEXT DEFAULT (datetime('now'))
 );
 
