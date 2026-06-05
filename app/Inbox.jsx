@@ -21,6 +21,17 @@ export default function Inbox({ tiers, byTier, risky, handled = [] }) {
   const [acct, setAcct] = useState("both");                 // both | personal | work
   const [tierOff, setTierOff] = useState({});               // tier key -> hidden
   const [showHandled, setShowHandled] = useState(false);
+  const [bodies, setBodies] = useState({});                 // id -> 'loading' | text | {error}
+
+  async function toggleBody(e) {
+    if (bodies[e.id]) { setBodies((b) => { const n = { ...b }; delete n[e.id]; return n; }); return; }
+    setBodies((b) => ({ ...b, [e.id]: "loading" }));
+    try {
+      const r = await fetch(`/api/inbox/body?account=${e.account}&id=${e.id}`);
+      const j = await r.json();
+      setBodies((b) => ({ ...b, [e.id]: j.ok ? (j.body || "(empty)") : "⚠ " + (j.error || "failed") }));
+    } catch (err) { setBodies((b) => ({ ...b, [e.id]: "⚠ " + err.message })); }
+  }
 
   const acctOk = (e) => acct === "both" || e.account === acct;
   const filt = (list) => list.filter((e) => acctOk(e) && matches(e, q));
@@ -52,7 +63,11 @@ export default function Inbox({ tiers, byTier, risky, handled = [] }) {
       <div className="subj">{e.subject}</div>
       {!handledRow && <div className="why">{e.why}</div>}
       {!handledRow && e.action && <div className="nx"><b>Next:</b> {e.action}</div>}
+      {bodies[e.id] && (
+        <div className="mbody">{bodies[e.id] === "loading" ? <span className="bodyload">Loading…</span> : bodies[e.id]}</div>
+      )}
       <div className="mailacts">
+        <button className="mbtn read" onClick={() => toggleBody(e)}>{bodies[e.id] ? "Hide" : "Read"}</button>
         {busy[e.id]
           ? <span className="mwait">{busy[e.id]}…</span>
           : handledRow

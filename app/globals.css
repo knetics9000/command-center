@@ -71,6 +71,9 @@ h1.hello{font-family:"Iowan Old Style",Palatino,Georgia,serif;font-weight:600;fo
 .mbtn{border:1px solid var(--line);background:#fff;border-radius:9px;padding:4px 11px;font:inherit;font-size:12px;font-weight:700;color:var(--ink2);cursor:pointer}
 .mbtn:hover{background:#FCFAF4;border-color:var(--acc)} .mbtn.danger:hover{border-color:#D2745A;color:#b0432a;background:#fcf1ee}
 .mwait{font-size:12px;color:var(--acc-deep);font-weight:700;text-transform:capitalize}
+.mbtn.read{border-color:var(--acc);color:var(--acc-deep)}
+.mbody{margin-top:9px;padding:11px 13px;background:#FCFAF4;border:1px solid var(--line);border-radius:10px;font-size:12.5px;line-height:1.55;color:var(--ink2);white-space:pre-wrap;max-height:300px;overflow-y:auto}
+.bodyload{color:var(--muted);font-style:italic}
 .morebtn{border:none;background:none;color:var(--acc-deep);font:inherit;font-size:12px;font-weight:700;cursor:pointer;padding:2px 4px;margin:2px 0 8px}
 
 /* inbox filter bar */
