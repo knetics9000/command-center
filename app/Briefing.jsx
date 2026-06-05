@@ -40,6 +40,17 @@ export default function Briefing({ briefing, existingTags = [] }) {
 
       {b && <>
         <div className="greet">{b.greeting}</div>
+        {b.delta && (
+          <div className="delta">
+            <span className="dlbl">Since last briefing</span>
+            {b.delta.newActCount > 0 && <span className="dpill now">{b.delta.newActCount} new urgent</span>}
+            {b.delta.cleared > 0 && <span className="dpill good">{b.delta.cleared} cleared</span>}
+            {b.delta.ruleEvents > 0 && <span className="dpill cal">{b.delta.ruleEvents} event{b.delta.ruleEvents > 1 ? "s" : ""} added</span>}
+            {b.delta.newAct && b.delta.newAct.length > 0 && (
+              <span className="dnew">· {b.delta.newAct.map((e) => e.sender).join(", ")}</span>
+            )}
+          </div>
+        )}
         <div className="prios">
           {(b.priorities || []).map((p, i) => (
             <div className="prio" key={i}>

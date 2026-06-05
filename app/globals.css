@@ -136,7 +136,12 @@ h1.hello{font-family:"Iowan Old Style",Palatino,Georgia,serif;font-weight:600;fo
 /* briefing (Phase 3) */
 .briefcard{background:linear-gradient(180deg,#fffdf8,#fbf6ea);border-color:#ece0c6}
 .briefcard .star{color:var(--acc-deep)} .bts{font-size:11px;color:var(--muted);font-weight:600}
-.greet{font-family:"Iowan Old Style",Palatino,Georgia,serif;font-size:20px;color:var(--ink);margin:2px 0 14px}
+.greet{font-family:"Iowan Old Style",Palatino,Georgia,serif;font-size:20px;color:var(--ink);margin:2px 0 10px}
+.delta{display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin:0 0 14px;font-size:12px}
+.delta .dlbl{font-size:10px;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);font-weight:700}
+.dpill{font-size:11px;font-weight:700;border-radius:999px;padding:2px 9px}
+.dpill.now{background:#fbe6df;color:#b0432a}.dpill.good{background:#E7EFE8;color:#5b7a64}.dpill.cal{background:#EAE3F3;color:#6b5a8e}
+.delta .dnew{color:var(--muted)}
 .prios{display:flex;flex-direction:column;gap:8px}
 .prio{display:flex;gap:11px;align-items:flex-start}
 .pnum{flex:none;width:22px;height:22px;border-radius:50%;background:var(--acc);color:#fff;font-weight:700;font-size:12px;display:grid;place-items:center;margin-top:1px}
