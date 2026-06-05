@@ -143,6 +143,18 @@ h1.hello{font-family:"Iowan Old Style",Palatino,Georgia,serif;font-weight:600;fo
 .fchip.handled.on{background:var(--ink);color:#fff;border-color:var(--ink)}
 .hstate{font-size:9.5px;font-weight:800;text-transform:uppercase;letter-spacing:.04em;background:#F2ECDF;color:#8a8475;border-radius:6px;padding:1px 7px}
 
+/* saved views (R10) */
+.viewsrow{display:flex;align-items:center;gap:7px;flex-wrap:wrap;margin-bottom:10px;padding-bottom:10px;border-bottom:1px solid var(--line)}
+.vlbl{font-size:10px;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);font-weight:700}
+.viewchip{display:inline-flex;align-items:center;background:var(--acc-soft);border:1px solid #ecd9b3;border-radius:999px;overflow:hidden}
+.viewchip.editing{background:#fff;gap:4px;padding:2px 4px;border-color:var(--acc)}
+.vapply{border:none;background:none;font:inherit;font-size:12px;font-weight:700;color:var(--acc-deep);padding:4px 4px 4px 11px;cursor:pointer}
+.vapply:hover{text-decoration:underline}
+.vx{border:none;background:none;color:#b89a5e;cursor:pointer;font-size:14px;padding:0 9px 0 4px;line-height:1}
+.vx:hover{color:#b0432a}
+.viewadd{border:1px dashed #ccc3ae;background:none;border-radius:999px;font:inherit;font-size:12px;font-weight:700;color:var(--ink2);padding:4px 11px;cursor:pointer}
+.viewadd:hover{border-color:var(--acc);color:var(--acc-deep)}
+
 /* smart filter pills (R3) */
 .filterbar2{margin-bottom:14px}
 .filterbar2 .searchinp{width:100%;margin-bottom:9px}

@@ -36,6 +36,20 @@ export default function Inbox({ tiers, byTier, risky, handled = [], projects = [
   const [projOpen, setProjOpen] = useState(false);
   const [grouped, setGrouped] = useState(false);            // thread/subject grouping
   const [gCollapsed, setGCollapsed] = useState({});         // group key -> collapsed
+  const [views, setViews] = useState([]);                   // saved filter views
+  const [savingView, setSavingView] = useState(false);
+  const [viewName, setViewName] = useState("");
+
+  useEffect(() => { try { setViews(JSON.parse(localStorage.getItem("cc_inbox_views") || "[]")); } catch {} }, []);
+  const persistViews = (v) => { setViews(v); localStorage.setItem("cc_inbox_views", JSON.stringify(v)); };
+  const snapshot = () => ({ q, acct, tierOff, projSel, grouped, showHandled });
+  const applyView = (s) => { setQ(s.q || ""); setAcct(s.acct || "both"); setTierOff(s.tierOff || {}); setProjSel(s.projSel || null); setGrouped(!!s.grouped); setShowHandled(!!s.showHandled); };
+  function saveView() {
+    const name = viewName.trim(); if (!name) return;
+    persistViews([...views.filter((v) => v.name !== name), { name, state: snapshot() }]);
+    setViewName(""); setSavingView(false); toast(`Saved view “${name}”`);
+  }
+  const deleteView = (name) => persistViews(views.filter((v) => v.name !== name));
   const [bodies, setBodies] = useState({});                 // id -> 'loading' | text | {error}
   const [reply, setReply] = useState({});                   // id -> {text, gen, saving, saved}
   const [evt, setEvt] = useState({});                       // id -> {loading, summary, location, start, durationMin}
@@ -312,6 +326,23 @@ export default function Inbox({ tiers, byTier, risky, handled = [], projects = [
         <span style={{ color: "var(--muted)", fontWeight: 600, textTransform: "none", letterSpacing: 0 }}>
           {showHandled ? `${handledFiltered.length} handled` : `${visibleCount} shown`}
         </span>
+      </div>
+
+      <div className="viewsrow">
+        <span className="vlbl">Views</span>
+        {views.map((v) => (
+          <span className="viewchip" key={v.name}>
+            <button className="vapply" onClick={() => applyView(v.state)}>{v.name}</button>
+            <button className="vx" onClick={() => deleteView(v.name)} title="Delete view">×</button>
+          </span>
+        ))}
+        {savingView
+          ? <span className="viewchip editing">
+              <input autoFocus className="addinp" style={{ width: 130 }} placeholder="View name…" value={viewName}
+                onChange={(e) => setViewName(e.target.value)} onKeyDown={(e) => { if (e.key === "Enter") saveView(); if (e.key === "Escape") setSavingView(false); }} />
+              <button className="addbtn" onClick={saveView}>✓</button>
+            </span>
+          : <button className="viewadd" onClick={() => setSavingView(true)}>＋ Save current</button>}
       </div>
 
       <div className="filterbar2">
