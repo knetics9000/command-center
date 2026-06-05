@@ -1,0 +1,23 @@
+# dependencies
+/node_modules
+/.pnp
+.pnp.js
+
+# next
+/.next
+/out
+next-env.d.ts
+
+# secrets & local data
+.env
+.env.local
+/data/*.db
+/data/*.db-*
+
+# logs
+*.log
+/logs
+
+# os
+.DS_Store
+Thumbs.db
