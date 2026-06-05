@@ -10,12 +10,14 @@ export default function ProjectChat({ contextId, projectName }) {
   const [busy, setBusy] = useState(false);
   const [proposed, setProposed] = useState([]);
   const [confirming, setConfirming] = useState(false);
+  const [loading, setLoading] = useState(true);
   const { toast } = useToast();
   const endRef = useRef(null);
 
   useEffect(() => {
+    setLoading(true);
     fetch("/api/chat?contextId=" + encodeURIComponent(contextId))
-      .then((r) => r.json()).then((j) => { if (j.ok) setMsgs(j.messages || []); }).catch(() => {});
+      .then((r) => r.json()).then((j) => { if (j.ok) setMsgs(j.messages || []); }).catch(() => {}).finally(() => setLoading(false));
   }, [contextId]);
   useEffect(() => { endRef.current?.scrollIntoView({ block: "nearest" }); }, [msgs, proposed]);
 
@@ -46,7 +48,8 @@ export default function ProjectChat({ contextId, projectName }) {
   return (
     <div className="chat">
       <div className="chatlog">
-        {msgs.length === 0 && <div className="chempty">Ask me to track schedules, pull details from email, or add events. e.g. “Track all i9 Sports game times and addresses and add them to my calendar.”</div>}
+        {loading && <div className="chat-sk"><div className="sk b them" /><div className="sk b me" /><div className="sk b them" /></div>}
+        {!loading && msgs.length === 0 && <div className="chempty">Ask me to track schedules, pull details from email, or add events. e.g. “Track all i9 Sports game times and addresses and add them to my calendar.”</div>}
         {msgs.map((m, i) => <div className={"cmsg " + m.role} key={i}>{m.content}</div>)}
         {busy && <div className="cmsg assistant typing">…</div>}
         {proposed.length > 0 && (
