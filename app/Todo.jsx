@@ -15,6 +15,7 @@ export default function Todo({ order, groups, openTotal }) {
   const [retag, setRetag] = useState({});      // taskId -> text
   const [evtFor, setEvtFor] = useState(null);  // taskId with open composer
   const [dueFor, setDueFor] = useState(null);  // taskId with open date picker
+  const [tagMenu, setTagMenu] = useState(null); // taskId with open tag dropdown
   const [collapsed, setCollapsed] = useState({}); // tag -> collapsed
 
   useEffect(() => { try { setCollapsed(JSON.parse(localStorage.getItem("cc_todo_collapsed") || "{}")); } catch {} }, []);
@@ -52,8 +53,20 @@ export default function Todo({ order, groups, openTotal }) {
     const extra = (retag[it.id] || "").trim(); if (!extra) return;
     const merged = Array.from(new Set([...tagsOf(it.tags), extra])).join("; ");
     setRetag((r) => { const n = { ...r }; delete n[it.id]; return n; });
+    setTagMenu(null);
     await post({ action: "retag", id: it.id, tags: merged });
   }
+  async function addExistingTag(it, tag) {
+    setTagMenu(null);
+    const merged = Array.from(new Set([...tagsOf(it.tags), tag])).join("; ");
+    await post({ action: "retag", id: it.id, tags: merged });
+  }
+  async function removeTag(it, tag) {
+    const tags = tagsOf(it.tags).filter((t) => t.toLowerCase() !== tag.toLowerCase()).join("; ");
+    await post({ action: "retag", id: it.id, tags });
+  }
+  // existing tags across all groups, minus the ones already on this entry
+  const availableTags = (it) => order.filter((t) => t !== "Untagged" && !tagsOf(it.tags).some((x) => x.toLowerCase() === t.toLowerCase()));
 
   return (
     <div className="card">
@@ -78,13 +91,30 @@ export default function Todo({ order, groups, openTotal }) {
                   <span className={"cbx" + (busy[it.id] ? " on" : "")} role="button" onClick={() => check(it.id)} title="Mark done" />
                   <span className="tl">{it.text}{it.synced === 0 && <em className="sync"> · syncing</em>}</span>
                   <span className="tagrow">
-                    {tagsOf(it.tags).map((x) => <span className={"tagchip " + tagClass(x)} key={x}>{x}</span>)}
-                    {retag[it.id] === undefined
-                      ? <button className="addtag" onClick={() => setRetag((r) => ({ ...r, [it.id]: "" }))}>+tag</button>
-                      : <input className="taginp" autoFocus value={retag[it.id]} placeholder="tag…"
-                          onChange={(e) => setRetag((r) => ({ ...r, [it.id]: e.target.value }))}
-                          onKeyDown={(e) => { if (e.key === "Enter") applyTag(it); if (e.key === "Escape") setRetag((r) => { const n = { ...r }; delete n[it.id]; return n; }); }}
-                          onBlur={() => applyTag(it)} />}
+                    {tagsOf(it.tags).map((x) => (
+                      <span className={"tagchip " + tagClass(x)} key={x}>{x}
+                        <button className="chipx" title={"Remove " + x} onClick={() => removeTag(it, x)}>×</button>
+                      </span>
+                    ))}
+                    <span className="tagmenuwrap">
+                      <button className="addtag" onClick={() => setTagMenu((m) => m === it.id ? null : it.id)}>+ tag ▾</button>
+                      {tagMenu === it.id && (
+                        <span className="tagmenu">
+                          {availableTags(it).map((t) => (
+                            <button key={t} className="tagmenu-opt" onClick={() => addExistingTag(it, t)}>
+                              <span className="dot" style={{ background: dotFor(t) }} /> {t}
+                            </button>
+                          ))}
+                          {availableTags(it).length === 0 && <span className="tagmenu-empty">No other tags yet</span>}
+                          <div className="tagmenu-new">
+                            <input className="addinp" placeholder="New tag…" value={retag[it.id] || ""}
+                              onChange={(e) => setRetag((r) => ({ ...r, [it.id]: e.target.value }))}
+                              onKeyDown={(e) => { if (e.key === "Enter") applyTag(it); if (e.key === "Escape") setTagMenu(null); }} />
+                            <button className="addbtn" onClick={() => applyTag(it)}>＋</button>
+                          </div>
+                        </span>
+                      )}
+                    </span>
                     {it.due && (() => { const m = dueMeta(it.due); return <span className={"duechip" + (m.overdue ? " overdue" : "")} onClick={() => setDueFor((id) => id === it.id ? null : it.id)}>⏰ {m.label}</span>; })()}
                     {!it.due && <button className="addtag" title="Set due date" onClick={() => setDueFor((id) => id === it.id ? null : it.id)}>⏰ due</button>}
                     {dueFor === it.id && (

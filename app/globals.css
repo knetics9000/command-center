@@ -57,7 +57,16 @@ h1.hello{font-family:"Iowan Old Style",Palatino,Georgia,serif;font-weight:600;fo
 .task{display:flex;align-items:center;gap:10px;padding:7px 14px;border-top:1px dashed var(--line);font-size:13.5px;flex-wrap:wrap}
 .cbx{width:16px;height:16px;border:1.5px solid #ccc3ae;border-radius:5px;flex:none}
 .tl{flex:1 1 55%} .tagrow{display:flex;gap:5px;flex-wrap:wrap}
-.tagchip{font-size:9.5px;font-weight:700;border-radius:6px;padding:1px 7px;background:#F1ECDF;color:#8a8475}
+.tagchip{font-size:9.5px;font-weight:700;border-radius:6px;padding:1px 4px 1px 7px;background:#F1ECDF;color:#8a8475;display:inline-flex;align-items:center;gap:2px}
+.chipx{border:none;background:none;color:currentColor;opacity:.5;cursor:pointer;font-size:12px;line-height:1;padding:0 2px;border-radius:4px}
+.chipx:hover{opacity:1;background:rgba(176,67,42,.15);color:#b0432a}
+.tagmenuwrap{position:relative;display:inline-block}
+.tagmenu{position:absolute;top:calc(100% + 4px);left:0;z-index:30;background:#fff;border:1px solid var(--line);border-radius:11px;box-shadow:0 12px 30px rgba(70,55,25,.18);padding:5px;min-width:170px;max-height:260px;overflow-y:auto;display:flex;flex-direction:column;gap:1px}
+.tagmenu-opt{display:flex;align-items:center;gap:7px;border:none;background:none;font:inherit;font-size:12.5px;font-weight:600;color:var(--ink);text-align:left;padding:6px 9px;border-radius:7px;cursor:pointer;white-space:nowrap}
+.tagmenu-opt:hover{background:var(--acc-soft)} .tagmenu-opt .dot{width:8px;height:8px;border-radius:50%;flex:none}
+.tagmenu-empty{font-size:11.5px;color:var(--muted);padding:5px 9px}
+.tagmenu-new{display:flex;gap:4px;padding:5px 4px 2px;border-top:1px solid var(--line);margin-top:3px}
+.tagmenu-new .addinp{font-size:12px;padding:5px 8px;width:110px}
 .tagchip.personal{background:#E7EFE8;color:#5b7a64}.tagchip.work{background:var(--acc-soft);color:var(--acc-deep)}.tagchip.project{background:#EAE3F3;color:#6b5a8e}
 .week{display:grid;grid-template-columns:repeat(7,1fr);gap:5px;margin-bottom:12px}
 .day{text-align:center;border-radius:10px;padding:7px 0} .day .dn{font-size:10px;color:var(--muted);text-transform:uppercase} .day .dd{font-size:15px;font-weight:700;margin-top:2px}
