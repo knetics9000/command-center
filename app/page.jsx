@@ -1,6 +1,7 @@
-import { getStats, getInbox, getProjects, getTodoGroups } from "@/lib/queries";
+import { getStats, getInbox, getProjects, getTodoGroups, getLatestBriefing, getProjectTags } from "@/lib/queries";
 import { connectionStatus, listEvents } from "@/lib/google";
 import RefreshButton from "./RefreshButton";
+import Briefing from "./Briefing";
 import Projects from "./Projects";
 import Todo from "./Todo";
 import Inbox from "./Inbox";
@@ -36,6 +37,8 @@ export default async function Home() {
   const inbox = getInbox();
   const projects = getProjects();
   const todo = getTodoGroups();
+  const briefing = getLatestBriefing();
+  const projectTags = getProjectTags();
   const conn = connectionStatus();
   const cal = await getCalendar();
 
@@ -64,6 +67,10 @@ export default async function Home() {
         <div className="stat"><div className="n"><b>{stats.inbox}</b></div><div className="l">Inbox · {stats.act} act now</div></div>
         <div className="stat"><div className="n"><b>{today.length}</b></div><div className="l">Events today</div></div>
         <div className="stat"><div className="n"><b>{stats.projects}</b></div><div className="l">Active projects</div></div>
+      </div>
+
+      <div style={{ marginTop: 18 }}>
+        <Briefing briefing={briefing} existingTags={projectTags} />
       </div>
 
       <div style={{ marginTop: 18 }}>
