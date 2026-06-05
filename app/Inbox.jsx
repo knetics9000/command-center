@@ -50,6 +50,16 @@ export default function Inbox({ tiers, byTier, risky, handled = [], projects = [
     setViewName(""); setSavingView(false); toast(`Saved view “${name}”`);
   }
   const deleteView = (name) => persistViews(views.filter((v) => v.name !== name));
+
+  // Bulk select + actions (X3)
+  const [selected, setSelected] = useState({});
+  const [bulkAssignOpen, setBulkAssignOpen] = useState(false);
+  const emailById = useMemo(() => {
+    const m = {}; for (const t of tiers) for (const e of byTier[t.key]) m[e.id] = e; for (const e of handled) m[e.id] = e; return m;
+  }, [tiers, byTier, handled]);
+  const selIds = Object.keys(selected).filter((id) => selected[id]);
+  const toggleSel = (id) => setSelected((s) => { const n = { ...s }; if (n[id]) delete n[id]; else n[id] = true; return n; });
+  const clearSel = () => setSelected({});
   const [bodies, setBodies] = useState({});                 // id -> 'loading' | text | {error}
   const [reply, setReply] = useState({});                   // id -> {text, gen, saving, saved}
   const [evt, setEvt] = useState({});                       // id -> {loading, summary, location, start, durationMin}
@@ -111,6 +121,30 @@ export default function Inbox({ tiers, byTier, risky, handled = [], projects = [
 
   // Flat ordered list of currently-visible emails, for keyboard navigation.
   const navList = showHandled ? filt(handled) : tiers.filter((t) => !tierOff[t.key]).flatMap((t) => filt(byTier[t.key]));
+
+  const allSelected = navList.length > 0 && navList.every((e) => selected[e.id]);
+  const selectAll = () => setSelected(Object.fromEntries(navList.map((e) => [e.id, true])));
+  async function bulkAct(action) {
+    const ids = selIds.filter((id) => emailById[id]); if (!ids.length) return;
+    setExiting((m) => { const n = { ...m }; ids.forEach((id) => (n[id] = true)); return n; });
+    setTimeout(() => setRemoved((m) => { const n = { ...m }; ids.forEach((id) => (n[id] = true)); return n; }), 260);
+    clearSel();
+    let ok = 0, fail = 0;
+    await Promise.all(ids.map(async (id) => {
+      const e = emailById[id];
+      try { await call(action, id, e.account); ok++; }
+      catch { fail++; setRemoved((m) => { const n = { ...m }; delete n[id]; return n; }); setExiting((m) => { const n = { ...m }; delete n[id]; return n; }); }
+    }));
+    toast(`${PAST[action]} ${ok}${fail ? ` · ${fail} failed` : ""}`);
+  }
+  async function bulkAssign(tag) {
+    const ids = selIds.filter((id) => emailById[id]); if (!ids.length) return;
+    setBulkAssignOpen(false);
+    setLinked((m) => { const n = { ...m }; ids.forEach((id) => (n[id] = tag)); return n; });
+    clearSel();
+    await Promise.all(ids.map((id) => fetch("/api/inbox", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ action: "link", id, projectTag: tag }) }).catch(() => {})));
+    toast(`Assigned ${ids.length} to ${tag.replace(/\s*project\s*$/i, "")}`);
+  }
 
   // Thread/subject grouping (R8)
   const TIER_RANK = { act: 0, review: 1, quick: 2, noise: 3 };
@@ -230,8 +264,9 @@ export default function Inbox({ tiers, byTier, risky, handled = [], projects = [
   }
 
   const Mail = ({ e, handledRow }) => (
-    <div id={"m-" + e.id} className={"mail " + (e.triage_tier || "review") + (exiting[e.id] ? " exit" : "") + (focusedId === e.id ? " kbfocus" : "")} key={e.id}>
+    <div id={"m-" + e.id} className={"mail " + (e.triage_tier || "review") + (exiting[e.id] ? " exit" : "") + (focusedId === e.id ? " kbfocus" : "") + (selected[e.id] ? " sel" : "")} key={e.id}>
       <div className="mt">
+        {!handledRow && <input type="checkbox" className="selbox" checked={!!selected[e.id]} onChange={() => toggleSel(e.id)} title="Select" />}
         <span className={"tag " + e.account}>{e.account === "work" ? "Work" : "Personal"}</span>
         <span className="snd">{e.sender}</span><span className="addr">{e.sender_addr}</span>
         {handledRow && <span className="hstate">{e.handled_state}</span>}
@@ -394,6 +429,30 @@ export default function Inbox({ tiers, byTier, risky, handled = [], projects = [
         </div>
       ) : (
         <>
+          {navList.length > 0 && (
+            <div className="selallrow">
+              <label className="selall"><input type="checkbox" checked={allSelected} onChange={() => allSelected ? clearSel() : selectAll()} /> Select all {navList.length} shown</label>
+            </div>
+          )}
+          {selIds.length > 0 && (
+            <div className="bulkbar">
+              <span className="bbcount">{selIds.length} selected</span>
+              <button className="bbbtn" onClick={() => bulkAct("archive")}>Archive</button>
+              <button className="bbbtn" onClick={() => bulkAct("done")}>Done</button>
+              <button className="bbbtn danger" onClick={() => bulkAct("spam")}>Spam</button>
+              <span className="snoozewrap">
+                <button className="bbbtn" onClick={() => setBulkAssignOpen((v) => !v)}>★ Assign ▾</button>
+                {bulkAssignOpen && (
+                  <span className="snoozemenu assignmenu" style={{ bottom: "auto", top: "calc(100% + 5px)" }}>
+                    {projects.length === 0 && <span className="projopt" style={{ color: "var(--muted)" }}>No projects yet</span>}
+                    {projects.map((p) => <button key={p.tag} className="snoozeopt" onClick={() => bulkAssign(p.tag)}>★ {p.name}</button>)}
+                  </span>
+                )}
+              </span>
+              <span className="grow" />
+              <button className="bbclear" onClick={clearSel}>Clear</button>
+            </div>
+          )}
           {risky.length > 0 && (
             <div className="alarm">
               <h3>⚠ Possible phishing / fraud — verify before clicking</h3>
