@@ -338,6 +338,8 @@ h1.hello{font-family:inherit;font-weight:600;font-size:32px;margin:0}
 .relrow .tag{font-size:8.5px;padding:1px 5px}.relrow .relsnd{font-weight:700;color:var(--ink)}
 .relrow .reldot{width:6px;height:6px;border-radius:50%;background:#7E9A86;display:inline-block}
 .relmuted{color:var(--muted)}
+.avatar{display:inline-grid;place-items:center;border-radius:50%;color:#fff;font-weight:800;flex:none;line-height:1;letter-spacing:-.02em;object-fit:cover;overflow:hidden}
+.relrow.person{align-items:center}
 .relrow.clickable{cursor:pointer;border-radius:7px;padding:3px 6px;margin:0 -6px;transition:background .12s ease}
 .relrow.clickable:hover{background:var(--acc-soft)}
 .relcaret{color:var(--muted);font-size:10px;transition:transform .16s ease;display:inline-block}

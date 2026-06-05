@@ -1,5 +1,6 @@
 "use client";
 import { useState, useEffect } from "react";
+import Avatar from "./Avatar";
 
 // Reusable drill-down: fetches /api/related and renders linked records + AI context.
 // Used by briefing priorities, the "since last briefing" delta, and themes.
@@ -61,7 +62,7 @@ export default function RelatedDrawer({ title, projectTag, excludeEmailId }) {
         )}
         {n(data.contacts) > 0 && (
           <Block title="People">
-            {data.contacts.map((c, i) => <div className="relrow" key={i}><span className="reldot" />{c.name}<span className="relmuted"> · {c.count}</span></div>)}
+            {data.contacts.map((c, i) => <div className="relrow person" key={i}><Avatar name={c.name} size={22} /><span className="relsnd">{c.name}</span><span className="relmuted"> · {c.count}</span></div>)}
           </Block>
         )}
         {n(data.projects) > 0 && (

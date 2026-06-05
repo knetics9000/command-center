@@ -2,6 +2,7 @@
 import { useState, useMemo, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import EventComposer from "./EventComposer";
+import Avatar from "./Avatar";
 import { useToast } from "./Toast";
 import Icon from "./Icon";
 
@@ -267,6 +268,7 @@ export default function Inbox({ tiers, byTier, risky, handled = [], projects = [
     <div id={"m-" + e.id} className={"mail " + (e.triage_tier || "review") + (exiting[e.id] ? " exit" : "") + (focusedId === e.id ? " kbfocus" : "") + (selected[e.id] ? " sel" : "")} key={e.id}>
       <div className="mt">
         {!handledRow && <input type="checkbox" className="selbox" checked={!!selected[e.id]} onChange={() => toggleSel(e.id)} title="Select" />}
+        <Avatar name={e.sender} size={26} />
         <span className={"tag " + e.account}>{e.account === "work" ? "Work" : "Personal"}</span>
         <span className="snd">{e.sender}</span><span className="addr">{e.sender_addr}</span>
         {handledRow && <span className="hstate">{e.handled_state}</span>}
