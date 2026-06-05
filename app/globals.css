@@ -153,6 +153,14 @@ h1.hello{font-family:"Iowan Old Style",Palatino,Georgia,serif;font-weight:600;fo
 .projmenu{position:absolute;top:calc(100% + 5px);left:0;z-index:30;background:#fff;border:1px solid var(--line);border-radius:11px;box-shadow:0 12px 30px rgba(70,55,25,.16);padding:5px;min-width:180px;display:flex;flex-direction:column;max-height:280px;overflow-y:auto}
 .projopt{border:none;background:none;font:inherit;font-size:13px;font-weight:600;color:var(--ink);text-align:left;padding:7px 10px;border-radius:8px;cursor:pointer}
 .projopt:hover{background:var(--acc-soft)} .projopt.on{background:var(--ink);color:#fff}
+/* email grouping (R8) */
+.emailgroup{border:1px solid var(--line);border-radius:13px;margin-bottom:9px;overflow:hidden;background:#fff}
+.eghead{display:flex;align-items:center;gap:9px;padding:11px 14px;background:#FCFAF4;cursor:pointer;user-select:none}
+.eghead:hover{background:#f8f2e4}
+.eghead .egsubj{font-weight:700;font-size:13.5px;flex:1;min-width:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.eghead .egcount{font-size:11px;color:var(--muted);font-weight:600;white-space:nowrap;font-variant-numeric:tabular-nums}
+.egbody{padding:10px 12px;display:flex;flex-direction:column;gap:8px;background:#fcfaf5}
+.egbody .mail{background:#fff}
 .kbhint{flex-basis:100%;font-size:11px;color:var(--muted);margin-top:2px}
 .kbhint kbd{display:inline-block;background:#fff;border:1px solid var(--line);border-bottom-width:2px;border-radius:5px;padding:0 5px;font:inherit;font-size:10.5px;font-weight:700;color:var(--ink2);margin:0 1px}
 .mail.kbfocus{border-left-color:var(--acc-deep);box-shadow:0 0 0 2px var(--acc) inset,0 4px 14px rgba(224,162,60,.18);scroll-margin:90px}

@@ -34,6 +34,8 @@ export default function Inbox({ tiers, byTier, risky, handled = [], projects = [
   const [showHandled, setShowHandled] = useState(false);
   const [projSel, setProjSel] = useState(null);             // selected project tag
   const [projOpen, setProjOpen] = useState(false);
+  const [grouped, setGrouped] = useState(false);            // thread/subject grouping
+  const [gCollapsed, setGCollapsed] = useState({});         // group key -> collapsed
   const [bodies, setBodies] = useState({});                 // id -> 'loading' | text | {error}
   const [reply, setReply] = useState({});                   // id -> {text, gen, saving, saved}
   const [evt, setEvt] = useState({});                       // id -> {loading, summary, location, start, durationMin}
@@ -95,6 +97,23 @@ export default function Inbox({ tiers, byTier, risky, handled = [], projects = [
 
   // Flat ordered list of currently-visible emails, for keyboard navigation.
   const navList = showHandled ? filt(handled) : tiers.filter((t) => !tierOff[t.key]).flatMap((t) => filt(byTier[t.key]));
+
+  // Thread/subject grouping (R8)
+  const TIER_RANK = { act: 0, review: 1, quick: 2, noise: 3 };
+  const normSubj = (s) => (s || "").replace(/^((re|fwd|fw)\s*:\s*)+/i, "").trim().toLowerCase();
+  function buildGroups(list) {
+    const map = new Map();
+    for (const e of list) {
+      const key = normSubj(e.subject) || e.thread_id || e.sender_addr || e.id;
+      if (!map.has(key)) map.set(key, { key, subject: e.subject, emails: [] });
+      map.get(key).emails.push(e);
+    }
+    const groups = [...map.values()].map((g) => ({
+      ...g,
+      topTier: g.emails.map((e) => e.triage_tier).sort((a, b) => (TIER_RANK[a] ?? 9) - (TIER_RANK[b] ?? 9))[0] || "review",
+    }));
+    return groups.sort((a, b) => b.emails.length - a.emails.length || (TIER_RANK[a.topTier] - TIER_RANK[b.topTier]));
+  }
   const [focusIdx, setFocusIdx] = useState(-1);
   const focusedId = focusIdx >= 0 && focusIdx < navList.length ? navList[focusIdx].id : null;
 
@@ -283,6 +302,11 @@ export default function Inbox({ tiers, byTier, risky, handled = [], projects = [
               )}
             </span>
           )}
+          {!showHandled && (
+            <button className={"pill" + (grouped ? " on" : "")} onClick={() => setGrouped((v) => !v)} title="Group by conversation/subject">
+              ⛓ Group
+            </button>
+          )}
           <button className={"pill" + (showHandled ? " on" : "")} onClick={() => setShowHandled((v) => !v)}>
             {showHandled ? "← Inbox" : "Handled"}
           </button>
@@ -308,22 +332,38 @@ export default function Inbox({ tiers, byTier, risky, handled = [], projects = [
               ? <div className="emptyhero sm"><div className="ehtitle">No matches</div><div className="ehsub">Nothing fits your current search or filters.</div></div>
               : <div className="emptyhero sm"><div className="ehicon">🌿</div><div className="ehtitle">Inbox zero</div><div className="ehsub">You're all caught up. Snoozed mail returns automatically when it's due.</div></div>
           )}
-          {tiers.map((t) => {
-            if (tierOff[t.key]) return null;
-            const list = filt(byTier[t.key]); if (!list.length) return null;
-            const show = t.key === "noise" && !expandNoise && !q ? list.slice(0, 4) : list;
-            return (
-              <div className={"tsec tsec-" + t.key} key={t.key}>
-                <div className="tier-h"><span className={"tierdot " + t.key} /><span className="n">{t.label}</span><span className="c">{list.length}</span><span className="rl" /></div>
-                {show.map((e) => <Mail e={e} key={e.id} />)}
-                {t.key === "noise" && !q && list.length > 4 && (
-                  <button className="morebtn" onClick={() => setExpandNoise((v) => !v)}>
-                    {expandNoise ? "Show less" : `+${list.length - 4} more`}
-                  </button>
-                )}
-              </div>
-            );
-          })}
+          {grouped ? (
+            buildGroups(navList).map((g) => g.emails.length === 1
+              ? <Mail e={g.emails[0]} key={g.key} />
+              : (
+                <div className="emailgroup" key={g.key}>
+                  <div className="eghead" onClick={() => setGCollapsed((c) => ({ ...c, [g.key]: !c[g.key] }))}>
+                    <span className={"catcaret" + (gCollapsed[g.key] ? "" : " open")}>▸</span>
+                    <span className={"tierdot " + g.topTier} />
+                    <span className="egsubj">{g.subject || "(no subject)"}</span>
+                    <span className="egcount">{g.emails.length} messages · {new Set(g.emails.map((e) => e.sender)).size} people</span>
+                  </div>
+                  {!gCollapsed[g.key] && <div className="egbody">{g.emails.map((e) => <Mail e={e} key={e.id} />)}</div>}
+                </div>
+              ))
+          ) : (
+            tiers.map((t) => {
+              if (tierOff[t.key]) return null;
+              const list = filt(byTier[t.key]); if (!list.length) return null;
+              const show = t.key === "noise" && !expandNoise && !q ? list.slice(0, 4) : list;
+              return (
+                <div className={"tsec tsec-" + t.key} key={t.key}>
+                  <div className="tier-h"><span className={"tierdot " + t.key} /><span className="n">{t.label}</span><span className="c">{list.length}</span><span className="rl" /></div>
+                  {show.map((e) => <Mail e={e} key={e.id} />)}
+                  {t.key === "noise" && !q && list.length > 4 && (
+                    <button className="morebtn" onClick={() => setExpandNoise((v) => !v)}>
+                      {expandNoise ? "Show less" : `+${list.length - 4} more`}
+                    </button>
+                  )}
+                </div>
+              );
+            })
+          )}
         </>
       )}
     </div>
