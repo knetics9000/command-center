@@ -22,6 +22,27 @@ export default function Inbox({ tiers, byTier, risky, handled = [] }) {
   const [tierOff, setTierOff] = useState({});               // tier key -> hidden
   const [showHandled, setShowHandled] = useState(false);
   const [bodies, setBodies] = useState({});                 // id -> 'loading' | text | {error}
+  const [reply, setReply] = useState({});                   // id -> {text, gen, saving, saved}
+
+  async function genReply(e) {
+    if (reply[e.id]) { setReply((r) => { const n = { ...r }; delete n[e.id]; return n; }); return; }
+    setReply((r) => ({ ...r, [e.id]: { gen: true, text: "" } }));
+    try {
+      const res = await fetch("/api/inbox/reply", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ action: "generate", id: e.id, account: e.account }) });
+      const j = await res.json();
+      setReply((r) => ({ ...r, [e.id]: { gen: false, text: j.ok ? j.text : "", error: j.ok ? null : (j.error || "failed") } }));
+    } catch (err) { setReply((r) => ({ ...r, [e.id]: { gen: false, text: "", error: err.message } })); }
+  }
+  async function saveDraft(e) {
+    const cur = reply[e.id]; if (!cur || !cur.text.trim()) return;
+    setReply((r) => ({ ...r, [e.id]: { ...cur, saving: true } }));
+    try {
+      const res = await fetch("/api/inbox/reply", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ action: "save", id: e.id, account: e.account, text: cur.text }) });
+      const j = await res.json();
+      if (j.ok) setReply((r) => ({ ...r, [e.id]: { ...r[e.id], saving: false, saved: true } }));
+      else { alert("Save failed: " + (j.error || "")); setReply((r) => ({ ...r, [e.id]: { ...r[e.id], saving: false } })); }
+    } catch (err) { alert("Save failed: " + err.message); setReply((r) => ({ ...r, [e.id]: { ...r[e.id], saving: false } })); }
+  }
 
   async function toggleBody(e) {
     if (bodies[e.id]) { setBodies((b) => { const n = { ...b }; delete n[e.id]; return n; }); return; }
@@ -66,7 +87,29 @@ export default function Inbox({ tiers, byTier, risky, handled = [] }) {
       {bodies[e.id] && (
         <div className="mbody">{bodies[e.id] === "loading" ? <span className="bodyload">Loading…</span> : bodies[e.id]}</div>
       )}
+      {reply[e.id] && (
+        <div className="replybox">
+          {reply[e.id].gen
+            ? <span className="bodyload">Drafting a reply…</span>
+            : reply[e.id].error
+              ? <span style={{ color: "#b0432a", fontSize: 12.5 }}>⚠ {reply[e.id].error}</span>
+              : <>
+                  <textarea className="replyta" value={reply[e.id].text} disabled={reply[e.id].saved}
+                    onChange={(ev) => setReply((r) => ({ ...r, [e.id]: { ...r[e.id], text: ev.target.value } }))} />
+                  <div className="replyacts">
+                    {reply[e.id].saved
+                      ? <span className="savedtag">✓ Saved to Gmail drafts</span>
+                      : <>
+                          <button className="mbtn" onClick={() => saveDraft(e)} disabled={reply[e.id].saving}>{reply[e.id].saving ? "Saving…" : "Save to Gmail drafts"}</button>
+                          <button className="mbtn" onClick={() => genReply(e)}>Discard</button>
+                          <span className="replyhint">Saved as a draft — never auto-sent.</span>
+                        </>}
+                  </div>
+                </>}
+        </div>
+      )}
       <div className="mailacts">
+        {!handledRow && <button className="mbtn reply" onClick={() => genReply(e)}>{reply[e.id] ? "Close reply" : "✍ Reply"}</button>}
         <button className="mbtn read" onClick={() => toggleBody(e)}>{bodies[e.id] ? "Hide" : "Read"}</button>
         {busy[e.id]
           ? <span className="mwait">{busy[e.id]}…</span>

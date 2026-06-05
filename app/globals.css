@@ -74,6 +74,13 @@ h1.hello{font-family:"Iowan Old Style",Palatino,Georgia,serif;font-weight:600;fo
 .mbtn.read{border-color:var(--acc);color:var(--acc-deep)}
 .mbody{margin-top:9px;padding:11px 13px;background:#FCFAF4;border:1px solid var(--line);border-radius:10px;font-size:12.5px;line-height:1.55;color:var(--ink2);white-space:pre-wrap;max-height:300px;overflow-y:auto}
 .bodyload{color:var(--muted);font-style:italic}
+.mbtn.reply{border-color:var(--acc-deep);color:var(--acc-deep);background:var(--acc-soft)}
+.replybox{margin-top:9px;padding:11px 13px;background:#fff;border:1px solid var(--acc);border-radius:10px}
+.replyta{width:100%;min-height:120px;border:1px solid var(--line);border-radius:8px;padding:9px 11px;font:inherit;font-size:13px;line-height:1.5;resize:vertical;background:#FCFAF4}
+.replyta:focus{outline:none;border-color:var(--acc);background:#fff}
+.replyacts{display:flex;align-items:center;gap:9px;margin-top:8px;flex-wrap:wrap}
+.replyhint{font-size:11px;color:var(--muted)}
+.savedtag{font-size:12.5px;color:#5b7a64;font-weight:700}
 .morebtn{border:none;background:none;color:var(--acc-deep);font:inherit;font-size:12px;font-weight:700;cursor:pointer;padding:2px 4px;margin:2px 0 8px}
 
 /* inbox filter bar */
