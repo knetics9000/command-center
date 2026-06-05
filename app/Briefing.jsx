@@ -15,6 +15,7 @@ export default function Briefing({ briefing, existingTags = [] }) {
   const [creating, setCreating] = useState({});
   const [openPrio, setOpenPrio] = useState(null);
   const [deltaOpen, setDeltaOpen] = useState(false);
+  const [openTheme, setOpenTheme] = useState(null);
   const b = briefing;
 
   async function regenerate() {
@@ -96,12 +97,18 @@ export default function Briefing({ briefing, existingTags = [] }) {
             {b.clusters.map((c, i) => {
               const tracked = existingTags.includes(tagFor(c.name));
               return (
-                <div className="cl" key={i}>
-                  <div className="clmain"><span className="cln">{c.name}</span><span className="cls">{c.summary}</span></div>
-                  <span className="clmeta">{(c.taskIds || []).length}t · {(c.emailIds || []).length}e</span>
-                  {c.suggestProject && (tracked
-                    ? <span className="cltracked">tracked ✓</span>
-                    : <button className="clbtn" onClick={() => createProject(c)} disabled={creating[c.name]}>{creating[c.name] ? "…" : "+ Project"}</button>)}
+                <div key={i}>
+                  <div className="cl">
+                    <div className="clmain clickable" onClick={() => setOpenTheme((x) => x === i ? null : i)}>
+                      <span className={"priocaret" + (openTheme === i ? " open" : "")}>▸</span>
+                      <span className="cln">{c.name}</span><span className="cls">{c.summary}</span>
+                    </div>
+                    <span className="clmeta">{(c.taskIds || []).length}t · {(c.emailIds || []).length}e</span>
+                    {c.suggestProject && (tracked
+                      ? <span className="cltracked">tracked ✓</span>
+                      : <button className="clbtn" onClick={() => createProject(c)} disabled={creating[c.name]}>{creating[c.name] ? "…" : "+ Project"}</button>)}
+                  </div>
+                  {openTheme === i && <RelatedDrawer title={c.name + " " + (c.summary || "")} projectTag={tracked ? tagFor(c.name).replace(/ project$/, " Project") : ""} />}
                 </div>
               );
             })}

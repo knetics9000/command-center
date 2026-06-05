@@ -221,7 +221,9 @@ h1.hello{font-family:"Iowan Old Style",Palatino,Georgia,serif;font-weight:600;fo
 .clbl{font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:var(--muted);font-weight:700;margin-bottom:8px}
 .cl{display:flex;align-items:center;gap:10px;padding:7px 0;border-top:1px solid var(--line)}
 .cl:first-of-type{border-top:none}
-.clmain{flex:1;min-width:0} .cln{font-weight:700;font-size:13.5px;margin-right:8px}.cls{font-size:12.5px;color:var(--ink2)}
+.clmain{flex:1;min-width:0;display:flex;align-items:baseline;gap:7px} .cln{font-weight:700;font-size:13.5px}.cls{font-size:12.5px;color:var(--ink2)}
+.clmain.clickable{cursor:pointer;border-radius:8px;padding:3px 6px;margin:0 -6px;transition:background .14s ease}
+.clmain.clickable:hover{background:#fff} .clmain .priocaret{align-self:center;font-size:11px}
 .clmeta{font-size:11px;color:var(--muted);font-weight:600;white-space:nowrap}
 .clbtn{border:1px solid var(--acc);background:var(--acc-soft);color:var(--acc-deep);border-radius:9px;padding:4px 11px;font:inherit;font-size:12px;font-weight:700;cursor:pointer;white-space:nowrap}
 .clbtn:hover{background:var(--acc);color:#fff} .clbtn:disabled{opacity:.6}
