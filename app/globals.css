@@ -8,7 +8,15 @@ body{
   background:var(--bg); color:var(--ink);
   font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
   font-size:14px; line-height:1.5;
+  -webkit-font-smoothing:antialiased; -moz-osx-font-smoothing:grayscale; text-rendering:optimizeLegibility;
 }
+/* U5 — tabular figures so counts/times/metrics don't jitter as they change */
+.stat .n,.ring::after,.tier-h .c,.cat-h .c,.badge,.mail .tmm,.mail .addr,.ev .tm,.day .dd,.day .dn,
+.duechip,.proj .open,.proj .badge,.rlwhen,.dpill,.bts,.pnum,.cmdk-foot,.snoozeopt .st,.rmeta{
+  font-variant-numeric:tabular-nums;font-feature-settings:"tnum" 1,"lnum" 1;
+}
+/* tighter display headings */
+h1.hello,.greet,.stat .n{letter-spacing:-.012em}
 .wrap{max-width:1180px;margin:0 auto;padding:28px 26px 70px}
 .serif{font-family:"Iowan Old Style","Palatino Linotype",Palatino,Georgia,serif}
 .card{background:var(--card);border:1px solid var(--line);border-radius:20px;
