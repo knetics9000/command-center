@@ -1,7 +1,7 @@
 import { getStats, getInbox, getHandledInbox, getProjects, getTodoGroups, getLatestBriefing, getProjectTags, getDueTasks, getLastSync } from "@/lib/queries";
 import { connectionStatus, listEvents } from "@/lib/google";
 import RefreshButton from "./RefreshButton";
-import SectionNav from "./SectionNav";
+import Sidebar from "./Sidebar";
 import Briefing from "./Briefing";
 import Projects from "./Projects";
 import Todo from "./Todo";
@@ -55,20 +55,24 @@ export default async function Home() {
   const today = events.filter((e) => new Date(e.start).toDateString() === now.toDateString());
   const nextEv = events.filter((e) => !e.allDay && new Date(e.start) > now)[0];
 
-  return (
-    <div className="wrap">
-      <div className="top">
-        <div>
-          <h1 className="hello">Welcome back, Kurt</h1>
-          <div className="sub">{now.toLocaleDateString(undefined, { weekday: "long", month: "long", day: "numeric" })} · here's where you left off</div>
-        </div>
-        <div>
-          <div className="synced">{conn.every((c) => c.connected) ? "both accounts connected ✓" : <a href="/connect">connect accounts →</a>}</div>
-          <RefreshButton />
-        </div>
-      </div>
+  const connected = conn.every((c) => c.connected);
+  const personalEmail = (conn.find((c) => c.account === "personal") || {}).email;
 
-      <SectionNav lastSync={lastSync} />
+  return (
+    <div className="appshell">
+      <Sidebar connected={connected} email={personalEmail} />
+      <main className="workspace">
+        <div className="wrap">
+          <header className="topbar">
+            <div>
+              <h1 className="hello">Welcome back, Kurt</h1>
+              <div className="sub">{now.toLocaleDateString(undefined, { weekday: "long", month: "long", day: "numeric" })} · here's where you left off</div>
+            </div>
+            <div className="tb-right">
+              <div className="synced">{connected ? "both accounts connected ✓" : <a href="/connect">connect accounts →</a>}</div>
+              <RefreshButton />
+            </div>
+          </header>
 
       <div className="stats card" style={{ padding: "18px 22px" }}>
         <div className="stat"><div className="n"><b>{stats.openTasks}</b></div><div className="l">Open tasks</div></div>
@@ -90,7 +94,7 @@ export default async function Home() {
           <Todo order={todo.order} groups={todo.groups} openTotal={todo.openTotal} />
         </div>
 
-        <div className="col">
+        <div className="col" id="sec-calendar" style={{ scrollMarginTop: 70 }}>
           <div className="card">
             <div className="sec-h">Calendar · this week</div>
             {!cal.connected && <div style={{ color: "var(--muted)" }}><a href="/connect">Connect calendar →</a></div>}
@@ -120,6 +124,8 @@ export default async function Home() {
       <div id="sec-inbox" style={{ scrollMarginTop: 70 }}>
         <Inbox tiers={inbox.tiers} byTier={inbox.byTier} risky={inbox.risky} handled={handled} projects={projects.map((p) => ({ tag: p.tag, name: p.name }))} />
       </div>
+        </div>
+      </main>
     </div>
   );
 }
