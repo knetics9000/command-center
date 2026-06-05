@@ -29,7 +29,7 @@ async function getCalendar(timeMin, timeMax) {
   const conn = connectionStatus().find((c) => c.account === "personal");
   if (!conn || !conn.connected) return { events: [], connected: false };
   let evs = [];
-  for (const [acc, color] of [["personal", "#6366F1"], ["work", "#14B8A6"]]) {
+  for (const [acc, color] of [["personal", "#4648d4"], ["work", "#14B8A6"]]) {
     try {
       const items = await listEvents(acc, timeMin, timeMax);
       evs = evs.concat(items.map((e) => ({
@@ -95,10 +95,10 @@ export default async function Home() {
           const inboxPct = stats.inbox ? Math.round((stats.act / stats.inbox) * 100) : 0;
           const evPct = Math.min(100, today.length * 20);
           const cards = [
-            { n: stats.openTasks, l: "Open tasks", sub: taskPct + "% done", pct: taskPct, color: "#6366F1" },
-            { n: stats.inbox, l: "Inbox", sub: stats.act + " act now", pct: inboxPct, color: "#E5484D" },
+            { n: stats.openTasks, l: "Open tasks", sub: taskPct + "% done", pct: taskPct, color: "#4648d4" },
+            { n: stats.inbox, l: "Inbox", sub: stats.act + " act now", pct: inboxPct, color: "#ba1a1a" },
             { n: today.length, l: "Events today", sub: "this week", pct: evPct, color: "#14B8A6" },
-            { n: stats.projects, l: "Active projects", sub: stats.avgProj + "% avg", pct: stats.avgProj, color: "#F5A623" },
+            { n: stats.projects, l: "Active projects", sub: stats.avgProj + "% avg", pct: stats.avgProj, color: "#904900" },
           ];
           return cards.map((c, i) => (
             <div className="statcard card" key={i}>
