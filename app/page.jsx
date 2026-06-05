@@ -2,6 +2,7 @@ import { getStats, getInbox, getHandledInbox, getProjects, getTodoGroups, getLat
 import { connectionStatus, listEvents } from "@/lib/google";
 import RefreshButton from "./RefreshButton";
 import Sidebar from "./Sidebar";
+import Donut from "./Donut";
 import Briefing from "./Briefing";
 import Projects from "./Projects";
 import Todo from "./Todo";
@@ -80,11 +81,24 @@ export default async function Home() {
             </div>
           </header>
 
-      <div className="stats card" style={{ padding: "18px 22px" }}>
-        <div className="stat"><div className="n"><b>{stats.openTasks}</b></div><div className="l">Open tasks</div></div>
-        <div className="stat"><div className="n"><b>{stats.inbox}</b></div><div className="l">Inbox · {stats.act} act now</div></div>
-        <div className="stat"><div className="n"><b>{today.length}</b></div><div className="l">Events today</div></div>
-        <div className="stat"><div className="n"><b>{stats.projects}</b></div><div className="l">Active projects</div></div>
+      <div className="stats">
+        {(() => {
+          const taskPct = stats.openTasks + stats.doneTasks ? Math.round((stats.doneTasks / (stats.openTasks + stats.doneTasks)) * 100) : 0;
+          const inboxPct = stats.inbox ? Math.round((stats.act / stats.inbox) * 100) : 0;
+          const evPct = Math.min(100, today.length * 20);
+          const cards = [
+            { n: stats.openTasks, l: "Open tasks", sub: taskPct + "% done", pct: taskPct, color: "#6366F1" },
+            { n: stats.inbox, l: "Inbox", sub: stats.act + " act now", pct: inboxPct, color: "#E5484D" },
+            { n: today.length, l: "Events today", sub: "this week", pct: evPct, color: "#14B8A6" },
+            { n: stats.projects, l: "Active projects", sub: stats.avgProj + "% avg", pct: stats.avgProj, color: "#F5A623" },
+          ];
+          return cards.map((c, i) => (
+            <div className="statcard card" key={i}>
+              <div className="statinfo"><div className="n"><b>{c.n}</b></div><div className="l">{c.l}</div><div className="sl">{c.sub}</div></div>
+              <Donut pct={c.pct} color={c.color}><span className="dpct">{c.pct}%</span></Donut>
+            </div>
+          ));
+        })()}
       </div>
 
       <div id="sec-briefing" style={{ marginTop: 18, scrollMarginTop: 70 }}>

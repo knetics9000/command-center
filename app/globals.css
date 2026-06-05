@@ -72,8 +72,16 @@ h1.hello{font-family:inherit;font-weight:600;font-size:32px;margin:0}
 .sec-h{font-size:12px;letter-spacing:.16em;text-transform:uppercase;color:var(--muted);font-weight:700;margin:0 0 14px;display:flex;align-items:center;gap:9px}
 .sec-h .star{color:var(--acc)} .sec-h .grow{flex:1}
 .stats{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-bottom:18px}
-.stat .n{font-family:inherit;font-size:34px;line-height:1}
-.stat .n b{color:var(--acc-deep)} .stat .l{font-size:11px;letter-spacing:.07em;text-transform:uppercase;color:var(--muted);font-weight:700;margin-top:4px}
+.statcard{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:16px 18px}
+.statinfo{min-width:0}
+.stat .n,.statinfo .n{font-family:inherit;font-size:32px;line-height:1}
+.stat .n b,.statinfo .n b{color:var(--ink)}
+.statinfo .l{font-size:11px;letter-spacing:.06em;text-transform:uppercase;color:var(--muted);font-weight:700;margin-top:5px}
+.statinfo .sl{font-size:11.5px;color:var(--ink2);margin-top:2px;font-variant-numeric:tabular-nums}
+.donut{position:relative;flex:none;display:grid;place-items:center}
+.donut-c{position:absolute;inset:0;display:grid;place-items:center}
+.dpct{font-size:12px;font-weight:800;color:var(--ink2);font-variant-numeric:tabular-nums}
+@media(max-width:900px){.stats{grid-template-columns:repeat(2,1fr)}}
 .bento{display:grid;grid-template-columns:1.5fr 1fr;gap:18px}
 .col{display:flex;flex-direction:column;gap:18px} .full{grid-column:1/-1}
 .projgrid{display:grid;grid-template-columns:repeat(3,1fr);gap:13px}
