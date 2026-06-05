@@ -171,4 +171,16 @@ h1.hello{font-family:"Iowan Old Style",Palatino,Georgia,serif;font-weight:600;fo
 .rlog{display:flex;align-items:center;gap:8px;padding:3px 0;font-size:12.5px}
 .rldot{width:6px;height:6px;border-radius:50%;background:#7E9A86;flex:none}
 .rltitle{flex:1;min-width:0;color:var(--ink)} .rlwhen{font-size:11px;color:var(--muted);white-space:nowrap}
+
+/* command bar (⌘K) */
+.cmdk-overlay{position:fixed;inset:0;z-index:100;background:rgba(43,41,37,.28);backdrop-filter:blur(2px);display:flex;justify-content:center;align-items:flex-start;padding-top:14vh}
+.cmdk{width:min(560px,92vw);background:#fff;border:1px solid var(--line);border-radius:16px;box-shadow:0 24px 60px rgba(70,55,25,.28);overflow:hidden;animation:cmdkin .14s ease-out}
+@keyframes cmdkin{from{opacity:0;transform:translateY(-8px) scale(.98)}to{opacity:1;transform:none}}
+.cmdk-row{display:flex;align-items:center;gap:10px;padding:14px 16px}
+.cmdk-icon{width:26px;height:26px;border-radius:7px;background:var(--acc-soft);color:var(--acc-deep);display:grid;place-items:center;font-weight:700;flex:none}
+.cmdk-input{flex:1;border:none;outline:none;font:inherit;font-size:16px;color:var(--ink);background:none}
+.cmdk-go{border:1px solid var(--acc);background:var(--acc-soft);color:var(--acc-deep);border-radius:9px;padding:6px 12px;font:inherit;font-size:12.5px;font-weight:700;cursor:pointer}
+.cmdk-foot{display:flex;justify-content:space-between;align-items:center;gap:10px;padding:9px 16px;border-top:1px solid var(--line);background:#FCFAF4;font-size:12px;color:var(--ink2)}
+.cmdk-foot code{background:#F1ECDF;border-radius:5px;padding:1px 6px;font-size:11.5px}
+.cmdk-esc{color:var(--muted);white-space:nowrap}
 @media(max-width:880px){.bento{grid-template-columns:1fr}.stats{grid-template-columns:repeat(2,1fr)}.projgrid{grid-template-columns:1fr 1fr}}
