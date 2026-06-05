@@ -1,6 +1,7 @@
 "use client";
 import { useState, useMemo } from "react";
 import { useRouter } from "next/navigation";
+import EventComposer from "./EventComposer";
 
 function rel(x) {
   const s = (Date.now() - new Date(x)) / 1000; if (isNaN(s)) return "";
@@ -23,6 +24,17 @@ export default function Inbox({ tiers, byTier, risky, handled = [] }) {
   const [showHandled, setShowHandled] = useState(false);
   const [bodies, setBodies] = useState({});                 // id -> 'loading' | text | {error}
   const [reply, setReply] = useState({});                   // id -> {text, gen, saving, saved}
+  const [evt, setEvt] = useState({});                       // id -> {loading, summary, location, start, durationMin}
+
+  async function addEvent(e) {
+    if (evt[e.id]) { setEvt((x) => { const n = { ...x }; delete n[e.id]; return n; }); return; }
+    setEvt((x) => ({ ...x, [e.id]: { loading: true } }));
+    try {
+      const r = await fetch("/api/inbox/event", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ id: e.id, account: e.account }) });
+      const j = await r.json();
+      setEvt((x) => ({ ...x, [e.id]: j.ok ? { ...j, loading: false } : { loading: false, summary: e.subject } }));
+    } catch { setEvt((x) => ({ ...x, [e.id]: { loading: false, summary: e.subject } })); }
+  }
 
   async function genReply(e) {
     if (reply[e.id]) { setReply((r) => { const n = { ...r }; delete n[e.id]; return n; }); return; }
@@ -108,8 +120,14 @@ export default function Inbox({ tiers, byTier, risky, handled = [] }) {
                 </>}
         </div>
       )}
+      {evt[e.id] && (
+        <EventComposer key={e.id} loading={evt[e.id].loading} summary={evt[e.id].summary} location={evt[e.id].location}
+          start={evt[e.id].start} durationMin={evt[e.id].durationMin}
+          onClose={() => setEvt((x) => { const n = { ...x }; delete n[e.id]; return n; })} />
+      )}
       <div className="mailacts">
         {!handledRow && <button className="mbtn reply" onClick={() => genReply(e)}>{reply[e.id] ? "Close reply" : "✍ Reply"}</button>}
+        {!handledRow && <button className="mbtn" onClick={() => addEvent(e)}>{evt[e.id] ? "Close" : "📅 Calendar"}</button>}
         <button className="mbtn read" onClick={() => toggleBody(e)}>{bodies[e.id] ? "Hide" : "Read"}</button>
         {busy[e.id]
           ? <span className="mwait">{busy[e.id]}…</span>
