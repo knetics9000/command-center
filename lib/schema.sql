@@ -34,6 +34,7 @@ CREATE TABLE IF NOT EXISTS emails (
   cluster_id   INTEGER REFERENCES clusters(id),
   handled      INTEGER DEFAULT 0,
   handled_state TEXT,                    -- archived|done|spam|snoozed
+  snooze_until TEXT,                     -- ISO time to return a snoozed email to the board
   updated_at   TEXT DEFAULT (datetime('now'))
 );
 

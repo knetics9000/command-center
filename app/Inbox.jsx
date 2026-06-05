@@ -74,6 +74,30 @@ export default function Inbox({ tiers, byTier, risky, handled = [] }) {
     [tiers, byTier, tierOff, q, acct]
   );
 
+  const [snoozeFor, setSnoozeFor] = useState(null);   // email id with open snooze menu
+
+  function snoozeOptions() {
+    const now = new Date();
+    const at = (base, h, m = 0) => { const d = new Date(base); d.setHours(h, m, 0, 0); return d; };
+    const evening = at(now, 18); if (evening <= now) evening.setDate(evening.getDate() + 1);
+    const tomorrow = at(now, 8); tomorrow.setDate(tomorrow.getDate() + 1);
+    const nextWeek = at(now, 8); nextWeek.setDate(nextWeek.getDate() + ((8 - nextWeek.getDay()) % 7 || 7));
+    return [
+      { label: "In 3 hours", at: new Date(now.getTime() + 3 * 3600e3) },
+      { label: "This evening", at: evening },
+      { label: "Tomorrow 8am", at: tomorrow },
+      { label: "Next week", at: nextWeek },
+    ];
+  }
+  async function snooze(id, until) {
+    setSnoozeFor(null);
+    setBusy((b) => ({ ...b, [id]: "snooze" }));
+    try {
+      await fetch("/api/inbox", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ action: "snooze", id, until: until.toISOString() }) });
+      router.refresh();
+    } finally { setBusy((b) => { const n = { ...b }; delete n[id]; return n; }); }
+  }
+
   async function act(id, account, action) {
     setBusy((b) => ({ ...b, [id]: action }));
     try {
@@ -128,6 +152,20 @@ export default function Inbox({ tiers, byTier, risky, handled = [] }) {
       <div className="mailacts">
         {!handledRow && <button className="mbtn reply" onClick={() => genReply(e)}>{reply[e.id] ? "Close reply" : "✍ Reply"}</button>}
         {!handledRow && <button className="mbtn" onClick={() => addEvent(e)}>{evt[e.id] ? "Close" : "📅 Calendar"}</button>}
+        {!handledRow && (
+          <span className="snoozewrap">
+            <button className="mbtn" onClick={() => setSnoozeFor((id) => id === e.id ? null : e.id)}>💤 Snooze</button>
+            {snoozeFor === e.id && (
+              <span className="snoozemenu">
+                {snoozeOptions().map((o) => (
+                  <button key={o.label} className="snoozeopt" onClick={() => snooze(e.id, o.at)}>
+                    {o.label}<span className="st">{o.at.toLocaleString([], { weekday: "short", hour: "numeric", minute: "2-digit" })}</span>
+                  </button>
+                ))}
+              </span>
+            )}
+          </span>
+        )}
         <button className="mbtn read" onClick={() => toggleBody(e)}>{bodies[e.id] ? "Hide" : "Read"}</button>
         {busy[e.id]
           ? <span className="mwait">{busy[e.id]}…</span>
