@@ -193,6 +193,24 @@ h1.hello{font-family:"Iowan Old Style",Palatino,Georgia,serif;font-weight:600;fo
 .pnum{flex:none;width:22px;height:22px;border-radius:50%;background:var(--acc);color:#fff;font-weight:700;font-size:12px;display:grid;place-items:center;margin-top:1px}
 .prio .pt{font-weight:700;font-size:14px;display:flex;align-items:center;gap:8px}
 .prio .pd{font-size:12.5px;color:var(--ink2);margin-top:1px}
+.prio.clickable{cursor:pointer;border-radius:11px;padding:7px 9px;margin:0 -9px;transition:background .14s ease}
+.prio.clickable:hover{background:#fff} .prio.open{background:#fff}
+.prio .pgrow{flex:1;min-width:0}
+.priocaret{color:var(--muted);font-size:12px;align-self:center;transition:transform .16s ease}
+.priocaret.open{transform:rotate(90deg)}
+/* related drawer (R4/R5/R6) */
+.reldrawer{margin:4px 0 6px;padding:12px 14px;background:#fff;border:1px solid var(--line);border-radius:12px;animation:expandin .2s ease}
+.relai{margin-bottom:10px;padding-bottom:9px;border-bottom:1px dashed var(--line)}
+.relwhy{font-size:13px;color:var(--ink);line-height:1.5}
+.relactions{display:flex;flex-wrap:wrap;gap:6px;margin-top:8px}
+.relchip{font-size:11.5px;font-weight:700;color:var(--acc-deep);background:var(--acc-soft);border-radius:8px;padding:3px 9px}
+.relgrid{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:12px}
+.relblock .relbh{font-size:10px;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);font-weight:700;margin-bottom:5px}
+.relrow{font-size:12.5px;color:var(--ink2);padding:3px 0;line-height:1.4;display:flex;gap:5px;align-items:baseline;flex-wrap:wrap}
+.relrow .tag{font-size:8.5px;padding:1px 5px}.relrow .relsnd{font-weight:700;color:var(--ink)}
+.relrow .reldot{width:6px;height:6px;border-radius:50%;background:#7E9A86;display:inline-block}
+.relmuted{color:var(--muted)}
+
 .upill{font-size:9px;font-weight:800;text-transform:uppercase;letter-spacing:.05em;border-radius:6px;padding:1px 7px}
 .upill.now{background:#fbe6df;color:#b0432a}.upill.today{background:var(--acc-soft);color:var(--acc-deep)}.upill.soon{background:#eef0e9;color:#6b7a64}
 .clusters{margin-top:16px;border-top:1px dashed var(--line);padding-top:12px}

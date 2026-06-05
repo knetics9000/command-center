@@ -3,6 +3,7 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { useToast } from "./Toast";
 import Icon from "./Icon";
+import RelatedDrawer from "./RelatedDrawer";
 
 const tagFor = (name) => (/project/i.test(name) ? name : name + " Project").toLowerCase();
 const when = (ts) => { const d = new Date((ts || "").replace(" ", "T") + "Z"); return isNaN(d) ? "" : d.toLocaleTimeString([], { hour: "numeric", minute: "2-digit" }); };
@@ -12,6 +13,7 @@ export default function Briefing({ briefing, existingTags = [] }) {
   const { toast } = useToast();
   const [busy, setBusy] = useState(false);
   const [creating, setCreating] = useState({});
+  const [openPrio, setOpenPrio] = useState(null);
   const b = briefing;
 
   async function regenerate() {
@@ -63,9 +65,13 @@ export default function Briefing({ briefing, existingTags = [] }) {
         )}
         <div className="prios">
           {(b.priorities || []).map((p, i) => (
-            <div className="prio" key={i}>
-              <span className="pnum">{i + 1}</span>
-              <div><div className="pt">{p.title} {pill(p.urgency)}</div><div className="pd">{p.detail}</div></div>
+            <div key={i}>
+              <div className={"prio clickable" + (openPrio === i ? " open" : "")} onClick={() => setOpenPrio((x) => x === i ? null : i)}>
+                <span className="pnum">{i + 1}</span>
+                <div className="pgrow"><div className="pt">{p.title} {pill(p.urgency)}</div><div className="pd">{p.detail}</div></div>
+                <span className={"priocaret" + (openPrio === i ? " open" : "")}>▸</span>
+              </div>
+              {openPrio === i && <RelatedDrawer title={p.title + " — " + p.detail} />}
             </div>
           ))}
         </div>
