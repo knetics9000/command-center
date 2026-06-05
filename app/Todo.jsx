@@ -1,5 +1,5 @@
 "use client";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { tagsOf, tagClass } from "@/lib/tags";
 import EventComposer from "./EventComposer";
@@ -15,6 +15,12 @@ export default function Todo({ order, groups, openTotal }) {
   const [retag, setRetag] = useState({});      // taskId -> text
   const [evtFor, setEvtFor] = useState(null);  // taskId with open composer
   const [dueFor, setDueFor] = useState(null);  // taskId with open date picker
+  const [collapsed, setCollapsed] = useState({}); // tag -> collapsed
+
+  useEffect(() => { try { setCollapsed(JSON.parse(localStorage.getItem("cc_todo_collapsed") || "{}")); } catch {} }, []);
+  const persist = (next) => { setCollapsed(next); localStorage.setItem("cc_todo_collapsed", JSON.stringify(next)); };
+  const toggleGroup = (t) => persist({ ...collapsed, [t]: !collapsed[t] });
+  const setAll = (val) => persist(Object.fromEntries(order.map((t) => [t, val])));
 
   async function setDue(id, due) {
     setDueFor(null);
@@ -51,12 +57,21 @@ export default function Todo({ order, groups, openTotal }) {
 
   return (
     <div className="card">
-      <div className="sec-h">To-Do · by tag <span className="grow" /><span style={{ color: "var(--acc-deep)", fontWeight: 700 }}>{openTotal} open</span></div>
+      <div className="sec-h">To-Do · by tag <span className="grow" />
+        <button className="miniact" onClick={() => setAll(false)}>Expand all</button>
+        <button className="miniact" onClick={() => setAll(true)}>Collapse all</button>
+        <span style={{ color: "var(--acc-deep)", fontWeight: 700, marginLeft: 8 }}>{openTotal} open</span>
+      </div>
       {order.map((t) => {
         const list = groups[t];
+        const isOpen = !collapsed[t];
         return (
-          <div className="cat" key={t}>
-            <div className="cat-h"><span className="dot" style={{ background: dotFor(t) }} /><span className="nm">{t}</span><span className="c">{list.length}</span></div>
+          <div className={"cat" + (isOpen ? "" : " collapsed")} key={t}>
+            <div className="cat-h" role="button" onClick={() => toggleGroup(t)}>
+              <span className={"catcaret" + (isOpen ? " open" : "")}>▸</span>
+              <span className="dot" style={{ background: dotFor(t) }} /><span className="nm">{t}</span><span className="c">{list.length}</span>
+            </div>
+            {isOpen && <>
             {list.map((it) => (
               <div key={it.id}>
                 <div className={"task" + (busy[it.id] ? " done" : "")}>
@@ -90,6 +105,7 @@ export default function Todo({ order, groups, openTotal }) {
                 onKeyDown={(e) => { if (e.key === "Enter") add(t); }} />
               <button className="addbtn" onClick={() => add(t)}>＋</button>
             </div>
+            </>}
           </div>
         );
       })}
