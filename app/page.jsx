@@ -1,6 +1,7 @@
-import { getStats, getInbox, getHandledInbox, getProjects, getTodoGroups, getLatestBriefing, getProjectTags, getDueTasks } from "@/lib/queries";
+import { getStats, getInbox, getHandledInbox, getProjects, getTodoGroups, getLatestBriefing, getProjectTags, getDueTasks, getLastSync } from "@/lib/queries";
 import { connectionStatus, listEvents } from "@/lib/google";
 import RefreshButton from "./RefreshButton";
+import SectionNav from "./SectionNav";
 import Briefing from "./Briefing";
 import Projects from "./Projects";
 import Todo from "./Todo";
@@ -40,6 +41,7 @@ export default async function Home() {
   const todo = getTodoGroups();
   const briefing = getLatestBriefing();
   const projectTags = getProjectTags();
+  const lastSync = getLastSync();
   const conn = connectionStatus();
   const cal = await getCalendar();
 
@@ -66,6 +68,8 @@ export default async function Home() {
         </div>
       </div>
 
+      <SectionNav lastSync={lastSync} />
+
       <div className="stats card" style={{ padding: "18px 22px" }}>
         <div className="stat"><div className="n"><b>{stats.openTasks}</b></div><div className="l">Open tasks</div></div>
         <div className="stat"><div className="n"><b>{stats.inbox}</b></div><div className="l">Inbox · {stats.act} act now</div></div>
@@ -73,16 +77,16 @@ export default async function Home() {
         <div className="stat"><div className="n"><b>{stats.projects}</b></div><div className="l">Active projects</div></div>
       </div>
 
-      <div style={{ marginTop: 18 }}>
+      <div id="sec-briefing" style={{ marginTop: 18, scrollMarginTop: 70 }}>
         <Briefing briefing={briefing} existingTags={projectTags} />
       </div>
 
-      <div style={{ marginTop: 18 }}>
+      <div id="sec-projects" style={{ marginTop: 18, scrollMarginTop: 70 }}>
         <Projects projects={projects} />
       </div>
 
       <div className="bento" style={{ marginTop: 18 }}>
-        <div className="col">
+        <div className="col" id="sec-todo" style={{ scrollMarginTop: 70 }}>
           <Todo order={todo.order} groups={todo.groups} openTotal={todo.openTotal} />
         </div>
 
@@ -113,7 +117,9 @@ export default async function Home() {
         </div>
       </div>
 
-      <Inbox tiers={inbox.tiers} byTier={inbox.byTier} risky={inbox.risky} handled={handled} />
+      <div id="sec-inbox" style={{ scrollMarginTop: 70 }}>
+        <Inbox tiers={inbox.tiers} byTier={inbox.byTier} risky={inbox.risky} handled={handled} />
+      </div>
     </div>
   );
 }
