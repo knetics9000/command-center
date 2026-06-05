@@ -3,11 +3,13 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { tagsOf, tagClass } from "@/lib/tags";
 import EventComposer from "./EventComposer";
+import { useToast } from "./Toast";
 
 const dotFor = (t) => tagClass(t) === "personal" ? "#7E9A86" : tagClass(t) === "work" ? "#C2851E" : tagClass(t) === "project" ? "#6b5a8e" : "#b5ae9f";
 
 export default function Todo({ order, groups, openTotal }) {
   const router = useRouter();
+  const { toast } = useToast();
   const [busy, setBusy] = useState({});
   const [adding, setAdding] = useState({});   // tag -> text
   const [retag, setRetag] = useState({});      // taskId -> text
@@ -27,7 +29,7 @@ export default function Todo({ order, groups, openTotal }) {
 
   async function post(body) {
     const r = await fetch("/api/task", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify(body) });
-    if (!r.ok) { const j = await r.json().catch(() => ({})); alert("Task action failed: " + (j.error || r.status)); }
+    if (!r.ok) { const j = await r.json().catch(() => ({})); toast({ message: "Task action failed: " + (j.error || r.status), tone: "error" }); }
     router.refresh();
   }
   async function check(id) {

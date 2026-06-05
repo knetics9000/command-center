@@ -4,18 +4,20 @@ import { useRouter } from "next/navigation";
 import ProjectChat from "./ProjectChat";
 import StandingRules from "./StandingRules";
 import ProjectNotes from "./ProjectNotes";
+import { useToast } from "./Toast";
 
 const ringColor = (p) => (p >= 66 ? "#7E9A86" : p >= 33 ? "#E0A23C" : "#D2745A");
 
 export default function Projects({ projects }) {
   const router = useRouter();
+  const { toast } = useToast();
   const [open, setOpen] = useState({});     // tag -> bool
   const [text, setText] = useState({});     // tag -> draft
   const [busy, setBusy] = useState({});
 
   async function post(body) {
     const r = await fetch("/api/task", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify(body) });
-    if (!r.ok) { const j = await r.json().catch(() => ({})); alert("Failed: " + (j.error || r.status)); }
+    if (!r.ok) { const j = await r.json().catch(() => ({})); toast({ message: "Failed: " + (j.error || r.status), tone: "error" }); }
     router.refresh();
   }
   async function add(tag) {

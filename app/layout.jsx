@@ -1,5 +1,6 @@
 import "./globals.css";
 import CommandBar from "./CommandBar";
+import { ToastProvider } from "./Toast";
 
 export const metadata = {
   title: "Command Center",
@@ -9,7 +10,12 @@ export const metadata = {
 export default function RootLayout({ children }) {
   return (
     <html lang="en">
-      <body>{children}<CommandBar /></body>
+      <body>
+        <ToastProvider>
+          {children}
+          <CommandBar />
+        </ToastProvider>
+      </body>
     </html>
   );
 }

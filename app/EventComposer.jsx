@@ -1,5 +1,6 @@
 "use client";
 import { useState } from "react";
+import { useToast } from "./Toast";
 
 // Local "YYYY-MM-DDTHH:MM" -> ISO instant (interpreted in the browser's timezone).
 const toISO = (local) => { const d = new Date(local); return isNaN(d) ? null : d.toISOString(); };
@@ -16,6 +17,7 @@ export default function EventComposer({ summary = "", location = "", start = "",
   const [dur, setDur] = useState(durationMin || 60);
   const [saving, setSaving] = useState(false);
   const [saved, setSaved] = useState(false);
+  const { toast } = useToast();
 
   async function confirm() {
     const startISO = toISO(st); if (!startISO || !s.trim()) return;
@@ -24,8 +26,8 @@ export default function EventComposer({ summary = "", location = "", start = "",
     try {
       const r = await fetch("/api/calendar", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ action: "create", events: [{ summary: s.trim(), location: loc.trim(), start: startISO, end: endISO }] }) });
       const j = await r.json();
-      if (j.ok) { setSaved(true); setTimeout(() => onClose && onClose(true), 1200); }
-      else alert("Add failed: " + (j.error || r.status));
+      if (j.ok) { setSaved(true); toast("📅 Added to your calendar"); setTimeout(() => onClose && onClose(true), 1200); }
+      else toast({ message: "Add failed: " + (j.error || r.status), tone: "error" });
     } finally { setSaving(false); }
   }
 

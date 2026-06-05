@@ -1,12 +1,14 @@
 "use client";
 import { useState } from "react";
 import { useRouter } from "next/navigation";
+import { useToast } from "./Toast";
 
 const tagFor = (name) => (/project/i.test(name) ? name : name + " Project").toLowerCase();
 const when = (ts) => { const d = new Date((ts || "").replace(" ", "T") + "Z"); return isNaN(d) ? "" : d.toLocaleTimeString([], { hour: "numeric", minute: "2-digit" }); };
 
 export default function Briefing({ briefing, existingTags = [] }) {
   const router = useRouter();
+  const { toast } = useToast();
   const [busy, setBusy] = useState(false);
   const [creating, setCreating] = useState({});
   const b = briefing;
@@ -20,7 +22,7 @@ export default function Briefing({ briefing, existingTags = [] }) {
     setCreating((s) => ({ ...s, [c.name]: true }));
     try {
       const r = await fetch("/api/project", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ action: "create", name: c.name, clusterId: c.id }) });
-      if (!r.ok) { const j = await r.json().catch(() => ({})); alert("Create failed: " + (j.error || r.status)); }
+      if (r.ok) toast("✦ Project created"); else { const j = await r.json().catch(() => ({})); toast({ message: "Create failed: " + (j.error || r.status), tone: "error" }); }
       router.refresh();
     } finally { setCreating((s) => { const n = { ...s }; delete n[c.name]; return n; }); }
   }

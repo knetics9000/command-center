@@ -2,6 +2,7 @@
 import { useState, useMemo } from "react";
 import { useRouter } from "next/navigation";
 import EventComposer from "./EventComposer";
+import { useToast } from "./Toast";
 
 function rel(x) {
   const s = (Date.now() - new Date(x)) / 1000; if (isNaN(s)) return "";
@@ -14,8 +15,12 @@ const matches = (e, q) => {
   return [e.sender, e.sender_addr, e.subject, e.snippet, e.why].some((f) => (f || "").toLowerCase().includes(s));
 };
 
+const PAST = { archive: "Archived", done: "Marked done", spam: "Marked spam", restore: "Restored" };
+
 export default function Inbox({ tiers, byTier, risky, handled = [] }) {
   const router = useRouter();
+  const { toast } = useToast();
+  const [removed, setRemoved] = useState({});   // optimistic-hidden email ids
   const [busy, setBusy] = useState({});
   const [expandNoise, setExpandNoise] = useState(false);
   const [q, setQ] = useState("");
@@ -51,9 +56,9 @@ export default function Inbox({ tiers, byTier, risky, handled = [] }) {
     try {
       const res = await fetch("/api/inbox/reply", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ action: "save", id: e.id, account: e.account, text: cur.text }) });
       const j = await res.json();
-      if (j.ok) setReply((r) => ({ ...r, [e.id]: { ...r[e.id], saving: false, saved: true } }));
-      else { alert("Save failed: " + (j.error || "")); setReply((r) => ({ ...r, [e.id]: { ...r[e.id], saving: false } })); }
-    } catch (err) { alert("Save failed: " + err.message); setReply((r) => ({ ...r, [e.id]: { ...r[e.id], saving: false } })); }
+      if (j.ok) { setReply((r) => ({ ...r, [e.id]: { ...r[e.id], saving: false, saved: true } })); toast("✓ Draft saved to Gmail"); }
+      else { toast({ message: "Save failed: " + (j.error || ""), tone: "error" }); setReply((r) => ({ ...r, [e.id]: { ...r[e.id], saving: false } })); }
+    } catch (err) { toast({ message: "Save failed: " + err.message, tone: "error" }); setReply((r) => ({ ...r, [e.id]: { ...r[e.id], saving: false } })); }
   }
 
   async function toggleBody(e) {
@@ -67,7 +72,7 @@ export default function Inbox({ tiers, byTier, risky, handled = [] }) {
   }
 
   const acctOk = (e) => acct === "both" || e.account === acct;
-  const filt = (list) => list.filter((e) => acctOk(e) && matches(e, q));
+  const filt = (list) => list.filter((e) => !removed[e.id] && acctOk(e) && matches(e, q));
 
   const visibleCount = useMemo(
     () => tiers.reduce((n, t) => (tierOff[t.key] ? n : n + filt(byTier[t.key]).length), 0),
@@ -89,23 +94,36 @@ export default function Inbox({ tiers, byTier, risky, handled = [] }) {
       { label: "Next week", at: nextWeek },
     ];
   }
-  async function snooze(id, until) {
+  async function snooze(id, until, label) {
     setSnoozeFor(null);
-    setBusy((b) => ({ ...b, [id]: "snooze" }));
+    setRemoved((m) => ({ ...m, [id]: true }));
     try {
       await fetch("/api/inbox", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ action: "snooze", id, until: until.toISOString() }) });
-      router.refresh();
-    } finally { setBusy((b) => { const n = { ...b }; delete n[id]; return n; }); }
+      toast(`Snoozed · back ${label.toLowerCase()}`);
+    } catch (e) {
+      setRemoved((m) => { const n = { ...m }; delete n[id]; return n; });
+      toast({ message: "Snooze failed: " + e.message, tone: "error" });
+    }
   }
 
+  async function call(action, id, account) {
+    const r = await fetch("/api/inbox", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ action, id, account }) });
+    if (!r.ok) { const j = await r.json().catch(() => ({})); throw new Error(j.error || r.status); }
+  }
+
+  // Optimistic: hide immediately, fire in background, offer Undo. No full refresh (keeps the view snappy).
   async function act(id, account, action) {
-    setBusy((b) => ({ ...b, [id]: action }));
+    setRemoved((m) => ({ ...m, [id]: true }));
     try {
-      const r = await fetch("/api/inbox", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ action, id, account }) });
-      if (!r.ok) { const j = await r.json().catch(() => ({})); alert("Gmail action failed: " + (j.error || r.status)); }
-      router.refresh();
-    } finally {
-      setBusy((b) => { const n = { ...b }; delete n[id]; return n; });
+      await call(action, id, account);
+      if (action === "restore") { toast("Restored to inbox"); router.refresh(); return; }
+      toast({
+        message: PAST[action] || "Done",
+        action: async () => { try { await call("restore", id, account); setRemoved((m) => { const n = { ...m }; delete n[id]; return n; }); } catch { router.refresh(); } },
+      });
+    } catch (e) {
+      setRemoved((m) => { const n = { ...m }; delete n[id]; return n; });
+      toast({ message: "Gmail action failed: " + e.message, tone: "error" });
     }
   }
 
@@ -158,7 +176,7 @@ export default function Inbox({ tiers, byTier, risky, handled = [] }) {
             {snoozeFor === e.id && (
               <span className="snoozemenu">
                 {snoozeOptions().map((o) => (
-                  <button key={o.label} className="snoozeopt" onClick={() => snooze(e.id, o.at)}>
+                  <button key={o.label} className="snoozeopt" onClick={() => snooze(e.id, o.at, o.label)}>
                     {o.label}<span className="st">{o.at.toLocaleString([], { weekday: "short", hour: "numeric", minute: "2-digit" })}</span>
                   </button>
                 ))}

@@ -1,5 +1,6 @@
 "use client";
 import { useState, useEffect, useRef } from "react";
+import { useToast } from "./Toast";
 
 const fmt = (iso) => { const d = new Date(iso); return isNaN(d) ? iso : d.toLocaleString([], { weekday: "short", month: "short", day: "numeric", hour: "numeric", minute: "2-digit" }); };
 
@@ -9,6 +10,7 @@ export default function ProjectChat({ contextId, projectName }) {
   const [busy, setBusy] = useState(false);
   const [proposed, setProposed] = useState([]);
   const [confirming, setConfirming] = useState(false);
+  const { toast } = useToast();
   const endRef = useRef(null);
 
   useEffect(() => {
@@ -36,8 +38,8 @@ export default function ProjectChat({ contextId, projectName }) {
     try {
       const r = await fetch("/api/calendar", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ action: "create", events: proposed, contextId }) });
       const j = await r.json();
-      if (j.ok) { setMsgs((x) => [...x, { role: "assistant", content: `✓ Added ${j.created.length} event(s) to your calendar.` }]); setProposed([]); }
-      else alert("Create failed: " + (j.error || r.status));
+      if (j.ok) { setMsgs((x) => [...x, { role: "assistant", content: `✓ Added ${j.created.length} event(s) to your calendar.` }]); setProposed([]); toast("📅 Events added to your calendar"); }
+      else toast({ message: "Create failed: " + (j.error || r.status), tone: "error" });
     } finally { setConfirming(false); }
   }
 

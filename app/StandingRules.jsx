@@ -1,11 +1,13 @@
 "use client";
 import { useState, useEffect } from "react";
+import { useToast } from "./Toast";
 
 const ago = (ts) => { if (!ts) return "never run"; const d = new Date(ts.replace(" ", "T") + "Z"); const s = (Date.now() - d) / 1000; if (isNaN(s)) return ""; if (s < 3600) return Math.round(s / 60) + "m ago"; if (s < 86400) return Math.round(s / 3600) + "h ago"; return Math.round(s / 86400) + "d ago"; };
 
 const evtime = (iso) => { const d = new Date(iso); return isNaN(d) ? iso : d.toLocaleString([], { weekday: "short", month: "short", day: "numeric", hour: "numeric", minute: "2-digit" }); };
 
 export default function StandingRules({ contextId }) {
+  const { toast } = useToast();
   const [rules, setRules] = useState([]);
   const [activity, setActivity] = useState([]);
   const [text, setText] = useState("");
@@ -27,7 +29,7 @@ export default function StandingRules({ contextId }) {
   }
   async function run(id) {
     setBusy(id);
-    try { const j = await post({ action: "run", id }); if (j.ok) alert(`Rule ran: ${j.created?.length || 0} event(s) added.\n${j.summary || ""}`); else alert("Failed: " + (j.error || "")); load(); }
+    try { const j = await post({ action: "run", id }); if (j.ok) toast(j.created?.length ? `Rule added ${j.created.length} event(s)` : "Rule ran — nothing new to add"); else toast({ message: "Failed: " + (j.error || ""), tone: "error" }); load(); }
     finally { setBusy(null); }
   }
 
