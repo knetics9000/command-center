@@ -21,6 +21,18 @@ function ago(iso) {
 export default function SectionNav({ lastSync }) {
   const [active, setActive] = useState("sec-briefing");
   const [, tick] = useState(0);
+  const [compact, setCompact] = useState(false);
+  const [focus, setFocus] = useState(false);
+
+  useEffect(() => {
+    const c = localStorage.getItem("cc_compact") === "1";
+    const f = localStorage.getItem("cc_focus") === "1";
+    setCompact(c); setFocus(f);
+    document.body.classList.toggle("compact", c);
+    document.body.classList.toggle("focus", f);
+  }, []);
+  const toggleCompact = () => setCompact((v) => { const n = !v; document.body.classList.toggle("compact", n); localStorage.setItem("cc_compact", n ? "1" : "0"); return n; });
+  const toggleFocus = () => setFocus((v) => { const n = !v; document.body.classList.toggle("focus", n); localStorage.setItem("cc_focus", n ? "1" : "0"); return n; });
 
   useEffect(() => {
     const els = SECTIONS.map((s) => document.getElementById(s.id)).filter(Boolean);
@@ -46,7 +58,11 @@ export default function SectionNav({ lastSync }) {
           <button key={s.id} className={"snlink" + (active === s.id ? " on" : "")} onClick={() => go(s.id)}>{s.label}</button>
         ))}
       </div>
-      <span className="secnav-sync"><span className="livedot" />{ago(lastSync)}</span>
+      <div className="secnav-right">
+        <button className={"vctrl" + (focus ? " on" : "")} onClick={toggleFocus} title="Focus: only Act-Now mail + today's priorities">◎ Focus</button>
+        <button className={"vctrl" + (compact ? " on" : "")} onClick={toggleCompact} title="Toggle density">{compact ? "▤ Compact" : "▦ Comfortable"}</button>
+        <span className="secnav-sync"><span className="livedot" />{ago(lastSync)}</span>
+      </div>
     </div>
   );
 }

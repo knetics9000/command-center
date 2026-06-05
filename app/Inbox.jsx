@@ -285,7 +285,7 @@ export default function Inbox({ tiers, byTier, risky, handled = [] }) {
             const list = filt(byTier[t.key]); if (!list.length) return null;
             const show = t.key === "noise" && !expandNoise && !q ? list.slice(0, 4) : list;
             return (
-              <div key={t.key}>
+              <div className={"tsec tsec-" + t.key} key={t.key}>
                 <div className="tier-h"><span className={"tierdot " + t.key} /><span className="n">{t.label}</span><span className="c">{list.length}</span><span className="rl" /></div>
                 {show.map((e) => <Mail e={e} key={e.id} />)}
                 {t.key === "noise" && !q && list.length > 4 && (

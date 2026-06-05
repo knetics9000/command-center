@@ -213,6 +213,26 @@ h1.hello{font-family:"Iowan Old Style",Palatino,Georgia,serif;font-weight:600;fo
 .rldot{width:6px;height:6px;border-radius:50%;background:#7E9A86;flex:none}
 .rltitle{flex:1;min-width:0;color:var(--ink)} .rlwhen{font-size:11px;color:var(--muted);white-space:nowrap}
 
+/* density + focus (U10) */
+.secnav-right{display:flex;align-items:center;gap:8px}
+.vctrl{border:1px solid var(--line);background:#fff;border-radius:8px;font:inherit;font-size:11.5px;font-weight:700;color:var(--ink2);padding:5px 10px;cursor:pointer;white-space:nowrap}
+.vctrl:hover{background:#FCFAF4;border-color:var(--acc)} .vctrl.on{background:var(--ink);color:#fff;border-color:var(--ink)}
+/* compact density */
+body.compact .card{padding:13px 15px}
+body.compact .mail{padding:8px 11px;margin-bottom:6px}
+body.compact .task{padding:5px 12px}
+body.compact .ev{padding:6px 2px}
+body.compact .sec-h{margin-bottom:9px}
+body.compact .stat .n{font-size:28px}
+body.compact .cat{margin-bottom:6px}
+body.compact .wrap{padding-top:18px}
+/* focus mode — only today's priorities + Act-Now mail */
+body.focus #sec-projects,body.focus .bento{display:none}
+body.focus .briefcard .clusters{display:none}
+body.focus .tsec:not(.tsec-act){display:none}
+body.focus .filterbar .fchips,body.focus .kbhint{display:none}
+body.focus .secnav .snlink[data-hide]{display:none}
+
 /* icons + tier dots (U9) */
 .ic{display:inline-block;vertical-align:-2px;flex:none}
 .mbtn .ic{vertical-align:-2px;margin-right:1px}
