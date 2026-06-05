@@ -1,6 +1,7 @@
 "use client";
 import { useState } from "react";
 import { useRouter } from "next/navigation";
+import ProjectChat from "./ProjectChat";
 
 const ringColor = (p) => (p >= 66 ? "#7E9A86" : p >= 33 ? "#E0A23C" : "#D2745A");
 
@@ -55,6 +56,7 @@ export default function Projects({ projects }) {
                     onKeyDown={(e) => { if (e.key === "Enter") add(p.tag); }} />
                   <button className="addbtn" onClick={() => add(p.tag)}>＋</button>
                 </div>
+                <ProjectChat contextId={p.tag} projectName={p.name} />
               </div>
             )}
           </div>
