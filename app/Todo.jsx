@@ -12,6 +12,18 @@ export default function Todo({ order, groups, openTotal }) {
   const [adding, setAdding] = useState({});   // tag -> text
   const [retag, setRetag] = useState({});      // taskId -> text
   const [evtFor, setEvtFor] = useState(null);  // taskId with open composer
+  const [dueFor, setDueFor] = useState(null);  // taskId with open date picker
+
+  async function setDue(id, due) {
+    setDueFor(null);
+    await post({ action: "setdue", id, due });
+  }
+  const dueMeta = (due) => {
+    if (!due) return null;
+    const d = new Date(due + "T12:00:00"); const today = new Date(); today.setHours(0, 0, 0, 0);
+    const overdue = d < today;
+    return { label: d.toLocaleDateString([], { month: "short", day: "numeric" }), overdue };
+  };
 
   async function post(body) {
     const r = await fetch("/api/task", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify(body) });
@@ -55,6 +67,12 @@ export default function Todo({ order, groups, openTotal }) {
                           onChange={(e) => setRetag((r) => ({ ...r, [it.id]: e.target.value }))}
                           onKeyDown={(e) => { if (e.key === "Enter") applyTag(it); if (e.key === "Escape") setRetag((r) => { const n = { ...r }; delete n[it.id]; return n; }); }}
                           onBlur={() => applyTag(it)} />}
+                    {it.due && (() => { const m = dueMeta(it.due); return <span className={"duechip" + (m.overdue ? " overdue" : "")} onClick={() => setDueFor((id) => id === it.id ? null : it.id)}>⏰ {m.label}</span>; })()}
+                    {!it.due && <button className="addtag" title="Set due date" onClick={() => setDueFor((id) => id === it.id ? null : it.id)}>⏰ due</button>}
+                    {dueFor === it.id && (
+                      <input type="date" className="dueinp" autoFocus defaultValue={it.due || ""}
+                        onChange={(e) => setDue(it.id, e.target.value)} onBlur={() => setDueFor(null)} />
+                    )}
                     <button className="addtag" title="Add to calendar" onClick={() => setEvtFor((id) => id === it.id ? null : it.id)}>📅</button>
                   </span>
                 </div>

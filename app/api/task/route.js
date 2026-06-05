@@ -35,6 +35,12 @@ export async function POST(req) {
       return NextResponse.json({ ok: true, id, syncing: true });
     }
 
+    if (b.action === "setdue") {
+      const due = (b.due || "").trim() || null; // "YYYY-MM-DD" or clear
+      db.prepare("UPDATE tasks SET due=?, updated_at=datetime('now') WHERE id=?").run(due, b.id);
+      return NextResponse.json({ ok: true });
+    }
+
     if (b.action === "retag") {
       const tags = (b.tags || "").trim();
       if (isReal(b.id)) await retagTask(b.id, tags);

@@ -11,6 +11,7 @@ CREATE TABLE IF NOT EXISTS tasks (
   status       TEXT DEFAULT 'open',      -- open|completed|archived|done
   source       TEXT DEFAULT 'offload',
   created_at   TEXT,
+  due          TEXT,                     -- optional due date (YYYY-MM-DD), set in-app, preserved across syncs
   synced       INTEGER DEFAULT 1,        -- 0 = added here, awaiting a real Offload id
   updated_at   TEXT DEFAULT (datetime('now'))
 );
