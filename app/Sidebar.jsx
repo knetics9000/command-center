@@ -10,7 +10,7 @@ const NAV = [
   { id: "sec-inbox", label: "Inbox", icon: "inbox" },
 ];
 
-export default function Sidebar({ connected, email }) {
+export default function Sidebar({ connected, email, pic }) {
   const [active, setActive] = useState("sec-briefing");
 
   useEffect(() => {
@@ -37,7 +37,7 @@ export default function Sidebar({ connected, email }) {
       <div className="sb-foot">
         <div className="sb-status"><span className={"sb-dot" + (connected ? " ok" : "")} />{connected ? "All connected" : <a href="/connect">Connect →</a>}</div>
         <div className="sb-user">
-          <span className="sb-av">KW</span>
+          {pic ? <img className="sb-av img" src={pic} alt="" referrerPolicy="no-referrer" /> : <span className="sb-av">KW</span>}
           <div className="sb-uwrap"><div className="sb-uname">Kurt</div><div className="sb-umail">{email || "kingkurt1978@gmail.com"}</div></div>
         </div>
       </div>

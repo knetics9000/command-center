@@ -110,6 +110,7 @@ CREATE TABLE IF NOT EXISTS calendar_events (
 CREATE TABLE IF NOT EXISTS google_tokens (
   account       TEXT PRIMARY KEY,        -- 'personal' | 'work'
   email         TEXT,
+  picture       TEXT,                    -- profile photo URL
   access_token  TEXT,
   refresh_token TEXT,
   expiry        INTEGER,                 -- epoch ms

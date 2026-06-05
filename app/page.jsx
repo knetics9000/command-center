@@ -56,11 +56,11 @@ export default async function Home() {
   const nextEv = events.filter((e) => !e.allDay && new Date(e.start) > now)[0];
 
   const connected = conn.every((c) => c.connected);
-  const personalEmail = (conn.find((c) => c.account === "personal") || {}).email;
+  const personal = conn.find((c) => c.account === "personal") || {};
 
   return (
     <div className="appshell">
-      <Sidebar connected={connected} email={personalEmail} />
+      <Sidebar connected={connected} email={personal.email} pic={personal.picture} />
       <main className="workspace">
         <div className="wrap">
           <header className="topbar">
@@ -69,8 +69,14 @@ export default async function Home() {
               <div className="sub">{now.toLocaleDateString(undefined, { weekday: "long", month: "long", day: "numeric" })} · here's where you left off</div>
             </div>
             <div className="tb-right">
+              <div className="tb-actions">
+                <RefreshButton />
+                <div className="tb-account">
+                  {personal.picture ? <img className="tb-av" src={personal.picture} alt="" referrerPolicy="no-referrer" /> : <span className="tb-av ph">KW</span>}
+                  <div className="tb-acwrap"><div className="tb-acname">Kurt</div><div className="tb-acmail">{personal.email || ""}</div></div>
+                </div>
+              </div>
               <div className="synced">{connected ? "both accounts connected ✓" : <a href="/connect">connect accounts →</a>}</div>
-              <RefreshButton />
             </div>
           </header>
 
