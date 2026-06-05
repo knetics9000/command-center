@@ -1,4 +1,4 @@
-import { getStats, getInbox, getProjects, getTodoGroups, getLatestBriefing, getProjectTags } from "@/lib/queries";
+import { getStats, getInbox, getHandledInbox, getProjects, getTodoGroups, getLatestBriefing, getProjectTags } from "@/lib/queries";
 import { connectionStatus, listEvents } from "@/lib/google";
 import RefreshButton from "./RefreshButton";
 import Briefing from "./Briefing";
@@ -35,6 +35,7 @@ async function getCalendar() {
 export default async function Home() {
   const stats = getStats();
   const inbox = getInbox();
+  const handled = getHandledInbox();
   const projects = getProjects();
   const todo = getTodoGroups();
   const briefing = getLatestBriefing();
@@ -109,7 +110,7 @@ export default async function Home() {
         </div>
       </div>
 
-      <Inbox tiers={inbox.tiers} byTier={inbox.byTier} risky={inbox.risky} />
+      <Inbox tiers={inbox.tiers} byTier={inbox.byTier} risky={inbox.risky} handled={handled} />
     </div>
   );
 }

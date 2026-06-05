@@ -72,6 +72,19 @@ h1.hello{font-family:"Iowan Old Style",Palatino,Georgia,serif;font-weight:600;fo
 .mbtn:hover{background:#FCFAF4;border-color:var(--acc)} .mbtn.danger:hover{border-color:#D2745A;color:#b0432a;background:#fcf1ee}
 .mwait{font-size:12px;color:var(--acc-deep);font-weight:700;text-transform:capitalize}
 .morebtn{border:none;background:none;color:var(--acc-deep);font:inherit;font-size:12px;font-weight:700;cursor:pointer;padding:2px 4px;margin:2px 0 8px}
+
+/* inbox filter bar */
+.filterbar{display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin-bottom:12px}
+.searchinp{flex:1;min-width:180px;border:1px solid var(--line);border-radius:10px;padding:7px 12px;font:inherit;font-size:13px;background:#FCFAF4}
+.searchinp:focus{outline:none;border-color:var(--acc);background:#fff}
+.fseg{display:inline-flex;border:1px solid var(--line);border-radius:9px;overflow:hidden;background:#fff}
+.fsegb{border:none;background:none;font:inherit;font-size:12px;font-weight:700;color:var(--ink2);padding:6px 11px;cursor:pointer;border-right:1px solid var(--line)}
+.fsegb:last-child{border-right:none} .fsegb.on{background:var(--acc);color:#fff}
+.fchips{display:flex;gap:6px;flex-wrap:wrap}
+.fchip{border:1px solid var(--line);background:#fff;border-radius:999px;font:inherit;font-size:11.5px;font-weight:700;color:var(--ink2);padding:5px 11px;cursor:pointer}
+.fchip:hover{background:#FCFAF4} .fchip.off{opacity:.4;text-decoration:line-through}
+.fchip.handled.on{background:var(--ink);color:#fff;border-color:var(--ink)}
+.hstate{font-size:9.5px;font-weight:800;text-transform:uppercase;letter-spacing:.04em;background:#F2ECDF;color:#8a8475;border-radius:6px;padding:1px 7px}
 .addrow{display:flex;gap:6px;padding:8px 13px 11px}
 .addinp{flex:1;border:1px solid var(--line);border-radius:9px;padding:6px 10px;font:inherit;font-size:13px;background:#FCFAF4}
 .addinp:focus{outline:none;border-color:var(--acc);background:#fff}
