@@ -274,7 +274,11 @@ export default function Inbox({ tiers, byTier, risky, handled = [] }) {
               {risky.map((e) => <div className="it" key={e.id}><b>{e.sender}</b> &lt;{e.sender_addr}&gt; — {e.subject}{e.risk_why ? " · " + e.risk_why : ""}</div>)}
             </div>
           )}
-          {visibleCount === 0 && <div style={{ color: "var(--muted)", fontSize: 13, padding: "8px 2px" }}>No emails match your filters.</div>}
+          {visibleCount === 0 && (
+            (q || acct !== "both" || Object.values(tierOff).some(Boolean))
+              ? <div className="emptyhero sm"><div className="ehtitle">No matches</div><div className="ehsub">Nothing fits your current search or filters.</div></div>
+              : <div className="emptyhero sm"><div className="ehicon">🌿</div><div className="ehtitle">Inbox zero</div><div className="ehsub">You're all caught up. Snoozed mail returns automatically when it's due.</div></div>
+          )}
           {tiers.map((t) => {
             if (tierOff[t.key]) return null;
             const list = filt(byTier[t.key]); if (!list.length) return null;

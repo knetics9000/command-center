@@ -34,7 +34,13 @@ export default function Projects({ projects }) {
     <div className="card full">
       <div className="sec-h"><span className="star">★</span> Project Tracker — where you left off</div>
       <div className="projgrid">
-        {projects.length === 0 && <div style={{ color: "var(--muted)" }}>No projects tagged in Offload yet.</div>}
+        {projects.length === 0 && (
+          <div className="emptyhero sm">
+            <div className="ehicon">★</div>
+            <div className="ehtitle">No projects yet</div>
+            <div className="ehsub">Tag any Offload task with a “…Project” tag and it shows up here automatically — or create one from a theme in your briefing above.</div>
+          </div>
+        )}
         {projects.map((p) => (
           <div className={"proj" + (open[p.tag] ? " exp" : "")} key={p.tag}>
             <div className="pn">{p.name}<span className="badge">{p.open} open</span></div>

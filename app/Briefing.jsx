@@ -38,7 +38,14 @@ export default function Briefing({ briefing, existingTags = [] }) {
         <button className="rbtn" style={{ marginTop: 0, marginLeft: 10 }} onClick={regenerate} disabled={busy}>{busy ? "Thinking…" : "↻ Regenerate"}</button>
       </div>
 
-      {!b && <div style={{ color: "var(--muted)" }}>No briefing yet. Hit Regenerate to generate today's.</div>}
+      {!b && (
+        <div className="emptyhero">
+          <div className="ehicon">✦</div>
+          <div className="ehtitle">No briefing yet</div>
+          <div className="ehsub">I'll mine your open tasks and unread mail, cluster them by theme, and hand you a short prioritized plan for the day.</div>
+          <button className="ehbtn" onClick={regenerate} disabled={busy}>{busy ? "Thinking…" : "Generate today's briefing"}</button>
+        </div>
+      )}
 
       {b && <>
         <div className="greet">{b.greeting}</div>
