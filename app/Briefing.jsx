@@ -14,6 +14,7 @@ export default function Briefing({ briefing, existingTags = [] }) {
   const [busy, setBusy] = useState(false);
   const [creating, setCreating] = useState({});
   const [openPrio, setOpenPrio] = useState(null);
+  const [deltaOpen, setDeltaOpen] = useState(false);
   const b = briefing;
 
   async function regenerate() {
@@ -52,17 +53,30 @@ export default function Briefing({ briefing, existingTags = [] }) {
 
       {b && <>
         <div className="greet">{b.greeting}</div>
-        {b.delta && (
-          <div className="delta">
-            <span className="dlbl">Since last briefing</span>
-            {b.delta.newActCount > 0 && <span className="dpill now">{b.delta.newActCount} new urgent</span>}
-            {b.delta.cleared > 0 && <span className="dpill good">{b.delta.cleared} cleared</span>}
-            {b.delta.ruleEvents > 0 && <span className="dpill cal">{b.delta.ruleEvents} event{b.delta.ruleEvents > 1 ? "s" : ""} added</span>}
-            {b.delta.newAct && b.delta.newAct.length > 0 && (
-              <span className="dnew">· {b.delta.newAct.map((e) => e.sender).join(", ")}</span>
-            )}
-          </div>
-        )}
+        {b.delta && (() => {
+          const drillable = b.delta.newAct && b.delta.newAct.length > 0;
+          return (
+            <div className="deltawrap">
+              <div className={"delta" + (drillable ? " clickable" : "")} onClick={() => drillable && setDeltaOpen((v) => !v)}>
+                <span className="dlbl">Since last briefing</span>
+                {b.delta.newActCount > 0 && <span className="dpill now">{b.delta.newActCount} new urgent</span>}
+                {b.delta.cleared > 0 && <span className="dpill good">{b.delta.cleared} cleared</span>}
+                {b.delta.ruleEvents > 0 && <span className="dpill cal">{b.delta.ruleEvents} event{b.delta.ruleEvents > 1 ? "s" : ""} added</span>}
+                {drillable && <span className="dnew">· {b.delta.newAct.map((e) => e.sender).join(", ")}</span>}
+                {drillable && <span className={"priocaret" + (deltaOpen ? " open" : "")}>▸</span>}
+              </div>
+              {deltaOpen && drillable && (
+                <>
+                  <div className="deltadrill">
+                    <div className="relbh">New since last briefing</div>
+                    {b.delta.newAct.map((e, i) => <div className="relrow" key={i}><span className="reldot" style={{ background: "#D2745A" }} /><span className="relsnd">{e.sender}</span> {e.subject}</div>)}
+                  </div>
+                  <RelatedDrawer title={b.delta.newAct.map((e) => e.subject).join(" ")} />
+                </>
+              )}
+            </div>
+          );
+        })()}
         <div className="prios">
           {(b.priorities || []).map((p, i) => (
             <div key={i}>
