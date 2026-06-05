@@ -3,14 +3,17 @@ import { useState, useEffect } from "react";
 
 const ago = (ts) => { if (!ts) return "never run"; const d = new Date(ts.replace(" ", "T") + "Z"); const s = (Date.now() - d) / 1000; if (isNaN(s)) return ""; if (s < 3600) return Math.round(s / 60) + "m ago"; if (s < 86400) return Math.round(s / 3600) + "h ago"; return Math.round(s / 86400) + "d ago"; };
 
+const evtime = (iso) => { const d = new Date(iso); return isNaN(d) ? iso : d.toLocaleString([], { weekday: "short", month: "short", day: "numeric", hour: "numeric", minute: "2-digit" }); };
+
 export default function StandingRules({ contextId }) {
   const [rules, setRules] = useState([]);
+  const [activity, setActivity] = useState([]);
   const [text, setText] = useState("");
   const [busy, setBusy] = useState(null);
 
   async function load() {
     const j = await fetch("/api/rules?contextId=" + encodeURIComponent(contextId)).then((r) => r.json()).catch(() => ({}));
-    if (j.ok) setRules(j.rules || []);
+    if (j.ok) { setRules(j.rules || []); setActivity(j.activity || []); }
   }
   useEffect(() => { load(); }, [contextId]);
 
@@ -45,6 +48,19 @@ export default function StandingRules({ contextId }) {
           onChange={(e) => setText(e.target.value)} onKeyDown={(e) => { if (e.key === "Enter") add(); }} />
         <button className="addbtn" onClick={add}>＋</button>
       </div>
+
+      {activity.length > 0 && (
+        <div className="ractivity">
+          <div className="ralbl">Recently added to your calendar by these rules</div>
+          {activity.map((a, i) => (
+            <div className="rlog" key={i}>
+              <span className="rldot" />
+              <span className="rltitle">{a.title}</span>
+              <span className="rlwhen">{evtime(a.start)}</span>
+            </div>
+          ))}
+        </div>
+      )}
     </div>
   );
 }

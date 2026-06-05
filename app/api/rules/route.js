@@ -11,7 +11,16 @@ export async function GET(req) {
   const rows = contextId
     ? db.prepare("SELECT * FROM standing_rules WHERE context_id=? ORDER BY id DESC").all(contextId)
     : db.prepare("SELECT * FROM standing_rules ORDER BY id DESC").all();
-  return NextResponse.json({ ok: true, rules: rows });
+  let activity = [];
+  if (contextId) {
+    activity = db.prepare(
+      `SELECT ce.title, ce.location, ce.start, ce.created_at, ce.rule_id
+       FROM calendar_events ce JOIN standing_rules sr ON sr.id = ce.rule_id
+       WHERE sr.context_id = ? AND ce.source='rule'
+       ORDER BY datetime(ce.created_at) DESC LIMIT 20`
+    ).all(contextId);
+  }
+  return NextResponse.json({ ok: true, rules: rows, activity });
 }
 
 export async function POST(req) {
