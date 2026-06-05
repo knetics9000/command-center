@@ -33,8 +33,8 @@ h1.hello{font-weight:700} .statinfo .n b{font-weight:800}
 h1.hello,.greet,.stat .n{letter-spacing:-.012em}
 .wrap{max-width:1120px;margin:0 auto;padding:24px 30px 80px}
 .serif{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif}
-.card{background:var(--card);border:1px solid var(--line);border-radius:18px;
-  box-shadow:0 1px 2px rgba(30,34,51,.04),0 6px 20px rgba(30,34,51,.05);padding:20px 22px}
+.card{background:var(--card);border:1px solid var(--line);border-radius:16px;
+  box-shadow:0 4px 6px -1px rgba(20,22,40,.05),0 2px 4px -1px rgba(20,22,40,.03);padding:20px 22px}
 a{color:var(--acc-deep)}
 
 /* app shell + sidebar */
@@ -383,8 +383,19 @@ h1.hello{font-family:inherit;font-weight:600;font-size:32px;margin:0}
 .relcaret.open{transform:rotate(90deg)}
 .relbody{margin:2px 0 8px;padding:9px 11px;background:var(--paper);border:1px solid var(--line);border-radius:9px;font-size:12px;line-height:1.5;color:var(--ink2);white-space:pre-wrap;max-height:240px;overflow-y:auto}
 
+/* Performance insight card (ST4) */
+.perfcard{position:relative;overflow:hidden;background:var(--acc);border-radius:16px;padding:22px 26px;color:#fff;box-shadow:0 10px 28px rgba(70,72,212,.28)}
+.perf-main{position:relative;z-index:2}
+.perf-h{font-family:var(--font-head);font-weight:700;font-size:18px}
+.perf-sub{font-size:13.5px;color:#e1e0ff;margin-top:3px;max-width:560px}
+.perf-num{display:flex;align-items:flex-end;gap:9px;margin-top:14px}
+.perf-num b{font-family:var(--font-head);font-size:40px;line-height:.9;font-weight:800}
+.perf-num span{font-size:12px;color:#cfceff;margin-bottom:5px;text-transform:uppercase;letter-spacing:.06em;font-family:var(--font-mono)}
+.perf-ic{position:absolute;top:18px;right:26px;font-size:64px!important;opacity:.18;z-index:1}
+.perf-blur{position:absolute;right:-30px;bottom:-40px;width:160px;height:160px;background:rgba(255,255,255,.14);border-radius:50%;filter:blur(28px);z-index:0}
+
 .upill{font-size:9px;font-weight:800;text-transform:uppercase;letter-spacing:.05em;border-radius:6px;padding:1px 7px}
-.upill.now{background:#fbe6df;color:#b0432a}.upill.today{background:var(--acc-soft);color:var(--acc-deep)}.upill.soon{background:#eef0e9;color:#6b7a64}
+.upill.now{background:var(--error-soft);color:var(--error)}.upill.today{background:var(--acc-soft);color:var(--acc-deep)}.upill.soon{background:#dfdfe6;color:#5d5e64}
 .clusters{margin-top:16px;border-top:1px dashed var(--line);padding-top:12px}
 .clbl{font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:var(--muted);font-weight:700;margin-bottom:8px}
 .cl{display:flex;align-items:center;gap:10px;padding:7px 0;border-top:1px solid var(--line)}

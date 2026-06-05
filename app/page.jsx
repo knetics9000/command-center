@@ -106,6 +106,21 @@ export default async function Home() {
         })()}
       </div>
 
+      {(() => {
+        const tp = stats.openTasks + stats.doneTasks ? Math.round((stats.doneTasks / (stats.openTasks + stats.doneTasks)) * 100) : 0;
+        return (
+          <div className="perfcard" style={{ marginTop: 18 }}>
+            <div className="perf-main">
+              <div className="perf-h">Performance</div>
+              <div className="perf-sub">You've completed {tp}% of your tasks — {stats.doneTasks} done, {stats.openTasks} still open.</div>
+              <div className="perf-num"><b>{stats.doneTasks}</b><span>Tasks done</span></div>
+            </div>
+            <span className="material-symbols-outlined perf-ic">trending_up</span>
+            <span className="perf-blur" />
+          </div>
+        );
+      })()}
+
       <div id="sec-briefing" style={{ marginTop: 18, scrollMarginTop: 70 }}>
         <Briefing briefing={briefing} existingTags={projectTags} />
       </div>
