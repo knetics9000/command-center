@@ -1,4 +1,4 @@
-import { getStats, getInbox, getHandledInbox, getProjects, getTodoGroups, getLatestBriefing, getProjectTags, getDueTasks, getLastSync, getBucketSummary } from "@/lib/queries";
+import { getStats, getInbox, getHandledInbox, getProjects, getTodoGroups, getLatestBriefing, getProjectTags, getDueTasks, getLastSync, getBucketSummary, getRecentContacts, getSplit, getClearedSummary } from "@/lib/queries";
 import { connectionStatus, listEvents } from "@/lib/google";
 import RefreshButton from "./RefreshButton";
 import TopUtility from "./TopUtility";
@@ -83,6 +83,10 @@ export default async function Home() {
   const clCount = cleanupCount();
   const prioList = getPriorityInbox(4);
   const prioTop = prioList.map((e) => ({ sender: e.sender, subject: e.subject }));
+  const contacts = getRecentContacts(5).map((c) => ({ name: c.sender, addr: c.sender_addr, n: c.n }));
+  const split = getSplit();
+  const cleared = getClearedSummary();
+  const suggestedTasks = (briefing && briefing.priorities || []).slice(0, 3).map((p) => p.title);
 
   return (
     <TabsProvider>
@@ -143,7 +147,7 @@ export default async function Home() {
       })()}
 
       <div style={{ marginTop: 18 }}>
-        <DashGrid briefing={briefing} inboxTop={actTop} actCount={stats.act} projectsTop={projTop} projectsCount={stats.projects} todoTop={todoTop} todoOpen={todo.openTotal} dueTop={upcoming} cleanupCount={clCount} prioTop={prioTop} prioCount={inbox.priorityCount}>
+        <DashGrid briefing={briefing} inboxTop={actTop} actCount={stats.act} projectsTop={projTop} projectsCount={stats.projects} todoTop={todoTop} todoOpen={todo.openTotal} dueTop={upcoming} cleanupCount={clCount} prioTop={prioTop} prioCount={inbox.priorityCount} contacts={contacts} split={split} cleared={cleared} suggestedTasks={suggestedTasks}>
           <Briefing briefing={briefing} existingTags={projectTags} />
         </DashGrid>
       </div>

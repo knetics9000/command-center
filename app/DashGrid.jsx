@@ -1,10 +1,11 @@
 "use client";
 import { useState } from "react";
 import { useTabs } from "./Tabs";
+import Avatar from "./Avatar";
 
 const M = ({ i }) => <span className="material-symbols-outlined">{i}</span>;
 
-export default function DashGrid({ briefing, inboxTop = [], actCount = 0, projectsTop = [], projectsCount = 0, todoTop = [], todoOpen = 0, dueTop = [], cleanupCount = 0, prioTop = [], prioCount = 0, children }) {
+export default function DashGrid({ briefing, inboxTop = [], actCount = 0, projectsTop = [], projectsCount = 0, todoTop = [], todoOpen = 0, dueTop = [], cleanupCount = 0, prioTop = [], prioCount = 0, contacts = [], split = {}, cleared = {}, suggestedTasks = [], children }) {
   const { setTab } = useTabs();
   const [briefOpen, setBriefOpen] = useState(false);
   const go = (t) => { setTab(t); window.scrollTo({ top: 0, behavior: "smooth" }); };
@@ -80,6 +81,51 @@ export default function DashGrid({ briefing, inboxTop = [], actCount = 0, projec
             {dueTop.map((d, i) => <div className="wrow split" key={i}><span className="wrl">{d.isTask ? "✓ " : ""}{d.summary}</span><span className="wrr">{d.when}</span></div>)}
           </div>
           <div className="wfoot">Open Calendar <M i="arrow_forward" /></div>
+        </div>
+
+        {/* AI-Suggested next actions */}
+        <div className="widget wclick" onClick={() => go("todo")}>
+          <div className="whead"><span className="wicon brief"><M i="lightbulb" /></span><span className="wtitle">AI-Suggested Tasks</span></div>
+          <div className="wbody">
+            {suggestedTasks.length === 0 && <div className="wmuted">No suggestions right now.</div>}
+            {suggestedTasks.map((t, i) => <div className="wrow" key={i}>○ {t}</div>)}
+          </div>
+          <div className="wfoot">Open To-Do <M i="arrow_forward" /></div>
+        </div>
+
+        {/* Recently Updated Contacts */}
+        <div className="widget wclick" onClick={() => go("inbox")}>
+          <div className="whead"><span className="wicon"><M i="group" /></span><span className="wtitle">Recent Contacts</span></div>
+          <div className="wbody wcontacts">
+            {contacts.length === 0 && <div className="wmuted">No recent contacts.</div>}
+            {contacts.map((c, i) => <div className="wcontact" key={i}><Avatar name={c.name} size={26} /><span className="wcname">{c.name}</span>{c.n > 1 && <span className="wcn">{c.n}</span>}</div>)}
+          </div>
+        </div>
+
+        {/* Work / Personal Split */}
+        <div className="widget">
+          <div className="whead"><span className="wicon teal"><M i="balance" /></span><span className="wtitle">Work / Personal</span></div>
+          <div className="wbody">
+            {(() => {
+              const ew = split.emailWork || 0, ep = split.emailPersonal || 0, te = ew + ep || 1;
+              const tw = split.taskWork || 0, tp = split.taskPersonal || 0, tt = tw + tp || 1;
+              return <>
+                <div className="splitrow"><span className="splitlbl">Email</span><div className="splitbar"><span className="sbw" style={{ width: (ew / te * 100) + "%" }} /><span className="sbp" style={{ width: (ep / te * 100) + "%" }} /></div><span className="splitnum">{ew}/{ep}</span></div>
+                <div className="splitrow"><span className="splitlbl">Tasks</span><div className="splitbar"><span className="sbw" style={{ width: (tw / tt * 100) + "%" }} /><span className="sbp" style={{ width: (tp / tt * 100) + "%" }} /></div><span className="splitnum">{tw}/{tp}</span></div>
+                <div className="splitlegend"><span><span className="sbw dot" /> Work</span><span><span className="sbp dot" /> Personal</span></div>
+              </>;
+            })()}
+          </div>
+        </div>
+
+        {/* Archived / Cleared */}
+        <div className="widget wclick" onClick={() => go("inbox")}>
+          <div className="whead"><span className="wicon"><M i="inventory_2" /></span><span className="wtitle">Cleared</span></div>
+          <div className="wbody">
+            <div className="wrow split"><span className="wrl">Emails archived/done</span><span className="wrr">{cleared.emails || 0}</span></div>
+            <div className="wrow split"><span className="wrl">Tasks completed</span><span className="wrr">{cleared.tasks || 0}</span></div>
+          </div>
+          <div className="wfoot">View handled <M i="arrow_forward" /></div>
         </div>
       </div>
 
