@@ -5,6 +5,7 @@ import { useToast } from "./Toast";
 
 const M = ({ i }) => <span className="material-symbols-outlined">{i}</span>;
 const KIND = {
+  caldup: { icon: "event_busy", label: "Duplicate event", cls: "k-caldup" },
   calendar: { icon: "event", label: "Add to calendar", cls: "k-cal" },
   project: { icon: "account_tree", label: "New project", cls: "k-project" },
   duplicate: { icon: "content_copy", label: "Duplicate", cls: "k-dup" },
@@ -15,6 +16,7 @@ const KIND = {
 const niceDate = (d, t) => { const x = new Date((d || "") + "T" + (t || "12:00") + ":00"); return isNaN(x) ? d : x.toLocaleDateString([], { weekday: "short", month: "short", day: "numeric" }) + (t ? " · " + x.toLocaleTimeString([], { hour: "numeric", minute: "2-digit" }) : ""); };
 
 function Title({ s }) {
+  if (s.kind === "caldup") return <>Delete duplicate event: <b>{s.title}</b> · {niceDate(s.date, s.time)} <span className="k-from">(keep 1)</span></>;
   if (s.kind === "calendar") return <>Add to calendar: <b>{s.title}</b> · {niceDate(s.date, s.time)}</>;
   if (s.kind === "project") return <>Create project <b>{s.name}</b> from <b>{(s.taskIds || []).length}</b> related tasks</>;
   if (s.kind === "duplicate") return <>Merge <b>{(s.dupeIds || []).length + 1}</b> duplicates of “{s.text}”</>;
