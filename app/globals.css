@@ -713,3 +713,25 @@ body.focus .secnav .snlink[data-hide]{display:none}
 .clip-inp{width:100%;border:1px solid var(--line);border-radius:10px;padding:9px 12px;font:inherit;font-size:14px;background:var(--paper)}
 .clip-row{display:flex;gap:12px;margin-top:12px}.clip-col{flex:1;min-width:0}
 .clip-acts{display:flex;gap:9px;margin-top:16px}
+
+/* ===== New Project quick-add ===== */
+.newproj{display:flex;align-items:center;gap:7px}
+.newproj-inp{border:1px solid var(--line);border-radius:9px;padding:6px 11px;font:inherit;font-size:13px;background:var(--paper);width:180px}
+.newproj-btn{border:1px solid var(--acc);background:var(--acc-soft);color:var(--acc-deep);border-radius:9px;padding:6px 12px;font:inherit;font-size:12.5px;font-weight:700;cursor:pointer;white-space:nowrap}
+.newproj-btn:hover{background:var(--acc);color:#fff}.newproj-btn:disabled{opacity:.5;cursor:default}
+
+/* ===== Calendar "This Week" panel (MOD2) ===== */
+.weekahead{margin-top:14px;border-top:1px solid var(--line);padding-top:12px}
+.wa-h{font-family:var(--font-mono);font-size:10px;font-weight:700;letter-spacing:.05em;text-transform:uppercase;color:var(--muted);margin-bottom:9px}
+.wa-day{margin-bottom:10px}
+.wa-date{font-size:11.5px;font-weight:700;color:var(--ink2);margin-bottom:3px}
+.wa-empty{font-size:11.5px;color:var(--muted);font-style:italic;padding-left:2px}
+.wa-ev{display:flex;align-items:center;gap:8px;font-size:12.5px;color:var(--ink2);padding:1px 0}
+.wa-time{min-width:54px;font-size:11px;font-weight:700;color:var(--ink2);font-variant-numeric:tabular-nums}
+.wa-bar{width:3px;align-self:stretch;min-height:14px;border-radius:2px;flex:none}
+.wa-sum{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+
+/* ===== Ask-AI-about-tag (MOD4) ===== */
+.cat-h .askai{border:none;background:none;color:var(--muted);cursor:pointer;width:24px;height:24px;border-radius:6px;display:grid;place-items:center;opacity:0;transition:opacity .12s,background .12s}
+.cat-h:hover .askai{opacity:.7}.cat-h .askai:hover{opacity:1;background:var(--acc-soft);color:var(--acc-deep)}
+.cat-h .askai .material-symbols-outlined{font-size:17px}

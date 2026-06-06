@@ -33,9 +33,28 @@ export default function Projects({ projects }) {
     try { await post({ action: "check", id }); } finally { setBusy((b) => { const n = { ...b }; delete n[id]; return n; }); }
   }
 
+  const [newName, setNewName] = useState("");
+  const [adding, setAdding] = useState(false);
+  async function createProject() {
+    const name = newName.trim(); if (!name || adding) return;
+    setAdding(true);
+    try {
+      const j = await fetch("/api/project", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ action: "create", name }) }).then((r) => r.json());
+      if (j.ok) { setNewName(""); toast(j.already ? "Project already exists" : "Project created ✓"); router.refresh(); }
+      else toast({ message: j.error || "Failed", tone: "error" });
+    } finally { setAdding(false); }
+  }
+
   return (
     <div className="card full">
-      <div className="sec-h"><span className="star"><Icon name="target" size={15} /></span> Project Tracker — where you left off</div>
+      <div className="sec-h"><span className="star"><Icon name="target" size={15} /></span> Project Tracker — where you left off
+        <span className="grow" />
+        <span className="newproj">
+          <input className="newproj-inp" placeholder="New project name…" value={newName} disabled={adding}
+            onChange={(e) => setNewName(e.target.value)} onKeyDown={(e) => { if (e.key === "Enter") createProject(); }} />
+          <button className="newproj-btn" onClick={createProject} disabled={adding || !newName.trim()}>{adding ? "Adding…" : "＋ New Project"}</button>
+        </span>
+      </div>
       <div className="projgrid">
         {projects.length === 0 && (
           <div className="emptyhero sm">

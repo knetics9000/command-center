@@ -71,6 +71,9 @@ export default async function Home() {
   const sameDay = (a, b) => new Date(a).toDateString() === b.toDateString();
   const today = events.filter((e) => sameDay(e.start, now));
   const nextEv = events.filter((e) => !e.allDay && new Date(e.start) > now)[0];
+  // next 7 days (tomorrow → +7), grouped by day for the "This Week" panel
+  const weekDays = Array.from({ length: 7 }, (_, i) => { const d = new Date(now); d.setDate(now.getDate() + 1 + i); d.setHours(0, 0, 0, 0); return d; });
+  const week = weekDays.map((d) => ({ date: d, label: d.toLocaleDateString(undefined, { weekday: "short", month: "short", day: "numeric" }), events: events.filter((e) => sameDay(e.start, d)) }));
   const monthLabel = now.toLocaleDateString(undefined, { month: "long", year: "numeric" });
 
   const connected = conn.every((c) => c.connected);
@@ -214,6 +217,23 @@ export default async function Home() {
                 </div>
               );
             })}
+          </div>
+          <div className="weekahead">
+            <div className="wa-h">This Week</div>
+            {week.map((d, i) => (
+              <div className="wa-day" key={i}>
+                <div className="wa-date">{d.label}</div>
+                {d.events.length === 0
+                  ? <div className="wa-empty">— nothing scheduled —</div>
+                  : d.events.map((e, j) => (
+                      <div className="wa-ev" key={j}>
+                        <span className="wa-time">{e.isTask ? "due" : e.allDay ? "all day" : new Date(e.start).toLocaleTimeString([], { hour: "numeric", minute: "2-digit" })}</span>
+                        <span className="wa-bar" style={{ background: e.color }} />
+                        <span className="wa-sum">{e.isTask ? "✓ " : ""}{e.summary}</span>
+                      </div>
+                    ))}
+              </div>
+            ))}
           </div>
         </div>
       </div>

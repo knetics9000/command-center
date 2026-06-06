@@ -22,7 +22,11 @@ export default function AssistantChat() {
   const endRef = useRef(null);
 
   useEffect(() => {
-    fetch("/api/assistant").then((r) => r.json()).then((j) => { if (j.ok) setMsgs(j.messages || []); }).catch(() => {}).finally(() => setLoading(false));
+    fetch("/api/assistant").then((r) => r.json()).then((j) => { if (j.ok) setMsgs(j.messages || []); }).catch(() => {}).finally(() => {
+      setLoading(false);
+      let p; try { p = sessionStorage.getItem("assistantPrefill"); if (p) sessionStorage.removeItem("assistantPrefill"); } catch {}
+      if (p) ask(p); // auto-submit the "Ask AI about this tag" prefill from To-Do
+    });
   }, []);
   useEffect(() => { endRef.current?.scrollIntoView({ block: "nearest" }); }, [msgs, busy]);
 

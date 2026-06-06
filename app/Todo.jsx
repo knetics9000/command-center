@@ -3,6 +3,7 @@ import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { tagsOf, tagClass } from "@/lib/tags";
 import EventComposer from "./EventComposer";
+import { useTabs } from "./Tabs";
 import { useToast } from "./Toast";
 
 const dotFor = (t) => tagClass(t) === "personal" ? "#7E9A86" : tagClass(t) === "work" ? "#C2851E" : tagClass(t) === "project" ? "#6b5a8e" : "#b5ae9f";
@@ -10,6 +11,12 @@ const dotFor = (t) => tagClass(t) === "personal" ? "#7E9A86" : tagClass(t) === "
 export default function Todo({ order, groups, openTotal }) {
   const router = useRouter();
   const { toast } = useToast();
+  const { setTab } = useTabs();
+  function askAboutTag(t) {
+    try { sessionStorage.setItem("assistantPrefill", `Summarize my ${t} tasks and suggest what I should tackle first.`); } catch {}
+    setTab("assistant");
+    window.scrollTo({ top: 0, behavior: "smooth" });
+  }
   const [busy, setBusy] = useState({});
   const [adding, setAdding] = useState({});   // tag -> text
   const [retag, setRetag] = useState({});      // taskId -> text
@@ -83,6 +90,8 @@ export default function Todo({ order, groups, openTotal }) {
             <div className="cat-h" role="button" onClick={() => toggleGroup(t)}>
               <span className={"catcaret" + (isOpen ? " open" : "")}>▸</span>
               <span className="dot" style={{ background: dotFor(t) }} /><span className="nm">{t}</span><span className="c">{list.length}</span>
+              <span className="grow" />
+              <button className="askai" title={"Ask AI about " + t} onClick={(e) => { e.stopPropagation(); askAboutTag(t); }}><span className="material-symbols-outlined">smart_toy</span></button>
             </div>
             {isOpen && <>
             {list.map((it) => (
