@@ -109,6 +109,26 @@ a{color:var(--acc-deep)}
 .wpn{width:18px;height:18px;border-radius:50%;background:var(--acc);color:#fff;font-size:10px;font-weight:700;display:grid;place-items:center;flex:none}
 .wbrief-pt{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 .briefexpand{margin-top:16px;animation:expandin .2s ease}
+.wfoot.light{color:#fff;border-top-color:rgba(255,255,255,.2)}
+.waccent.wclick:hover{transform:translateY(-2px);box-shadow:0 14px 30px rgba(70,72,212,.4)}
+
+/* AI cleanup view (D3) */
+.cleanupcard .star .material-symbols-outlined{font-size:18px;color:var(--acc)}
+.cl-count{font-family:var(--font-mono);font-size:12px;font-weight:700;color:var(--acc-deep);background:var(--acc-soft);border-radius:999px;padding:2px 10px}
+.cl-intro{font-size:13px;color:var(--ink2);line-height:1.55;margin:-4px 0 16px;max-width:760px}
+.clsug{display:flex;gap:13px;align-items:flex-start;padding:13px 14px;border:1px solid var(--line);border-left:3px solid var(--muted);border-radius:12px;margin-bottom:9px;background:#fff}
+.clsug-ic{width:34px;height:34px;border-radius:9px;display:grid;place-items:center;flex:none;background:var(--paper2);color:var(--ink2)}
+.clsug-ic .material-symbols-outlined{font-size:20px}
+.clsug.k-project{border-left-color:var(--acc)}.clsug.k-project .clsug-ic{background:var(--acc-soft);color:var(--acc-deep)}
+.clsug.k-dup{border-left-color:#E5484D}.clsug.k-dup .clsug-ic{background:var(--error-soft);color:var(--error)}
+.clsug.k-mistag{border-left-color:#F5A623}.clsug.k-mistag .clsug-ic{background:#fdecd0;color:#9a6b00}
+.clsug.k-uncat{border-left-color:#8B5CF6}.clsug.k-uncat .clsug-ic{background:#ece7fb;color:#6b4bd6}
+.clsug.k-incomplete{border-left-color:#14B8A6}.clsug.k-incomplete .clsug-ic{background:#d7f5ef;color:#0f9e8e}
+.clsug-body{flex:1;min-width:0}
+.clsug-kind{font-family:var(--font-mono);font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:var(--muted);margin-bottom:2px}
+.clsug-title{font-size:14px;color:var(--ink);line-height:1.4}.clsug-title b{font-weight:700}.k-from{color:var(--muted);text-decoration:line-through}
+.clsug-why{font-size:12.5px;color:var(--ink2);margin-top:4px}
+.clsug-acts{display:flex;align-items:center;gap:7px;flex:none}
 @media(max-width:680px){.tablabel{display:none}.ah-name{display:none}}
 
 /* top utility bar (ST3) */

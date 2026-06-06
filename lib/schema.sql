@@ -106,6 +106,17 @@ CREATE TABLE IF NOT EXISTS calendar_events (
   created_at       TEXT DEFAULT (datetime('now'))
 );
 
+-- AI cleanup organizer suggestions (duplicates, mistags, incomplete, project ideas)
+CREATE TABLE IF NOT EXISTS cleanup_suggestions (
+  id          INTEGER PRIMARY KEY AUTOINCREMENT,
+  kind        TEXT NOT NULL,          -- mistag | duplicate | incomplete | project | uncategorized
+  payload     TEXT NOT NULL,          -- JSON specific to the kind
+  why         TEXT,
+  status      TEXT DEFAULT 'pending', -- pending | accepted | dismissed
+  signature   TEXT,                   -- dedupe key so re-runs don't repeat
+  created_at  TEXT DEFAULT (datetime('now'))
+);
+
 -- Google OAuth tokens per account (with refresh handling)
 CREATE TABLE IF NOT EXISTS google_tokens (
   account       TEXT PRIMARY KEY,        -- 'personal' | 'work'

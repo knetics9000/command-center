@@ -27,10 +27,11 @@ export default function DashGrid({ briefing, inboxTop = [], actCount = 0, projec
           </div>
         </div>
 
-        {/* AI Cleanup organizer (wired in D3) */}
-        <div className="widget waccent">
-          <div className="whead"><span className="wicon accent"><M i="auto_fix_high" /></span><span className="wtitle">AI Cleanup</span></div>
-          <div className="wbody"><div className="wmuted">Your organizer — comes online next. It'll suggest fixes for duplicate, misplaced, and incomplete tasks, and spot new projects.</div></div>
+        {/* AI Cleanup organizer */}
+        <div className="widget waccent wclick" onClick={() => go("cleanup")}>
+          <div className="whead"><span className="wicon accent"><M i="auto_fix_high" /></span><span className="wtitle">AI Cleanup</span>{cleanupCount > 0 && <span className="wcount accent">{cleanupCount}</span>}</div>
+          <div className="wbody"><div className="wmuted">{cleanupCount > 0 ? `${cleanupCount} suggestions to organize your tasks & spot new projects.` : "Tasks look organized. Open to re-scan."}</div></div>
+          <div className="wfoot light">Open organizer <M i="arrow_forward" /></div>
         </div>
 
         {/* Needs Attention */}

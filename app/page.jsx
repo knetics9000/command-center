@@ -9,6 +9,8 @@ import Projects from "./Projects";
 import Todo from "./Todo";
 import Inbox from "./Inbox";
 import DashGrid from "./DashGrid";
+import CleanupView from "./CleanupView";
+import { cleanupCount } from "@/lib/cleanup";
 import { TabsProvider, TabBar, TabPanel } from "./Tabs";
 
 export const dynamic = "force-dynamic";
@@ -76,6 +78,7 @@ export default async function Home() {
   const todoTop = todo.order.slice(0, 4).map((t) => ({ tag: t, count: todo.groups[t].length }));
   const fmtWhen = (e) => { const d = new Date(e.start); return e.isTask ? "due " + d.toLocaleDateString([], { month: "short", day: "numeric" }) : d.toLocaleDateString([], { weekday: "short", month: "short", day: "numeric" }) + (e.allDay ? "" : " " + d.toLocaleTimeString([], { hour: "numeric" })); };
   const upcoming = events.filter((e) => new Date(e.start) >= now).slice(0, 4).map((e) => ({ summary: e.summary, isTask: e.isTask, when: fmtWhen(e) }));
+  const clCount = cleanupCount();
 
   return (
     <TabsProvider>
@@ -136,10 +139,14 @@ export default async function Home() {
       })()}
 
       <div style={{ marginTop: 18 }}>
-        <DashGrid briefing={briefing} inboxTop={actTop} actCount={stats.act} projectsTop={projTop} projectsCount={stats.projects} todoTop={todoTop} todoOpen={todo.openTotal} dueTop={upcoming}>
+        <DashGrid briefing={briefing} inboxTop={actTop} actCount={stats.act} projectsTop={projTop} projectsCount={stats.projects} todoTop={todoTop} todoOpen={todo.openTotal} dueTop={upcoming} cleanupCount={clCount}>
           <Briefing briefing={briefing} existingTags={projectTags} />
         </DashGrid>
       </div>
+          </TabPanel>
+
+          <TabPanel name="cleanup">
+            <CleanupView />
           </TabPanel>
 
           <TabPanel name="projects">
