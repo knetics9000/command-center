@@ -12,6 +12,8 @@ import DashGrid from "./DashGrid";
 import Buckets from "./Buckets";
 import CleanupView from "./CleanupView";
 import AssistantChat from "./AssistantChat";
+import Habits from "./Habits";
+import FinanceCard from "./FinanceCard";
 import { cleanupCount } from "@/lib/cleanup";
 import { getPriorityInbox } from "@/lib/priority";
 import { TabsProvider, TabBar, TabPanel } from "./Tabs";
@@ -114,6 +116,7 @@ export default async function Home() {
           </header>
 
       <div className="stats">
+        <FinanceCard />
         {(() => {
           const taskPct = stats.openTasks + stats.doneTasks ? Math.round((stats.doneTasks / (stats.openTasks + stats.doneTasks)) * 100) : 0;
           const inboxPct = stats.inbox ? Math.round((stats.act / stats.inbox) * 100) : 0;
@@ -170,6 +173,10 @@ export default async function Home() {
 
           <TabPanel name="todo">
             <Todo order={todo.order} groups={todo.groups} openTotal={todo.openTotal} />
+          </TabPanel>
+
+          <TabPanel name="habits">
+            <Habits />
           </TabPanel>
 
           <TabPanel name="calendar">

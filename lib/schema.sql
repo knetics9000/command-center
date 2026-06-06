@@ -145,3 +145,39 @@ CREATE TABLE IF NOT EXISTS google_tokens (
   scope         TEXT,
   updated_at    TEXT DEFAULT (datetime('now'))
 );
+
+-- ===== Directive build: Habits, Journal, Bills =====
+
+-- Habit definitions (Kurt edits via the app or seed). subtasks is a JSON array of {id,label}.
+CREATE TABLE IF NOT EXISTS habit_template (
+  id         TEXT PRIMARY KEY,
+  name       TEXT NOT NULL,
+  subtasks   TEXT DEFAULT '[]',
+  sort_order INTEGER DEFAULT 0
+);
+
+-- One row per day; data is JSON { "<habitId>": { "<subtaskId>": true, ... } }.
+CREATE TABLE IF NOT EXISTS habit_entries (
+  date       TEXT PRIMARY KEY,           -- YYYY-MM-DD
+  data       TEXT DEFAULT '{}',
+  updated_at TEXT DEFAULT (datetime('now'))
+);
+
+-- Daily journal: raw entry + Claude summary, keyed by date.
+CREATE TABLE IF NOT EXISTS journal (
+  date       TEXT PRIMARY KEY,           -- YYYY-MM-DD
+  raw        TEXT DEFAULT '',
+  summary    TEXT DEFAULT '',
+  updated_at TEXT DEFAULT (datetime('now'))
+);
+
+-- Bills extracted from Gmail by the bills-scan.
+CREATE TABLE IF NOT EXISTS bills (
+  id         INTEGER PRIMARY KEY AUTOINCREMENT,
+  name       TEXT,
+  due_date   TEXT,                       -- YYYY-MM-DD or ''
+  amount     TEXT,                       -- keep as text ("$84.20") to avoid float issues
+  category   TEXT,
+  source     TEXT,                       -- email id/sender
+  created_at TEXT DEFAULT (datetime('now'))
+);

@@ -11,6 +11,7 @@ const TABS = [
   { id: "inbox", label: "Inbox", icon: "inbox" },
   { id: "projects", label: "Projects", icon: "account_tree" },
   { id: "todo", label: "To-Do", icon: "checklist" },
+  { id: "habits", label: "Habits", icon: "check_circle" },
   { id: "calendar", label: "Calendar", icon: "calendar_today" },
 ];
 
