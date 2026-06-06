@@ -99,7 +99,7 @@ export default function Projects({ projects }) {
                         onBlur={() => saveEdit(it)} />
                     ) : (
                       <span onDoubleClick={() => startEdit(it)}>{it.text}{it.synced === 0 && <em className="sync"> · syncing</em>}
-                        <button className="taskedit" title="Edit task" onClick={() => startEdit(it)}><span className="material-symbols-outlined">edit</span></button>
+                        <button type="button" className="taskedit" title="Edit task" onMouseDown={(e) => { e.preventDefault(); startEdit(it); }}><span className="material-symbols-outlined">edit</span></button>
                       </span>
                     )}
                   </div>
