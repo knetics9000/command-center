@@ -131,14 +131,15 @@ export default function Todo({ order, groups, openTotal }) {
                 <div className={"task" + (busy[it.id] ? " done" : "")}>
                   <span className={"cbx" + (busy[it.id] ? " on" : "")} role="button" onClick={() => check(it.id)} title="Mark done" />
                   {editing[it.id] !== undefined ? (
-                    <input className="editinp" autoFocus value={editing[it.id]}
-                      onChange={(e) => setEditing((s) => ({ ...s, [it.id]: e.target.value }))}
-                      onKeyDown={(e) => { if (e.key === "Enter") saveEdit(it); if (e.key === "Escape") cancelEdit(it.id); }}
-                      onBlur={() => saveEdit(it)} />
-                  ) : (
-                    <span className="tl" onDoubleClick={() => startEdit(it)}>{it.text}{it.synced === 0 && <em className="sync"> · syncing</em>}
-                      <button type="button" className="taskedit" title="Edit task" onMouseDown={(e) => { e.preventDefault(); startEdit(it); }}><span className="material-symbols-outlined">edit</span></button>
+                    <span className="editwrap">
+                      <input className="editinp" autoFocus value={editing[it.id]}
+                        onChange={(e) => setEditing((s) => ({ ...s, [it.id]: e.target.value }))}
+                        onKeyDown={(e) => { if (e.key === "Enter") saveEdit(it); if (e.key === "Escape") cancelEdit(it.id); }} />
+                      <button type="button" className="editok" title="Save (Enter)" onClick={() => saveEdit(it)}><span className="material-symbols-outlined">check</span></button>
+                      <button type="button" className="editcancel" title="Cancel (Esc)" onClick={() => cancelEdit(it.id)}><span className="material-symbols-outlined">close</span></button>
                     </span>
+                  ) : (
+                    <span className="tl editable" title="Click to edit" onClick={() => startEdit(it)}>{it.text}{it.synced === 0 && <em className="sync"> · syncing</em>}</span>
                   )}
                   <span className="tagrow">
                     {tagsOf(it.tags).map((x) => (
