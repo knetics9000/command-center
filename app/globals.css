@@ -76,7 +76,9 @@ a{color:var(--acc-deep)}
 .tabbtn .material-symbols-outlined{font-size:20px;opacity:.75}
 .tabbtn:hover{color:var(--ink)}.tabbtn:hover .material-symbols-outlined{opacity:1}
 .tabbtn.on{color:var(--acc);border-bottom-color:var(--acc)}.tabbtn.on .material-symbols-outlined{opacity:1;color:var(--acc)}
-.workspace2{background:var(--bg)}
+.workspace2{background:var(--bg);overflow-x:hidden}
+/* grid/flex items must shrink below content width or they push the whole page wide */
+.widget,.stat,.wbrief-p,.wbrief-pt,.perfcard{min-width:0}
 .workspace2 .wrap{max-width:1280px;padding:22px 26px 90px}
 /* widget grid (D2) */
 .wgrid{display:grid;grid-template-columns:repeat(3,1fr);gap:16px}
