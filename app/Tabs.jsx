@@ -1,5 +1,5 @@
 "use client";
-import { createContext, useContext, useState } from "react";
+import { createContext, useContext, useState, useEffect } from "react";
 
 const TabCtx = createContext({ tab: "dashboard", setTab: () => {} });
 export const useTabs = () => useContext(TabCtx);
@@ -15,7 +15,12 @@ const TABS = [
 ];
 
 export function TabsProvider({ children }) {
-  const [tab, setTab] = useState("dashboard");
+  const [tab, setTabState] = useState("dashboard");
+  // restore the tab within a session so router.refresh()/reloads don't bounce to Dashboard
+  useEffect(() => {
+    try { const saved = sessionStorage.getItem("cc_tab"); if (saved && TABS.some((t) => t.id === saved)) setTabState(saved); } catch {}
+  }, []);
+  const setTab = (t) => { setTabState(t); try { sessionStorage.setItem("cc_tab", t); } catch {} };
   return <TabCtx.Provider value={{ tab, setTab }}>{children}</TabCtx.Provider>;
 }
 
