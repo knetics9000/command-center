@@ -1,6 +1,6 @@
 import { NextResponse } from "next/server";
 import { getDb } from "@/lib/db";
-import { addTask, completeTask, retagTask } from "@/lib/offload";
+import { addTask, completeTask, retagTask, upsertOffload } from "@/lib/offload";
 
 export const dynamic = "force-dynamic";
 
@@ -33,6 +33,14 @@ export async function POST(req) {
          VALUES (?,?,?,'task','open','offload',datetime('now'),0,datetime('now'))`
       ).run(id, text, tags);
       return NextResponse.json({ ok: true, id, syncing: true });
+    }
+
+    if (b.action === "edit") {
+      const text = (b.text || "").trim();
+      if (!text || !b.id) return NextResponse.json({ ok: false, error: "empty" }, { status: 400 });
+      if (isReal(b.id)) await upsertOffload([{ id: b.id, text }]); // push the edit back to Offload
+      db.prepare("UPDATE tasks SET text=?, updated_at=datetime('now') WHERE id=?").run(text, b.id);
+      return NextResponse.json({ ok: true });
     }
 
     if (b.action === "setdue") {

@@ -35,6 +35,14 @@ export default function Projects({ projects }) {
 
   const [newName, setNewName] = useState("");
   const [adding, setAdding] = useState(false);
+  const [editing, setEditing] = useState({});
+  const startEdit = (it) => setEditing((e) => ({ ...e, [it.id]: it.text }));
+  const cancelEdit = (id) => setEditing((e) => { const n = { ...e }; delete n[id]; return n; });
+  async function saveEdit(it) {
+    const t = (editing[it.id] || "").trim(); cancelEdit(it.id);
+    if (!t || t === it.text) return;
+    await post({ action: "edit", id: it.id, text: t });
+  }
   async function createProject() {
     const name = newName.trim(); if (!name || adding) return;
     setAdding(true);
@@ -84,7 +92,16 @@ export default function Projects({ projects }) {
                 {(p.tasks || []).map((it) => (
                   <div className="ptask" key={it.id}>
                     <span className={"cbx" + (busy[it.id] ? " on" : "")} role="button" onClick={() => check(it.id)} />
-                    <span>{it.text}{it.synced === 0 && <em className="sync"> · syncing</em>}</span>
+                    {editing[it.id] !== undefined ? (
+                      <input className="editinp" autoFocus value={editing[it.id]}
+                        onChange={(e) => setEditing((s) => ({ ...s, [it.id]: e.target.value }))}
+                        onKeyDown={(e) => { if (e.key === "Enter") saveEdit(it); if (e.key === "Escape") cancelEdit(it.id); }}
+                        onBlur={() => saveEdit(it)} />
+                    ) : (
+                      <span onDoubleClick={() => startEdit(it)}>{it.text}{it.synced === 0 && <em className="sync"> · syncing</em>}
+                        <button className="taskedit" title="Edit task" onClick={() => startEdit(it)}><span className="material-symbols-outlined">edit</span></button>
+                      </span>
+                    )}
                   </div>
                 ))}
                 {(!p.tasks || p.tasks.length === 0) && <div className="ptask muted">All clear 🌿</div>}

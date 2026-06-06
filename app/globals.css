@@ -756,3 +756,10 @@ body.focus .secnav .snlink[data-hide]{display:none}
 .catsum-h{display:flex;align-items:center;gap:7px;font-family:var(--font-head);font-weight:700;font-size:13px;color:var(--acc-deep);margin-bottom:5px}
 .catsum-h .material-symbols-outlined{font-size:17px}
 .catsum-b{font-size:13px;color:var(--ink);line-height:1.55}
+
+/* ===== Inline task edit ===== */
+.taskedit{border:none;background:none;color:var(--muted);cursor:pointer;padding:0 3px;opacity:0;transition:opacity .12s;vertical-align:-3px;margin-left:3px}
+.task:hover .taskedit,.ptask:hover .taskedit{opacity:.5}
+.taskedit:hover{opacity:1 !important;color:var(--acc)}
+.taskedit .material-symbols-outlined{font-size:15px}
+.editinp{flex:1;border:1px solid var(--acc);border-radius:7px;padding:4px 9px;font:inherit;font-size:13.5px;background:#fff;min-width:0;outline:none}

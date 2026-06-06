@@ -23,6 +23,16 @@ export default function Todo({ order, groups, openTotal }) {
   const [evtFor, setEvtFor] = useState(null);  // taskId with open composer
   const [organized, setOrganized] = useState({}); // grocery tag -> sections | null
   const [organizing, setOrganizing] = useState({});
+  const [editing, setEditing] = useState({});      // taskId -> draft text
+  const startEdit = (it) => setEditing((e) => ({ ...e, [it.id]: it.text }));
+  const cancelEdit = (id) => setEditing((e) => { const n = { ...e }; delete n[id]; return n; });
+  async function saveEdit(it) {
+    const text = (editing[it.id] || "").trim();
+    cancelEdit(it.id);
+    if (!text || text === it.text) return;
+    await fetch("/api/task", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ action: "edit", id: it.id, text }) });
+    toast("Task updated"); router.refresh();
+  }
   const isGrocery = (t) => /shopping|grocery/i.test(t);
   async function organize(t, items) {
     setOrganizing((o) => ({ ...o, [t]: true }));
@@ -120,7 +130,16 @@ export default function Todo({ order, groups, openTotal }) {
               <div key={it.id}>
                 <div className={"task" + (busy[it.id] ? " done" : "")}>
                   <span className={"cbx" + (busy[it.id] ? " on" : "")} role="button" onClick={() => check(it.id)} title="Mark done" />
-                  <span className="tl">{it.text}{it.synced === 0 && <em className="sync"> · syncing</em>}</span>
+                  {editing[it.id] !== undefined ? (
+                    <input className="editinp" autoFocus value={editing[it.id]}
+                      onChange={(e) => setEditing((s) => ({ ...s, [it.id]: e.target.value }))}
+                      onKeyDown={(e) => { if (e.key === "Enter") saveEdit(it); if (e.key === "Escape") cancelEdit(it.id); }}
+                      onBlur={() => saveEdit(it)} />
+                  ) : (
+                    <span className="tl" onDoubleClick={() => startEdit(it)}>{it.text}{it.synced === 0 && <em className="sync"> · syncing</em>}
+                      <button className="taskedit" title="Edit task" onClick={() => startEdit(it)}><span className="material-symbols-outlined">edit</span></button>
+                    </span>
+                  )}
                   <span className="tagrow">
                     {tagsOf(it.tags).map((x) => (
                       <span className={"tagchip " + tagClass(x)} key={x}>{x}
