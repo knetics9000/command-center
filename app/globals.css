@@ -65,8 +65,23 @@ a{color:var(--acc-deep)}
 .sb-uwrap{min-width:0}
 .sb-uname{font-size:12.5px;font-weight:700;color:#E7E9F0}.sb-umail{font-size:10.5px;color:var(--side-muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:150px}
 .workspace{flex:1;min-width:0;background:var(--bg);position:relative}
+/* tabbed shell (D1) */
+.appwrap{min-height:100vh;background:var(--bg)}
+.apptop{position:sticky;top:0;z-index:45;display:flex;align-items:center;gap:20px;height:60px;padding:0 26px;background:rgba(246,247,250,.92);backdrop-filter:blur(12px);border-bottom:1px solid var(--line)}
+.ah-brand{display:flex;align-items:center;gap:9px;font-family:var(--font-head);font-weight:800;font-size:16px;color:var(--ink);flex:none}
+.ah-logo{width:30px;height:30px;border-radius:8px;background:var(--acc);color:#fff!important;display:grid;place-items:center;font-size:19px!important}
+.tabstrip{position:sticky;top:60px;z-index:44;background:rgba(246,247,250,.92);backdrop-filter:blur(12px);border-bottom:1px solid var(--line);padding:0 26px;overflow-x:auto}
+.tabbar{display:flex;gap:2px;max-width:1280px;margin:0 auto}
+.tabbtn{display:flex;align-items:center;gap:8px;border:none;background:none;border-bottom:2px solid transparent;color:var(--ink2);font:inherit;font-size:13.5px;font-weight:600;padding:13px 15px;cursor:pointer;white-space:nowrap;transition:color .14s,border-color .14s}
+.tabbtn .material-symbols-outlined{font-size:20px;opacity:.75}
+.tabbtn:hover{color:var(--ink)}.tabbtn:hover .material-symbols-outlined{opacity:1}
+.tabbtn.on{color:var(--acc);border-bottom-color:var(--acc)}.tabbtn.on .material-symbols-outlined{opacity:1;color:var(--acc)}
+.workspace2{background:var(--bg)}
+.workspace2 .wrap{max-width:1280px;padding:22px 26px 90px}
+@media(max-width:680px){.tablabel{display:none}.ah-name{display:none}}
+
 /* top utility bar (ST3) */
-.tutil{position:sticky;top:0;z-index:40;display:flex;align-items:center;justify-content:space-between;gap:18px;height:60px;padding:0 30px;background:rgba(246,247,250,.85);backdrop-filter:blur(10px);border-bottom:1px solid var(--line)}
+.tutil{display:flex;align-items:center;justify-content:flex-end;gap:14px;flex:1}
 .tsearch{display:flex;align-items:center;gap:10px;flex:1;max-width:420px;background:var(--paper);border:1px solid transparent;border-radius:999px;padding:9px 14px;cursor:text;color:var(--muted);font:inherit;font-size:13.5px;transition:.14s}
 .tsearch:hover{background:#fff;border-color:var(--line)}
 .tsearch .material-symbols-outlined{font-size:20px}

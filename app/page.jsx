@@ -1,7 +1,6 @@
 import { getStats, getInbox, getHandledInbox, getProjects, getTodoGroups, getLatestBriefing, getProjectTags, getDueTasks, getLastSync } from "@/lib/queries";
 import { connectionStatus, listEvents } from "@/lib/google";
 import RefreshButton from "./RefreshButton";
-import Sidebar from "./Sidebar";
 import TopUtility from "./TopUtility";
 import Fab from "./Fab";
 import Donut from "./Donut";
@@ -9,6 +8,7 @@ import Briefing from "./Briefing";
 import Projects from "./Projects";
 import Todo from "./Todo";
 import Inbox from "./Inbox";
+import { TabsProvider, TabBar, TabPanel } from "./Tabs";
 
 export const dynamic = "force-dynamic";
 
@@ -70,11 +70,17 @@ export default async function Home() {
   const personal = conn.find((c) => c.account === "personal") || {};
 
   return (
-    <div className="appshell">
-      <Sidebar connected={connected} email={personal.email} pic={personal.picture} />
-      <main className="workspace">
-        <TopUtility actCount={stats.act} pic={personal.picture} email={personal.email} />
-        <div className="wrap">
+    <TabsProvider>
+      <div className="appwrap">
+        <header className="apptop">
+          <div className="ah-brand"><span className="ah-logo material-symbols-outlined">bolt</span><span className="ah-name">Command Center</span></div>
+          <TopUtility actCount={stats.act} pic={personal.picture} email={personal.email} />
+        </header>
+        <div className="tabstrip"><TabBar /></div>
+        <main className="workspace2">
+          <div className="wrap">
+
+          <TabPanel name="dashboard">
           <header className="topbar">
             <div>
               <h1 className="hello">Welcome back, Kurt</h1>
@@ -121,19 +127,21 @@ export default async function Home() {
         );
       })()}
 
-      <div id="sec-briefing" style={{ marginTop: 18, scrollMarginTop: 70 }}>
+      <div style={{ marginTop: 18 }}>
         <Briefing briefing={briefing} existingTags={projectTags} />
       </div>
+          </TabPanel>
 
-      <div id="sec-projects" style={{ marginTop: 18, scrollMarginTop: 70 }}>
-        <Projects projects={projects} />
-      </div>
+          <TabPanel name="projects">
+            <Projects projects={projects} />
+          </TabPanel>
 
-      <div id="sec-todo" style={{ marginTop: 18, scrollMarginTop: 70 }}>
-        <Todo order={todo.order} groups={todo.groups} openTotal={todo.openTotal} />
-      </div>
+          <TabPanel name="todo">
+            <Todo order={todo.order} groups={todo.groups} openTotal={todo.openTotal} />
+          </TabPanel>
 
-      <div id="sec-calendar" className="calsection" style={{ marginTop: 18, scrollMarginTop: 70 }}>
+          <TabPanel name="calendar">
+      <div className="calsection">
         <div className="card calmonth">
           <div className="sec-h">Calendar<span className="grow" /><span className="monthlbl">{monthLabel}</span></div>
           {!cal.connected && <div style={{ color: "var(--muted)" }}><a href="/connect">Connect calendar →</a></div>}
@@ -177,13 +185,16 @@ export default async function Home() {
           </div>
         </div>
       </div>
+          </TabPanel>
 
-      <div id="sec-inbox" style={{ scrollMarginTop: 70 }}>
-        <Inbox tiers={inbox.tiers} byTier={inbox.byTier} risky={inbox.risky} handled={handled} projects={projects.map((p) => ({ tag: p.tag, name: p.name }))} />
-      </div>
-        </div>
+          <TabPanel name="inbox">
+            <Inbox tiers={inbox.tiers} byTier={inbox.byTier} risky={inbox.risky} handled={handled} projects={projects.map((p) => ({ tag: p.tag, name: p.name }))} />
+          </TabPanel>
+
+          </div>
+        </main>
         <Fab />
-      </main>
-    </div>
+      </div>
+    </TabsProvider>
   );
 }
