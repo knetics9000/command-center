@@ -8,6 +8,7 @@ import Briefing from "./Briefing";
 import Projects from "./Projects";
 import Todo from "./Todo";
 import Inbox from "./Inbox";
+import DashGrid from "./DashGrid";
 import { TabsProvider, TabBar, TabPanel } from "./Tabs";
 
 export const dynamic = "force-dynamic";
@@ -69,6 +70,13 @@ export default async function Home() {
   const connected = conn.every((c) => c.connected);
   const personal = conn.find((c) => c.account === "personal") || {};
 
+  // dashboard widget summaries
+  const actTop = (inbox.byTier.act || []).slice(0, 3).map((e) => ({ sender: e.sender, subject: e.subject }));
+  const projTop = projects.slice(0, 3).map((p) => ({ name: p.name, open: p.open, pct: p.pct }));
+  const todoTop = todo.order.slice(0, 4).map((t) => ({ tag: t, count: todo.groups[t].length }));
+  const fmtWhen = (e) => { const d = new Date(e.start); return e.isTask ? "due " + d.toLocaleDateString([], { month: "short", day: "numeric" }) : d.toLocaleDateString([], { weekday: "short", month: "short", day: "numeric" }) + (e.allDay ? "" : " " + d.toLocaleTimeString([], { hour: "numeric" })); };
+  const upcoming = events.filter((e) => new Date(e.start) >= now).slice(0, 4).map((e) => ({ summary: e.summary, isTask: e.isTask, when: fmtWhen(e) }));
+
   return (
     <TabsProvider>
       <div className="appwrap">
@@ -128,7 +136,9 @@ export default async function Home() {
       })()}
 
       <div style={{ marginTop: 18 }}>
-        <Briefing briefing={briefing} existingTags={projectTags} />
+        <DashGrid briefing={briefing} inboxTop={actTop} actCount={stats.act} projectsTop={projTop} projectsCount={stats.projects} todoTop={todoTop} todoOpen={todo.openTotal} dueTop={upcoming}>
+          <Briefing briefing={briefing} existingTags={projectTags} />
+        </DashGrid>
       </div>
           </TabPanel>
 
