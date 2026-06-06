@@ -138,6 +138,7 @@ a{color:var(--acc-deep)}
 .wicon.gold{background:#fdecd0;color:#9a6b00}
 .wcount.gold{background:#fdecd0;color:#9a6b00}
 .mail.prio{border-left-color:#F5A623}
+.catchip{display:inline-block;margin-left:8px;font-size:9.5px;font-weight:700;border-radius:6px;padding:1px 8px;color:var(--cc);background:color-mix(in srgb,var(--cc) 14%,#fff);vertical-align:middle}
 @media(max-width:680px){.tablabel{display:none}.ah-name{display:none}}
 
 /* top utility bar (ST3) */

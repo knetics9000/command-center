@@ -3,6 +3,7 @@ import { useState, useMemo, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import EventComposer from "./EventComposer";
 import Avatar from "./Avatar";
+import { BUCKET_COLOR } from "@/lib/buckets";
 import { useToast } from "./Toast";
 import Icon from "./Icon";
 
@@ -288,7 +289,7 @@ export default function Inbox({ tiers, byTier, risky, handled = [], projects = [
         {assignedTag(e) && <span className="projchip">★ {assignedTag(e).replace(/\s*project\s*$/i, "")}</span>}
         <span className="tmm">{rel(e.received_at)}</span>
       </div>
-      <div className="subj">{e.subject}</div>
+      <div className="subj">{e.subject}{e.category && <span className="catchip" style={{ "--cc": BUCKET_COLOR[e.category] || "#777" }}>{e.category}</span>}</div>
       {!handledRow && <div className="why">{e.why}</div>}
       {!handledRow && e.action && <div className="nx"><b>Next:</b> {e.action}</div>}
       {bodies[e.id] && (
