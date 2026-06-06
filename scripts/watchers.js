@@ -1,15 +1,33 @@
-// Cron (*/15 * * * *): freshen mail/tasks, then run every enabled standing rule.
+// Cron (*/15 * * * *): freshen mail/tasks, run standing rules, then — only when
+// the data actually changed — auto-run the AI Cleanup organizer + regenerate the
+// briefing, so fresh suggestions appear without any manual scans.
 import "dotenv/config";
 import { syncAll } from "../lib/sync.js";
 import { runAllRules } from "../lib/rules.js";
+import { generateCleanup, dataFingerprint, cleanupCount } from "../lib/cleanup.js";
+import { generateBriefing } from "../lib/briefing.js";
+import { getMeta, setMeta } from "../lib/meta.js";
 
 try {
   const s = await syncAll();
   console.log("sync:", JSON.stringify(s));
+
   const res = await runAllRules();
   const total = res.reduce((n, r) => n + (r.created ? r.created.length : 0), 0);
   console.log(`rules run: ${res.length}, events created: ${total}`);
   for (const r of res) console.log(`  rule ${r.ruleId}: ${r.error ? "ERROR " + r.error : (r.created?.length || 0) + " created — " + (r.summary || "")}`);
+
+  // Auto-organize + re-brief only when something changed (saves API calls; keeps the briefing delta meaningful).
+  const fp = dataFingerprint();
+  if (fp !== getMeta("data_fp")) {
+    try { const c = await generateCleanup(); console.log(`cleanup: +${c.added} new, ${cleanupCount()} pending`); }
+    catch (e) { console.error("cleanup failed:", e.message); }
+    try { const b = await generateBriefing({ primary: false }); console.log(`briefing regenerated: ${b.priorities?.length || 0} priorities, ${b.clusters?.length || 0} clusters`); }
+    catch (e) { console.error("briefing failed:", e.message); }
+    setMeta("data_fp", fp);
+  } else {
+    console.log("no data change — skipped cleanup + briefing");
+  }
   process.exit(0);
 } catch (e) {
   console.error("watcher failed:", e.message);

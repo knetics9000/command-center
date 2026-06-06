@@ -128,6 +128,12 @@ CREATE TABLE IF NOT EXISTS cleanup_suggestions (
   created_at  TEXT DEFAULT (datetime('now'))
 );
 
+-- Small key/value store (e.g. last-seen data fingerprint for the watcher)
+CREATE TABLE IF NOT EXISTS app_meta (
+  key   TEXT PRIMARY KEY,
+  value TEXT
+);
+
 -- Google OAuth tokens per account (with refresh handling)
 CREATE TABLE IF NOT EXISTS google_tokens (
   account       TEXT PRIMARY KEY,        -- 'personal' | 'work'
