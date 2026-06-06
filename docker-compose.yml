@@ -1,0 +1,52 @@
+# Command Center on the existing Docker + Traefik VPS.
+#  - app:    the Next.js web server, routed by Traefik (auto HTTPS).
+#  - worker: the autonomy scheduler (15-min cycle + 7:30 briefing). No host cron.
+# Both share the ./data volume so the SQLite DB + tokens persist across rebuilds.
+#
+# ⚠ Two values must match YOUR Traefik setup (copy from your mirofish compose):
+#     - the external network name (here: "traefik")
+#     - the certresolver name      (here: "letsencrypt")
+#   and set CC_DOMAIN in .env (e.g. CC_DOMAIN=command.yourdomain.com).
+
+services:
+  app:
+    build: .
+    image: command-center
+    restart: unless-stopped
+    env_file: .env
+    environment:
+      - TZ=America/New_York
+    volumes:
+      - ./data:/app/data
+    command: sh -c "npm run db:init && npm run migrate && npm start"
+    networks:
+      - traefik
+      - internal
+    labels:
+      - "traefik.enable=true"
+      - "traefik.docker.network=traefik"
+      - "traefik.http.routers.commandcenter.rule=Host(`${CC_DOMAIN}`)"
+      - "traefik.http.routers.commandcenter.entrypoints=websecure"
+      - "traefik.http.routers.commandcenter.tls=true"
+      - "traefik.http.routers.commandcenter.tls.certresolver=letsencrypt"
+      - "traefik.http.services.commandcenter.loadbalancer.server.port=3000"
+
+  worker:
+    image: command-center
+    restart: unless-stopped
+    env_file: .env
+    environment:
+      - TZ=America/New_York
+    volumes:
+      - ./data:/app/data
+    command: sh -c "sleep 10 && node scripts/scheduler.js"
+    depends_on:
+      - app
+    networks:
+      - internal
+
+networks:
+  traefik:
+    external: true
+  internal:
+    driver: bridge
