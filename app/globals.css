@@ -763,3 +763,7 @@ body.focus .secnav .snlink[data-hide]{display:none}
 .taskedit:hover{opacity:1 !important;color:var(--acc)}
 .taskedit .material-symbols-outlined{font-size:15px}
 .editinp{flex:1;border:1px solid var(--acc);border-radius:7px;padding:4px 9px;font:inherit;font-size:13.5px;background:#fff;min-width:0;outline:none}
+
+/* ===== Project context save ===== */
+.pnotes-foot{display:flex;align-items:center;gap:11px;margin-top:8px}
+.pnotes-hint{font-size:11.5px;color:var(--muted)}

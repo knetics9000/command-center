@@ -6,6 +6,7 @@ export default function ProjectNotes({ contextId }) {
   const [loaded, setLoaded] = useState(false);
   const [open, setOpen] = useState(false);
   const [saved, setSaved] = useState(false);
+  const [saving, setSaving] = useState(false);
 
   useEffect(() => {
     fetch("/api/project?tag=" + encodeURIComponent(contextId)).then((r) => r.json())
@@ -13,8 +14,10 @@ export default function ProjectNotes({ contextId }) {
   }, [contextId]);
 
   async function save() {
-    await fetch("/api/project", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ action: "note", tag: contextId, notes }) });
-    setSaved(true); setTimeout(() => setSaved(false), 1500);
+    setSaving(true);
+    try { await fetch("/api/project", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ action: "note", tag: contextId, notes }) }); }
+    finally { setSaving(false); }
+    setSaved(true); setTimeout(() => setSaved(false), 2200);
   }
 
   if (!loaded) return null;
@@ -25,8 +28,14 @@ export default function ProjectNotes({ contextId }) {
         <span className="grow" />{saved && <span className="savedtag">saved</span>}<span className="pncaret">{open ? "▲" : "▾"}</span>
       </div>
       {open && (
-        <textarea className="pnotes-ta" value={notes} placeholder="Goals, key people, constraints… e.g. 'Humayun is my co-founder; Raz gives design feedback. Launch target end of June.'"
-          onChange={(e) => setNotes(e.target.value)} onBlur={save} />
+        <>
+          <textarea className="pnotes-ta" value={notes} placeholder="Goals, key people, constraints… e.g. 'Humayun is my co-founder; Raz gives design feedback. Launch target end of June.'"
+            onChange={(e) => setNotes(e.target.value)} onBlur={save} />
+          <div className="pnotes-foot">
+            <button className="clbtn" onClick={save} disabled={saving}>{saving ? "Saving…" : saved ? "Saved ✓" : "Save context"}</button>
+            <span className="pnotes-hint">Also saves automatically when you click outside the box.</span>
+          </div>
+        </>
       )}
     </div>
   );
