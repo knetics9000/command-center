@@ -129,6 +129,15 @@ a{color:var(--acc-deep)}
 .clsug-title{font-size:14px;color:var(--ink);line-height:1.4}.clsug-title b{font-weight:700}.k-from{color:var(--muted);text-decoration:line-through}
 .clsug-why{font-size:12.5px;color:var(--ink2);margin-top:4px}
 .clsug-acts{display:flex;align-items:center;gap:7px;flex:none}
+
+/* priority emails (D4) */
+.pill.priopill.on{background:#9a6b00;border-color:#9a6b00}
+.priotag{font-size:9.5px;font-weight:800;background:#fdecd0;color:#9a6b00;border-radius:6px;padding:1px 7px}
+.mbtn.star{border-color:#e7c98a;color:#9a6b00}
+.mbtn.star.on{background:#fdecd0;border-color:#f0b73c;color:#8a5e00}
+.wicon.gold{background:#fdecd0;color:#9a6b00}
+.wcount.gold{background:#fdecd0;color:#9a6b00}
+.mail.prio{border-left-color:#F5A623}
 @media(max-width:680px){.tablabel{display:none}.ah-name{display:none}}
 
 /* top utility bar (ST3) */

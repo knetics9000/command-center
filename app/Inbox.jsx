@@ -21,7 +21,7 @@ const PAST = { archive: "Archived", done: "Marked done", spam: "Marked spam", re
 const PSTOP = new Set("the a an and or of to for project app".split(" "));
 const projTerms = (name) => (name || "").toLowerCase().replace(/[^a-z0-9\s]/g, " ").split(/\s+/).filter((w) => w.length >= 3 && !PSTOP.has(w));
 
-export default function Inbox({ tiers, byTier, risky, handled = [], projects = [] }) {
+export default function Inbox({ tiers, byTier, risky, handled = [], projects = [], priorityCount = 0 }) {
   const router = useRouter();
   const { toast } = useToast();
   const [removed, setRemoved] = useState({});   // optimistic-hidden email ids
@@ -37,6 +37,18 @@ export default function Inbox({ tiers, byTier, risky, handled = [], projects = [
   const [projOpen, setProjOpen] = useState(false);
   const [grouped, setGrouped] = useState(false);            // thread/subject grouping
   const [gCollapsed, setGCollapsed] = useState({});         // group key -> collapsed
+  const [prioOnly, setPrioOnly] = useState(false);          // priority bucket filter
+
+  async function setPrio(e, decision, archive) {
+    const action = archive ? "notpriority_archive" : decision ? "priority" : "notpriority";
+    if (archive) { setExiting((m) => ({ ...m, [e.id]: true })); setTimeout(() => setRemoved((m) => ({ ...m, [e.id]: true })), 260); }
+    try {
+      const r = await fetch("/api/inbox", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ action, id: e.id, account: e.account }) });
+      if (!r.ok) throw new Error((await r.json().catch(() => ({}))).error || r.status);
+      toast(archive ? "Not priority · archived" : decision ? "Marked priority ⭐" : "Marked not-priority");
+      if (!archive) router.refresh();
+    } catch (err) { if (archive) setRemoved((m) => { const n = { ...m }; delete n[e.id]; return n; }); toast({ message: "Failed: " + err.message, tone: "error" }); }
+  }
   const [views, setViews] = useState([]);                   // saved filter views
   const [savingView, setSavingView] = useState(false);
   const [viewName, setViewName] = useState("");
@@ -108,7 +120,7 @@ export default function Inbox({ tiers, byTier, risky, handled = [], projects = [
   const acctOk = (e) => acct === "both" || e.account === acct;
   const projTermList = projSel ? projTerms(projSel) : [];
   const projOk = (e) => !projSel || assignedTag(e) === projSel || (() => { const hay = (e.subject + " " + e.sender + " " + e.snippet).toLowerCase(); return projTermList.some((t) => hay.includes(t)); })();
-  const filt = (list) => list.filter((e) => !removed[e.id] && acctOk(e) && projOk(e) && matches(e, q));
+  const filt = (list) => list.filter((e) => !removed[e.id] && acctOk(e) && projOk(e) && (!prioOnly || e.prio === 1) && matches(e, q));
 
   // contextual counts for the pills
   const allUnhandled = tiers.flatMap((t) => byTier[t.key]).filter((e) => !removed[e.id]);
@@ -265,13 +277,14 @@ export default function Inbox({ tiers, byTier, risky, handled = [], projects = [
   }
 
   const Mail = ({ e, handledRow }) => (
-    <div id={"m-" + e.id} className={"mail " + (e.triage_tier || "review") + (exiting[e.id] ? " exit" : "") + (focusedId === e.id ? " kbfocus" : "") + (selected[e.id] ? " sel" : "")} key={e.id}>
+    <div id={"m-" + e.id} className={"mail " + (e.triage_tier || "review") + (exiting[e.id] ? " exit" : "") + (focusedId === e.id ? " kbfocus" : "") + (selected[e.id] ? " sel" : "") + (!handledRow && e.prio === 1 ? " prio" : "")} key={e.id}>
       <div className="mt">
         {!handledRow && <input type="checkbox" className="selbox" checked={!!selected[e.id]} onChange={() => toggleSel(e.id)} title="Select" />}
         <Avatar name={e.sender} size={26} />
         <span className={"tag " + e.account}>{e.account === "work" ? "Work" : "Personal"}</span>
         <span className="snd">{e.sender}</span><span className="addr">{e.sender_addr}</span>
         {handledRow && <span className="hstate">{e.handled_state}</span>}
+        {!handledRow && e.prio === 1 && <span className="priotag" title={e.prioWhy}>★ Priority</span>}
         {assignedTag(e) && <span className="projchip">★ {assignedTag(e).replace(/\s*project\s*$/i, "")}</span>}
         <span className="tmm">{rel(e.received_at)}</span>
       </div>
@@ -308,6 +321,12 @@ export default function Inbox({ tiers, byTier, risky, handled = [], projects = [
           onClose={() => setEvt((x) => { const n = { ...x }; delete n[e.id]; return n; })} />
       )}
       <div className="mailacts">
+        {!handledRow && (
+          e.prio === 1
+            ? <button className="mbtn star on" title="Unmark priority" onClick={() => setPrio(e, 0)}>★ Priority</button>
+            : <button className="mbtn star" title="Mark priority" onClick={() => setPrio(e, 1)}>☆ Priority</button>
+        )}
+        {!handledRow && e.prio === 1 && <button className="mbtn" title="Not priority + archive" onClick={() => setPrio(e, 0, true)}>Not pri · archive</button>}
         {!handledRow && <button className="mbtn reply" onClick={() => genReply(e)}>{reply[e.id] ? "Close reply" : <><Icon name="reply" size={13} /> Reply</>}</button>}
         {!handledRow && <button className="mbtn" onClick={() => addEvent(e)}>{evt[e.id] ? "Close" : <><Icon name="calendar" size={13} /> Calendar</>}</button>}
         {!handledRow && (
@@ -385,6 +404,8 @@ export default function Inbox({ tiers, byTier, risky, handled = [], projects = [
       <div className="filterbar2">
         <input className="searchinp" placeholder="Search sender, subject, body…" value={q} onChange={(e) => setQ(e.target.value)} />
         <div className="pillrow">
+          <button className={"pill priopill" + (prioOnly ? " on" : "")} onClick={() => setPrioOnly((v) => !v)}>★ Priority<span className="pc">{priorityCount}</span></button>
+          <span className="pilldiv" />
           {["both", "personal", "work"].map((a) => (
             <button key={a} className={"pill acctpill" + (acct === a ? " on" : "")} onClick={() => setAcct(a)}>
               {a === "both" ? "All" : a === "work" ? "Work" : "Personal"}<span className="pc">{acctCount(a)}</span>
@@ -462,7 +483,7 @@ export default function Inbox({ tiers, byTier, risky, handled = [], projects = [
             </div>
           )}
           {visibleCount === 0 && (
-            (q || acct !== "both" || projSel || Object.values(tierOff).some(Boolean))
+            (q || acct !== "both" || projSel || prioOnly || Object.values(tierOff).some(Boolean))
               ? <div className="emptyhero sm"><div className="ehtitle">No matches</div><div className="ehsub">Nothing fits your current search or filters.</div></div>
               : <div className="emptyhero sm"><div className="ehicon">🌿</div><div className="ehtitle">Inbox zero</div><div className="ehsub">You're all caught up. Snoozed mail returns automatically when it's due.</div></div>
           )}

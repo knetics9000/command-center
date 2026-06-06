@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import { getDb } from "@/lib/db";
 import { archiveMsg, doneMsg, spamMsg, restoreMsg } from "@/lib/google";
+import { recordFeedback } from "@/lib/priority";
 
 export const dynamic = "force-dynamic";
 
@@ -25,6 +26,21 @@ export async function POST(req) {
       if (!sets.length) return NextResponse.json({ ok: false, error: "nothing to set" }, { status: 400 });
       params.push(id);
       db.prepare(`UPDATE emails SET ${sets.join(", ")}, updated_at=datetime('now') WHERE id=?`).run(...params);
+      return NextResponse.json({ ok: true });
+    }
+
+    // Priority decisions (learning loop). notpriority_archive also archives in Gmail.
+    if (action === "priority" || action === "notpriority" || action === "notpriority_archive") {
+      const db = getDb();
+      const decision = action === "priority" ? 1 : 0;
+      const e = db.prepare("SELECT sender_addr, account FROM emails WHERE id=?").get(id);
+      db.prepare("UPDATE emails SET priority=?, updated_at=datetime('now') WHERE id=?").run(decision, id);
+      if (e) recordFeedback(e.sender_addr, decision);
+      if (action === "notpriority_archive") {
+        const acc = account || (e && e.account);
+        await archiveMsg(acc, id);
+        db.prepare("UPDATE emails SET handled=1, handled_state='archived', snooze_until=NULL WHERE id=?").run(id);
+      }
       return NextResponse.json({ ok: true });
     }
 

@@ -11,6 +11,7 @@ import Inbox from "./Inbox";
 import DashGrid from "./DashGrid";
 import CleanupView from "./CleanupView";
 import { cleanupCount } from "@/lib/cleanup";
+import { getPriorityInbox } from "@/lib/priority";
 import { TabsProvider, TabBar, TabPanel } from "./Tabs";
 
 export const dynamic = "force-dynamic";
@@ -79,6 +80,8 @@ export default async function Home() {
   const fmtWhen = (e) => { const d = new Date(e.start); return e.isTask ? "due " + d.toLocaleDateString([], { month: "short", day: "numeric" }) : d.toLocaleDateString([], { weekday: "short", month: "short", day: "numeric" }) + (e.allDay ? "" : " " + d.toLocaleTimeString([], { hour: "numeric" })); };
   const upcoming = events.filter((e) => new Date(e.start) >= now).slice(0, 4).map((e) => ({ summary: e.summary, isTask: e.isTask, when: fmtWhen(e) }));
   const clCount = cleanupCount();
+  const prioList = getPriorityInbox(4);
+  const prioTop = prioList.map((e) => ({ sender: e.sender, subject: e.subject }));
 
   return (
     <TabsProvider>
@@ -139,7 +142,7 @@ export default async function Home() {
       })()}
 
       <div style={{ marginTop: 18 }}>
-        <DashGrid briefing={briefing} inboxTop={actTop} actCount={stats.act} projectsTop={projTop} projectsCount={stats.projects} todoTop={todoTop} todoOpen={todo.openTotal} dueTop={upcoming} cleanupCount={clCount}>
+        <DashGrid briefing={briefing} inboxTop={actTop} actCount={stats.act} projectsTop={projTop} projectsCount={stats.projects} todoTop={todoTop} todoOpen={todo.openTotal} dueTop={upcoming} cleanupCount={clCount} prioTop={prioTop} prioCount={inbox.priorityCount}>
           <Briefing briefing={briefing} existingTags={projectTags} />
         </DashGrid>
       </div>
@@ -205,7 +208,7 @@ export default async function Home() {
           </TabPanel>
 
           <TabPanel name="inbox">
-            <Inbox tiers={inbox.tiers} byTier={inbox.byTier} risky={inbox.risky} handled={handled} projects={projects.map((p) => ({ tag: p.tag, name: p.name }))} />
+            <Inbox tiers={inbox.tiers} byTier={inbox.byTier} risky={inbox.risky} handled={handled} projects={projects.map((p) => ({ tag: p.tag, name: p.name }))} priorityCount={inbox.priorityCount} />
           </TabPanel>
 
           </div>

@@ -38,7 +38,18 @@ CREATE TABLE IF NOT EXISTS emails (
   snooze_until TEXT,                     -- ISO time to return a snoozed email to the board
   project_tag  TEXT,                     -- manually assigned project (survives sync)
   etags        TEXT,                     -- custom "; "-joined tags on the email
+  priority     INTEGER,                  -- explicit: 1 priority, 0 not, NULL unset (AI suggests)
+  category     TEXT,                     -- AI life-category bucket
   updated_at   TEXT DEFAULT (datetime('now'))
+);
+
+-- Learns Kurt's priority preferences by sender/domain (the feedback loop)
+CREATE TABLE IF NOT EXISTS priority_feedback (
+  key         TEXT PRIMARY KEY,          -- lowercased sender addr, or "@domain"
+  kind        TEXT,                      -- sender | domain
+  decision    INTEGER,                   -- 1 priority, 0 not
+  count       INTEGER DEFAULT 1,
+  updated_at  TEXT DEFAULT (datetime('now'))
 );
 
 -- Detected themes (e.g. "i9 Sports", "Condo security system")

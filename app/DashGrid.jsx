@@ -4,7 +4,7 @@ import { useTabs } from "./Tabs";
 
 const M = ({ i }) => <span className="material-symbols-outlined">{i}</span>;
 
-export default function DashGrid({ briefing, inboxTop = [], actCount = 0, projectsTop = [], projectsCount = 0, todoTop = [], todoOpen = 0, dueTop = [], cleanupCount = 0, children }) {
+export default function DashGrid({ briefing, inboxTop = [], actCount = 0, projectsTop = [], projectsCount = 0, todoTop = [], todoOpen = 0, dueTop = [], cleanupCount = 0, prioTop = [], prioCount = 0, children }) {
   const { setTab } = useTabs();
   const [briefOpen, setBriefOpen] = useState(false);
   const go = (t) => { setTab(t); window.scrollTo({ top: 0, behavior: "smooth" }); };
@@ -32,6 +32,16 @@ export default function DashGrid({ briefing, inboxTop = [], actCount = 0, projec
           <div className="whead"><span className="wicon accent"><M i="auto_fix_high" /></span><span className="wtitle">AI Cleanup</span>{cleanupCount > 0 && <span className="wcount accent">{cleanupCount}</span>}</div>
           <div className="wbody"><div className="wmuted">{cleanupCount > 0 ? `${cleanupCount} suggestions to organize your tasks & spot new projects.` : "Tasks look organized. Open to re-scan."}</div></div>
           <div className="wfoot light">Open organizer <M i="arrow_forward" /></div>
+        </div>
+
+        {/* Priority Emails */}
+        <div className="widget wclick" onClick={() => go("inbox")}>
+          <div className="whead"><span className="wicon gold"><M i="star" /></span><span className="wtitle">Priority Emails</span><span className="wcount gold">{prioCount}</span></div>
+          <div className="wbody">
+            {prioTop.length === 0 && <div className="wmuted">No priority emails right now.</div>}
+            {prioTop.map((e, i) => <div className="wrow" key={i}><b>{e.sender}</b> · {e.subject}</div>)}
+          </div>
+          <div className="wfoot">Open Priority <M i="arrow_forward" /></div>
         </div>
 
         {/* Needs Attention */}
