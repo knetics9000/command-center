@@ -1,4 +1,4 @@
-import { getStats, getInbox, getHandledInbox, getProjects, getTodoGroups, getLatestBriefing, getProjectTags, getDueTasks, getLastSync } from "@/lib/queries";
+import { getStats, getInbox, getHandledInbox, getProjects, getTodoGroups, getLatestBriefing, getProjectTags, getDueTasks, getLastSync, getBucketSummary } from "@/lib/queries";
 import { connectionStatus, listEvents } from "@/lib/google";
 import RefreshButton from "./RefreshButton";
 import TopUtility from "./TopUtility";
@@ -9,6 +9,7 @@ import Projects from "./Projects";
 import Todo from "./Todo";
 import Inbox from "./Inbox";
 import DashGrid from "./DashGrid";
+import Buckets from "./Buckets";
 import CleanupView from "./CleanupView";
 import { cleanupCount } from "@/lib/cleanup";
 import { getPriorityInbox } from "@/lib/priority";
@@ -153,6 +154,7 @@ export default async function Home() {
           </TabPanel>
 
           <TabPanel name="projects">
+            <Buckets buckets={getBucketSummary()} />
             <Projects projects={projects} />
           </TabPanel>
 

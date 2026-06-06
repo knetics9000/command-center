@@ -139,6 +139,18 @@ a{color:var(--acc-deep)}
 .wcount.gold{background:#fdecd0;color:#9a6b00}
 .mail.prio{border-left-color:#F5A623}
 .catchip{display:inline-block;margin-left:8px;font-size:9.5px;font-weight:700;border-radius:6px;padding:1px 8px;color:var(--cc);background:color-mix(in srgb,var(--cc) 14%,#fff);vertical-align:middle}
+
+/* life-category buckets (D6) */
+.bktgrid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}
+@media(max-width:900px){.bktgrid{grid-template-columns:repeat(2,1fr)}}
+@media(max-width:600px){.bktgrid{grid-template-columns:1fr}}
+.bkt{display:flex;align-items:center;gap:11px;border:1px solid var(--line);border-left:3px solid var(--c);border-radius:12px;padding:12px 14px;cursor:pointer;background:#fff;transition:background .14s,box-shadow .14s}
+.bkt:hover,.bkt.on{background:var(--paper);box-shadow:0 4px 12px rgba(20,22,40,.06)}
+.bkt-dot{width:9px;height:9px;border-radius:50%;background:var(--c);flex:none}
+.bkt-info{flex:1;min-width:0}
+.bkt-name{font-family:var(--font-head);font-weight:700;font-size:13.5px;color:var(--ink)}
+.bkt-meta{font-size:11.5px;color:var(--muted);font-variant-numeric:tabular-nums;margin-top:1px}
+.bktwrap .reldrawer{margin-top:8px}
 @media(max-width:680px){.tablabel{display:none}.ah-name{display:none}}
 
 /* top utility bar (ST3) */
