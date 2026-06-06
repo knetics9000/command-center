@@ -4,6 +4,7 @@ import { useRouter } from "next/navigation";
 import EventComposer from "./EventComposer";
 import Avatar from "./Avatar";
 import { BUCKET_COLOR } from "@/lib/buckets";
+import ClipModal from "./ClipModal";
 import { useToast } from "./Toast";
 import Icon from "./Icon";
 
@@ -39,6 +40,7 @@ export default function Inbox({ tiers, byTier, risky, handled = [], projects = [
   const [grouped, setGrouped] = useState(false);            // thread/subject grouping
   const [gCollapsed, setGCollapsed] = useState({});         // group key -> collapsed
   const [prioOnly, setPrioOnly] = useState(false);          // priority bucket filter
+  const [clipFor, setClipFor] = useState(null);             // email being clipped to a task
 
   async function setPrio(e, decision, archive) {
     const action = archive ? "notpriority_archive" : decision ? "priority" : "notpriority";
@@ -328,6 +330,7 @@ export default function Inbox({ tiers, byTier, risky, handled = [], projects = [
             : <button className="mbtn star" title="Mark priority" onClick={() => setPrio(e, 1)}>☆ Priority</button>
         )}
         {!handledRow && e.prio === 1 && <button className="mbtn" title="Not priority + archive" onClick={() => setPrio(e, 0, true)}>Not pri · archive</button>}
+        {!handledRow && <button className="mbtn clip" title="Clip to a task" onClick={() => setClipFor(e)}><span className="material-symbols-outlined msbtn">content_cut</span> Clip</button>}
         {!handledRow && <button className="mbtn reply" onClick={() => genReply(e)}>{reply[e.id] ? "Close reply" : <><Icon name="reply" size={13} /> Reply</>}</button>}
         {!handledRow && <button className="mbtn" onClick={() => addEvent(e)}>{evt[e.id] ? "Close" : <><Icon name="calendar" size={13} /> Calendar</>}</button>}
         {!handledRow && (
@@ -522,6 +525,7 @@ export default function Inbox({ tiers, byTier, risky, handled = [], projects = [
           )}
         </>
       )}
+      {clipFor && <ClipModal email={clipFor} tags={(projects || []).map((p) => p.tag).filter(Boolean)} onClose={() => setClipFor(null)} />}
     </div>
   );
 }

@@ -748,3 +748,31 @@ body.focus .secnav .snlink[data-hide]{display:none}
 .fin-edit{display:flex;flex-direction:column;gap:6px}
 .fin-inp{border:1px solid var(--line);border-radius:8px;padding:6px 9px;font:inherit;font-size:12.5px;background:#fff}
 .fin-actrow{display:flex;gap:7px;margin-top:2px}
+
+/* ===== Bills Due (Phase 5) ===== */
+.bill{display:flex;align-items:center;gap:8px;font-size:12.5px;color:var(--ink2);padding:3px 0}
+.bill-dot{width:8px;height:8px;border-radius:50%;flex:none;background:var(--muted)}
+.bill-overdue .bill-dot,.bill-soon .bill-dot{background:#E5484D}
+.bill-week .bill-dot{background:#F5A623}
+.bill-name{font-weight:600;color:var(--ink);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.bill-cat{font-size:9.5px;font-weight:700;background:var(--paper2);color:#6b7180;border-radius:5px;padding:1px 6px;text-transform:capitalize}
+.bill-amt{font-weight:700;color:var(--ink);font-variant-numeric:tabular-nums}
+.bill-due{font-size:10.5px;font-weight:800;border-radius:6px;padding:1px 7px;background:var(--paper2);color:#6b7180}
+.bill-overdue .bill-due,.bill-soon .bill-due{background:var(--error-soft);color:var(--error)}
+.bill-week .bill-due{background:#fdf0d9;color:#9a6b00}
+
+/* ===== Spam cleanup kind ===== */
+.clsug.k-spam{border-left-color:#E5484D}.clsug.k-spam .clsug-ic{background:var(--error-soft);color:var(--error)}
+
+/* ===== Email-to-Task clip (Phase 5) ===== */
+.msbtn{font-size:14px;vertical-align:-3px;margin-right:2px}
+.mbtn.clip{border-color:#cbd2e0;color:var(--ink2)}.mbtn.clip:hover{border-color:var(--acc);color:var(--acc-deep)}
+.clipov{position:fixed;inset:0;z-index:120;background:rgba(20,22,40,.32);backdrop-filter:blur(2px);display:grid;place-items:center;animation:fadein .14s ease}
+.clipmodal{background:#fff;border:1px solid var(--line);border-radius:16px;box-shadow:0 24px 60px rgba(30,34,51,.28);padding:18px 20px;width:min(440px,92vw);animation:cmdkin .15s ease-out}
+.clip-h{display:flex;align-items:center;gap:8px;font-family:var(--font-head);font-weight:700;font-size:16px;color:var(--ink)}
+.clip-h .material-symbols-outlined{color:var(--acc);font-size:20px}
+.clip-ctx{font-size:12px;color:var(--muted);margin:4px 0 14px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.clip-l{font-family:var(--font-mono);font-size:10px;font-weight:700;letter-spacing:.04em;text-transform:uppercase;color:var(--muted);display:block;margin-bottom:4px}
+.clip-inp{width:100%;border:1px solid var(--line);border-radius:10px;padding:9px 12px;font:inherit;font-size:14px;background:var(--paper)}
+.clip-row{display:flex;gap:12px;margin-top:12px}.clip-col{flex:1;min-width:0}
+.clip-acts{display:flex;gap:9px;margin-top:16px}

@@ -3,6 +3,7 @@ import { useState } from "react";
 import { useTabs } from "./Tabs";
 import Avatar from "./Avatar";
 import GoalsCard from "./GoalsCard";
+import BillsCard from "./BillsCard";
 
 const M = ({ i }) => <span className="material-symbols-outlined">{i}</span>;
 
@@ -128,6 +129,9 @@ export default function DashGrid({ briefing, inboxTop = [], actCount = 0, projec
           </div>
           <div className="wfoot">View handled <M i="arrow_forward" /></div>
         </div>
+
+        {/* Bills Due */}
+        <BillsCard />
 
         {/* Goals */}
         <GoalsCard />
