@@ -1,14 +1,29 @@
-# Command Center on the existing Docker + Traefik VPS (mirrors the mirofish setup).
-#  - app:    Next.js web server, routed by Traefik (auto HTTPS via letsencrypt).
+# Command Center on the VPS (self-contained — does NOT touch mirofish/Traefik).
+#  - caddy:  HTTPS reverse proxy. Auto-issues a Let's Encrypt cert for CC_DOMAIN
+#            and proxies to the app. Owns ports 80/443 (free on this box).
+#  - app:    Next.js web server (internal :3000, only reachable via caddy).
 #  - worker: the autonomy scheduler (15-min cycle + 7:30 briefing). No host cron.
-# Both share a named volume so the SQLite DB + Google tokens persist across rebuilds.
+# Persistent data lives in named volumes (DB + Google tokens + TLS certs).
 #
-# Configure via .env in this folder (compose reads it automatically):
-#   CC_DOMAIN=command.yourdomain.com        # the subdomain Traefik will serve
-#   TRAEFIK_NETWORK=<your Traefik network>   # from: docker network ls  (matches mirofish)
-#   + all the app secrets (ANTHROPIC_API_KEY, GOOGLE_*, OFFLOAD_*, etc.)
+# Configure via .env in this folder (compose + caddy read it):
+#   CC_DOMAIN=command.yourdomain.com   + all app secrets (ANTHROPIC_API_KEY, GOOGLE_*, OFFLOAD_*)
+# DNS: point CC_DOMAIN's A record at this server BEFORE `docker compose up`.
 
 services:
+  caddy:
+    image: caddy:2
+    restart: unless-stopped
+    ports:
+      - "80:80"
+      - "443:443"
+    env_file: .env
+    volumes:
+      - ./Caddyfile:/etc/caddy/Caddyfile:ro
+      - caddy_data:/data
+      - caddy_config:/config
+    depends_on:
+      - app
+
   app:
     build: .
     image: command-center
@@ -19,16 +34,6 @@ services:
     volumes:
       - command_data:/app/data
     command: sh -c "npm run db:init && npm run migrate && npm start"
-    networks:
-      - traefik
-      - default
-    labels:
-      - "traefik.enable=true"
-      - "traefik.docker.network=${TRAEFIK_NETWORK}"
-      - "traefik.http.routers.commandcenter.rule=Host(`${CC_DOMAIN}`)"
-      - "traefik.http.routers.commandcenter.entrypoints=websecure"
-      - "traefik.http.routers.commandcenter.tls.certresolver=letsencrypt"
-      - "traefik.http.services.commandcenter.loadbalancer.server.port=3000"
 
   worker:
     image: command-center
@@ -42,10 +47,7 @@ services:
     depends_on:
       - app
 
-networks:
-  traefik:
-    external: true
-    name: ${TRAEFIK_NETWORK}
-
 volumes:
   command_data:
+  caddy_data:
+  caddy_config:

@@ -1,0 +1,13 @@
+# Caddy auto-HTTPS for Command Center. CC_DOMAIN comes from .env.
+# After the site is confirmed working, lock it with a password by uncommenting
+# basic_auth below (generate the hash with:
+#   docker run --rm caddy:2 caddy hash-password --plaintext 'YOUR_PASSWORD'
+# then paste it after the username).
+
+{$CC_DOMAIN} {
+	reverse_proxy app:3000
+
+	# basic_auth {
+	# 	kurt PASTE_BCRYPT_HASH_HERE
+	# }
+}
