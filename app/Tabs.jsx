@@ -6,6 +6,7 @@ export const useTabs = () => useContext(TabCtx);
 
 const TABS = [
   { id: "dashboard", label: "Dashboard", icon: "dashboard" },
+  { id: "assistant", label: "Assistant", icon: "smart_toy" },
   { id: "cleanup", label: "Cleanup", icon: "auto_fix_high" },
   { id: "inbox", label: "Inbox", icon: "inbox" },
   { id: "projects", label: "Projects", icon: "account_tree" },

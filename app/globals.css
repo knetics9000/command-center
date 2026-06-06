@@ -143,6 +143,24 @@ a{color:var(--acc-deep)}
 .clsug-why{font-size:12.5px;color:var(--ink2);margin-top:4px}
 .clsug-acts{display:flex;align-items:center;gap:7px;flex:none}
 
+/* command center assistant */
+.asscard{display:flex;flex-direction:column;min-height:560px}
+.asslog{flex:1;overflow-y:auto;display:flex;flex-direction:column;gap:11px;padding:6px 2px 12px;max-height:62vh}
+.assintro{padding:30px 8px;text-align:center}
+.assintro-h{font-family:var(--font-head);font-weight:700;font-size:18px;color:var(--ink)}
+.assintro-p{font-size:13.5px;color:var(--ink2);margin-top:6px;max-width:480px;margin-left:auto;margin-right:auto}
+.asschips{display:flex;flex-wrap:wrap;gap:8px;justify-content:center;margin-top:18px}
+.asschip{border:1px solid var(--line);background:#fff;border-radius:999px;font:inherit;font-size:12.5px;font-weight:600;color:var(--ink2);padding:7px 13px;cursor:pointer;transition:.14s}
+.asschip:hover{background:var(--acc-soft);border-color:var(--acc);color:var(--acc-deep)}
+.amsg{font-size:14px;line-height:1.55;padding:11px 14px;border-radius:14px;max-width:80%;white-space:pre-wrap}
+.amsg.user{align-self:flex-end;background:var(--acc);color:#fff;border-bottom-right-radius:5px}
+.amsg.assistant{align-self:flex-start;background:var(--paper2);color:var(--ink);border-bottom-left-radius:5px}
+.amsg.typing{color:var(--muted);letter-spacing:2px}
+.assinput{display:flex;gap:9px;padding-top:12px;border-top:1px solid var(--line)}
+.assinput .addinp{flex:1;font-size:14px;padding:11px 14px;border-radius:11px}
+.assend{width:46px;border:none;border-radius:11px;background:var(--acc);color:#fff;cursor:pointer;display:grid;place-items:center}
+.assend:hover{background:#5557e0}.assend:disabled{opacity:.6}.assend .material-symbols-outlined{font-size:20px}
+
 /* priority emails (D4) */
 .pill.priopill.on{background:#9a6b00;border-color:#9a6b00}
 .priotag{font-size:9.5px;font-weight:800;background:#fdecd0;color:#9a6b00;border-radius:6px;padding:1px 7px}

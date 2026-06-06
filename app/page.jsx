@@ -11,6 +11,7 @@ import Inbox from "./Inbox";
 import DashGrid from "./DashGrid";
 import Buckets from "./Buckets";
 import CleanupView from "./CleanupView";
+import AssistantChat from "./AssistantChat";
 import { cleanupCount } from "@/lib/cleanup";
 import { getPriorityInbox } from "@/lib/priority";
 import { TabsProvider, TabBar, TabPanel } from "./Tabs";
@@ -152,6 +153,10 @@ export default async function Home() {
           <Briefing briefing={briefing} existingTags={projectTags} />
         </DashGrid>
       </div>
+          </TabPanel>
+
+          <TabPanel name="assistant">
+            <AssistantChat />
           </TabPanel>
 
           <TabPanel name="cleanup">
