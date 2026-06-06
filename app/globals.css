@@ -343,7 +343,7 @@ h1.hello{font-family:inherit;font-weight:600;font-size:32px;margin:0}
 .projtasks{animation:expandin .22s ease}
 @keyframes expandin{from{opacity:0;transform:translateY(-6px)}to{opacity:1;transform:none}}
 .tl .sync{color:var(--acc-deep);font-style:normal;font-size:11px;font-weight:700;opacity:.8}
-.mailacts{display:flex;gap:7px;margin-top:9px}
+.mailacts{display:flex;flex-wrap:wrap;gap:7px;margin-top:9px}
 .mbtn{border:1px solid var(--line);background:#fff;border-radius:9px;padding:4px 11px;font:inherit;font-size:12px;font-weight:700;color:var(--ink2);cursor:pointer}
 .mbtn:hover{background:var(--paper);border-color:var(--acc)} .mbtn.danger:hover{border-color:#D2745A;color:#b0432a;background:#fdeeea}
 .mwait{font-size:12px;color:var(--acc-deep);font-weight:700;text-transform:capitalize}
