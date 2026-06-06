@@ -26,7 +26,7 @@ function weekRange() {
 function monthGrid() {
   const now = new Date();
   const first = new Date(now.getFullYear(), now.getMonth(), 1);
-  const startWd = (first.getDay() + 6) % 7;          // Monday = 0
+  const startWd = first.getDay();                    // Sunday = 0
   const gridStart = new Date(first); gridStart.setDate(1 - startWd); gridStart.setHours(0, 0, 0, 0);
   const days = Array.from({ length: 42 }, (_, i) => { const d = new Date(gridStart); d.setDate(gridStart.getDate() + i); return d; });
   const gridEnd = new Date(gridStart); gridEnd.setDate(gridStart.getDate() + 42);
@@ -65,7 +65,8 @@ export default async function Home() {
   const dueEvents = getDueTasks(grid.gridStart.toISOString().slice(0, 10), grid.gridEnd.toISOString().slice(0, 10))
     .map((t) => ({ summary: t.text, location: "", allDay: true, isTask: true, color: "#8B5CF6", start: t.due + "T12:00:00" }));
   const events = [...cal.events, ...dueEvents].sort((a, b) => new Date(a.start) - new Date(b.start));
-  const dn = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"];
+  const dn = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
+  const gcalDay = (d) => `https://calendar.google.com/calendar/r/day/${d.getFullYear()}/${d.getMonth() + 1}/${d.getDate()}`;
   const sameDay = (a, b) => new Date(a).toDateString() === b.toDateString();
   const today = events.filter((e) => sameDay(e.start, now));
   const nextEv = events.filter((e) => !e.allDay && new Date(e.start) > now)[0];
@@ -178,7 +179,7 @@ export default async function Home() {
               const isT = sameDay(now, d);
               const dim = d.getMonth() !== grid.month;
               return (
-                <div className={"mcell" + (isT ? " today" : "") + (dim ? " dim" : "")} key={i}>
+                <a className={"mcell" + (isT ? " today" : "") + (dim ? " dim" : "")} key={i} href={gcalDay(d)} target="_blank" rel="noreferrer" title="Open this day in Google Calendar">
                   <div className="mdate">{d.getDate()}</div>
                   {dayEvs.slice(0, 3).map((e, j) => (
                     <div className={"mchip" + (e.isTask ? " task" : "")} key={j} style={{ "--c": e.color }} title={e.summary}>
@@ -186,7 +187,7 @@ export default async function Home() {
                     </div>
                   ))}
                   {dayEvs.length > 3 && <div className="mmore">+{dayEvs.length - 3}</div>}
-                </div>
+                </a>
               );
             })}
           </div>

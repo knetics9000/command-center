@@ -226,9 +226,11 @@ h1.hello{font-family:inherit;font-weight:600;font-size:32px;margin:0}
 .mgrid{display:grid;grid-template-columns:repeat(7,1fr);gap:6px}
 .mgrid-h{margin-bottom:6px}
 .mh{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:var(--muted);text-align:center;padding:2px 0}
-.mcell{min-height:88px;border:1px solid var(--line);border-radius:10px;padding:5px 5px 4px;background:var(--card);display:flex;flex-direction:column;gap:3px;overflow:hidden}
+.mcell{min-height:88px;border:1px solid var(--line);border-radius:10px;padding:5px 5px 4px;background:var(--card);display:flex;flex-direction:column;gap:3px;overflow:hidden;text-decoration:none;color:inherit;cursor:pointer;transition:border-color .12s,box-shadow .12s}
+.mcell:hover{border-color:var(--acc);box-shadow:0 4px 12px rgba(70,72,212,.12)}
 .mcell.dim{background:var(--paper);opacity:.62}
 .mcell.today{border-color:var(--acc);box-shadow:inset 0 0 0 1px var(--acc)}
+.mcell.today:hover{box-shadow:inset 0 0 0 1px var(--acc),0 4px 12px rgba(70,72,212,.14)}
 .mdate{font-size:11.5px;font-weight:700;color:var(--ink2);text-align:right;font-variant-numeric:tabular-nums}
 .mcell.today .mdate{color:var(--acc-deep)}
 .mchip{font-size:10px;font-weight:600;line-height:1.25;color:#fff;background:var(--c,#6366F1);border-radius:5px;padding:2px 5px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
