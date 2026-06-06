@@ -5,14 +5,17 @@ import { useToast } from "./Toast";
 
 const M = ({ i }) => <span className="material-symbols-outlined">{i}</span>;
 const KIND = {
+  calendar: { icon: "event", label: "Add to calendar", cls: "k-cal" },
   project: { icon: "account_tree", label: "New project", cls: "k-project" },
   duplicate: { icon: "content_copy", label: "Duplicate", cls: "k-dup" },
   mistag: { icon: "sell", label: "Wrong tag", cls: "k-mistag" },
   uncategorized: { icon: "label_off", label: "Uncategorized", cls: "k-uncat" },
   incomplete: { icon: "edit_note", label: "Needs detail", cls: "k-incomplete" },
 };
+const niceDate = (d, t) => { const x = new Date((d || "") + "T" + (t || "12:00") + ":00"); return isNaN(x) ? d : x.toLocaleDateString([], { weekday: "short", month: "short", day: "numeric" }) + (t ? " · " + x.toLocaleTimeString([], { hour: "numeric", minute: "2-digit" }) : ""); };
 
 function Title({ s }) {
+  if (s.kind === "calendar") return <>Add to calendar: <b>{s.title}</b> · {niceDate(s.date, s.time)}</>;
   if (s.kind === "project") return <>Create project <b>{s.name}</b> from <b>{(s.taskIds || []).length}</b> related tasks</>;
   if (s.kind === "duplicate") return <>Merge <b>{(s.dupeIds || []).length + 1}</b> duplicates of “{s.text}”</>;
   if (s.kind === "mistag") return <>Re-tag “{s.text}” · <span className="k-from">{s.current}</span> → <b>{s.suggested}</b></>;
@@ -54,7 +57,7 @@ export default function CleanupView() {
         {list && <span className="cl-count">{list.length} suggestions</span>}
         <button className="rbtn" style={{ marginTop: 0, marginLeft: 10 }} onClick={run} disabled={running}>{running ? "Scanning…" : "↻ Re-scan tasks"}</button>
       </div>
-      <p className="cl-intro">I review your tasks for duplicates, wrong tags, vague items, and clusters that should become projects. Apply a fix or dismiss it — dismissed items won't come back, and your choices teach me your style.</p>
+      <p className="cl-intro">I review your tasks and emails for duplicates, wrong tags, vague items, clusters that should become projects, and <b>dated commitments to add to your calendar</b> (e.g. "domain expires June 20"). Apply a fix or dismiss it — dismissed items won't come back, and your choices teach me your style.</p>
 
       {list === null && <div className="chat-sk"><div className="sk b them" /><div className="sk b me" /><div className="sk b them" /></div>}
       {list && list.length === 0 && (

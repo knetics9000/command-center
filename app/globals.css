@@ -131,6 +131,7 @@ a{color:var(--acc-deep)}
 .clsug{display:flex;gap:13px;align-items:flex-start;padding:13px 14px;border:1px solid var(--line);border-left:3px solid var(--muted);border-radius:12px;margin-bottom:9px;background:#fff}
 .clsug-ic{width:34px;height:34px;border-radius:9px;display:grid;place-items:center;flex:none;background:var(--paper2);color:var(--ink2)}
 .clsug-ic .material-symbols-outlined{font-size:20px}
+.clsug.k-cal{border-left-color:#0f9e8e}.clsug.k-cal .clsug-ic{background:#d7f5ef;color:#0f9e8e}
 .clsug.k-project{border-left-color:var(--acc)}.clsug.k-project .clsug-ic{background:var(--acc-soft);color:var(--acc-deep)}
 .clsug.k-dup{border-left-color:#E5484D}.clsug.k-dup .clsug-ic{background:var(--error-soft);color:var(--error)}
 .clsug.k-mistag{border-left-color:#F5A623}.clsug.k-mistag .clsug-ic{background:#fdecd0;color:#9a6b00}
