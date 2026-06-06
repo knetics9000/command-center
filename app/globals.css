@@ -161,6 +161,9 @@ a{color:var(--acc-deep)}
 .assinput .addinp{flex:1;font-size:14px;padding:11px 14px;border-radius:11px}
 .assend{width:46px;border:none;border-radius:11px;background:var(--acc);color:#fff;cursor:pointer;display:grid;place-items:center}
 .assend:hover{background:#5557e0}.assend:disabled{opacity:.6}.assend .material-symbols-outlined{font-size:20px}
+.assproposed{align-self:flex-start;max-width:88%}
+.assproposed .pact{display:flex;align-items:center;gap:9px;font-size:13px;color:var(--ink);padding:5px 0}
+.assproposed .pact .material-symbols-outlined{font-size:18px;color:var(--acc-deep)}
 
 /* priority emails (D4) */
 .pill.priopill.on{background:#9a6b00;border-color:#9a6b00}
