@@ -21,6 +21,17 @@ export default function Todo({ order, groups, openTotal }) {
   const [adding, setAdding] = useState({});   // tag -> text
   const [retag, setRetag] = useState({});      // taskId -> text
   const [evtFor, setEvtFor] = useState(null);  // taskId with open composer
+  const [organized, setOrganized] = useState({}); // grocery tag -> sections | null
+  const [organizing, setOrganizing] = useState({});
+  const isGrocery = (t) => /shopping|grocery/i.test(t);
+  async function organize(t, items) {
+    setOrganizing((o) => ({ ...o, [t]: true }));
+    try {
+      const j = await fetch("/api/organize-shopping", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ items: items.map((i) => i.text) }) }).then((r) => r.json());
+      if (j.ok && (j.sections || []).length) setOrganized((o) => ({ ...o, [t]: j.sections }));
+      else toast(j.error || "Nothing to organize");
+    } catch (e) { toast({ message: "Failed: " + e.message, tone: "error" }); } finally { setOrganizing((o) => ({ ...o, [t]: false })); }
+  }
   const [dueFor, setDueFor] = useState(null);  // taskId with open date picker
   const [tagMenu, setTagMenu] = useState(null); // taskId with open tag dropdown
   const [collapsed, setCollapsed] = useState({}); // tag -> collapsed
@@ -91,9 +102,20 @@ export default function Todo({ order, groups, openTotal }) {
               <span className={"catcaret" + (isOpen ? " open" : "")}>▸</span>
               <span className="dot" style={{ background: dotFor(t) }} /><span className="nm">{t}</span><span className="c">{list.length}</span>
               <span className="grow" />
+              {isGrocery(t) && <button className="orgbtn" title="Group by store section" onClick={(e) => { e.stopPropagation(); organized[t] ? setOrganized((o) => ({ ...o, [t]: null })) : organize(t, list); }}>{organizing[t] ? "…" : organized[t] ? "Reset" : "Organize"}</button>}
               <button className="askai" title={"Ask AI about " + t} onClick={(e) => { e.stopPropagation(); askAboutTag(t); }}><span className="material-symbols-outlined">smart_toy</span></button>
             </div>
-            {isOpen && <>
+            {isOpen && organized[t] && (
+              <div className="grocgroups">
+                {organized[t].map((sec, si) => (
+                  <div className="grocsec" key={si}>
+                    <div className="grocsec-h">{sec.name}<span className="grocsec-c">{sec.items.length}</span></div>
+                    {sec.items.map((x, xi) => <div className="grocitem" key={xi}>○ {x}</div>)}
+                  </div>
+                ))}
+              </div>
+            )}
+            {isOpen && !organized[t] && <>
             {list.map((it) => (
               <div key={it.id}>
                 <div className={"task" + (busy[it.id] ? " done" : "")}>

@@ -66,7 +66,11 @@ export default function Projects({ projects }) {
         {projects.map((p) => (
           <div className={"proj" + (open[p.tag] ? " exp" : "")} key={p.tag}>
             <div className="projhead" role="button" onClick={() => setOpen((o) => ({ ...o, [p.tag]: !o[p.tag] }))}>
-              <div className="pn">{p.name}<span className="badge">{p.open} open</span></div>
+              <div className="pn">{p.name}<span className="badge">{p.open} open</span>
+                <span className={"phealth h-" + (p.health || "green")} title={p.stalled ? `No activity in ${p.daysSince} days` : p.overdue ? `${p.overdue} overdue` : "Active"}>
+                  {p.stalled ? "⚠ Stalled" : p.health === "red" ? "At risk" : p.health === "yellow" ? "Watch" : "On track"}
+                </span>
+              </div>
               <div className="ring" data-p={p.pct} style={{ background: `conic-gradient(${ringColor(p.pct)} ${p.pct}%, #EEE7D7 0)` }} />
               <div className="meta"><span className="k">Last</span> {p.last}</div>
               <div className="next">Next: {p.next}</div>
