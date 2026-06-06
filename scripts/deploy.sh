@@ -8,8 +8,9 @@ cd "$(dirname "$0")/.."
 echo "==> Installing dependencies"
 npm ci
 
-echo "==> Ensuring database is initialized"
+echo "==> Ensuring database is initialized + migrated"
 npm run db:init
+npm run migrate
 
 echo "==> Building"
 npm run build
