@@ -5,6 +5,16 @@ import { ToastProvider } from "./Toast";
 export const metadata = {
   title: "Command Center",
   description: "Autonomous personal command center",
+  manifest: "/manifest.webmanifest",
+  appleWebApp: { capable: true, title: "Command Center", statusBarStyle: "default" },
+  icons: { icon: "/icon.svg", apple: "/icon.svg" },
+};
+
+export const viewport = {
+  themeColor: "#4648d4",
+  width: "device-width",
+  initialScale: 1,
+  maximumScale: 1,
 };
 
 export default function RootLayout({ children }) {
