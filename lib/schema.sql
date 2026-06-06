@@ -145,3 +145,14 @@ CREATE TABLE IF NOT EXISTS google_tokens (
   scope         TEXT,
   updated_at    TEXT DEFAULT (datetime('now'))
 );
+
+-- Items shared into the Command Center via the Web Share Target.
+CREATE TABLE IF NOT EXISTS shared_items (
+  id         INTEGER PRIMARY KEY AUTOINCREMENT,
+  title      TEXT,
+  url        TEXT,
+  text       TEXT,
+  category   TEXT,
+  kind       TEXT,                        -- video|article|product|link|note|other
+  created_at TEXT DEFAULT (datetime('now'))
+);

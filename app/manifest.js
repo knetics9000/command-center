@@ -12,5 +12,11 @@ export default function manifest() {
       { src: "/icon.svg", sizes: "any", type: "image/svg+xml", purpose: "any" },
       { src: "/icon.svg", sizes: "any", type: "image/svg+xml", purpose: "maskable" },
     ],
+    // Makes Command Center appear in the Android share sheet (installed PWA).
+    share_target: {
+      action: "/share",
+      method: "GET",
+      params: { title: "title", text: "text", url: "url" },
+    },
   };
 }

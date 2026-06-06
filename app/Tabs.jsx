@@ -12,6 +12,7 @@ const TABS = [
   { id: "projects", label: "Projects", icon: "account_tree" },
   { id: "todo", label: "To-Do", icon: "checklist" },
   { id: "calendar", label: "Calendar", icon: "calendar_today" },
+  { id: "saved", label: "Saved", icon: "bookmark" },
 ];
 
 export function TabsProvider({ children }) {

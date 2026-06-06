@@ -12,6 +12,7 @@ import DashGrid from "./DashGrid";
 import Buckets from "./Buckets";
 import CleanupView from "./CleanupView";
 import AssistantChat from "./AssistantChat";
+import SavedView from "./SavedView";
 import { cleanupCount } from "@/lib/cleanup";
 import { getPriorityInbox } from "@/lib/priority";
 import { TabsProvider, TabBar, TabPanel } from "./Tabs";
@@ -237,6 +238,10 @@ export default async function Home() {
           </div>
         </div>
       </div>
+          </TabPanel>
+
+          <TabPanel name="saved">
+            <SavedView />
           </TabPanel>
 
           <TabPanel name="inbox">
