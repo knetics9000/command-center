@@ -1,8 +1,25 @@
 "use client";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import RelatedDrawer from "./RelatedDrawer";
 
 const M = ({ i }) => <span className="material-symbols-outlined">{i}</span>;
+
+function CategorySummary({ name }) {
+  const [summary, setSummary] = useState(null);
+  useEffect(() => {
+    let live = true;
+    setSummary(null);
+    fetch("/api/category-summary?name=" + encodeURIComponent(name)).then((r) => r.json())
+      .then((j) => { if (live) setSummary(j.ok ? j.summary : "Couldn't summarize."); }).catch(() => live && setSummary("Couldn't summarize."));
+    return () => { live = false; };
+  }, [name]);
+  return (
+    <div className="catsum">
+      <div className="catsum-h"><M i="auto_awesome" /> What's happening in {name}</div>
+      <div className="catsum-b">{summary === null ? "Summarizing…" : summary}</div>
+    </div>
+  );
+}
 
 export default function Buckets({ buckets = [] }) {
   const [open, setOpen] = useState(null);
@@ -17,7 +34,7 @@ export default function Buckets({ buckets = [] }) {
               <div className="bkt-info"><div className="bkt-name">{b.name}</div><div className="bkt-meta">{b.emails} emails · {b.tasks} tasks</div></div>
               <span className={"priocaret" + (open === b.name ? " open" : "")}>▸</span>
             </div>
-            {open === b.name && <RelatedDrawer title={b.name} />}
+            {open === b.name && <><CategorySummary name={b.name} /><RelatedDrawer title={b.name} /></>}
           </div>
         ))}
       </div>

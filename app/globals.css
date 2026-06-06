@@ -750,3 +750,9 @@ body.focus .secnav .snlink[data-hide]{display:none}
 .grocsec-h{display:flex;align-items:center;gap:7px;font-family:var(--font-mono);font-size:10px;font-weight:700;letter-spacing:.04em;text-transform:uppercase;color:var(--acc-deep);margin-bottom:3px}
 .grocsec-c{background:var(--acc-soft);color:var(--acc-deep);border-radius:999px;padding:0 6px;font-size:9.5px}
 .grocitem{font-size:13px;color:var(--ink2);line-height:1.6;padding-left:4px}
+
+/* ===== Category deep-dive AI summary ===== */
+.catsum{margin-top:8px;background:var(--acc-soft);border:1px solid var(--acc);border-radius:11px;padding:11px 13px}
+.catsum-h{display:flex;align-items:center;gap:7px;font-family:var(--font-head);font-weight:700;font-size:13px;color:var(--acc-deep);margin-bottom:5px}
+.catsum-h .material-symbols-outlined{font-size:17px}
+.catsum-b{font-size:13px;color:var(--ink);line-height:1.55}
