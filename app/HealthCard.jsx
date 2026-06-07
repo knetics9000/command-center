@@ -34,6 +34,7 @@ export default function HealthCard() {
           <Row label="Resting HR" val={h.restingHr != null ? h.restingHr + " bpm" : null} />
           <Row label="Sleep" val={h.sleepHours != null ? h.sleepHours + " h" : null} />
           <Row label="Active min" val={h.activeMinutes} />
+          <Row label="Weight" val={h.weight != null ? h.weight + " lb" : null} />
         </div>
       )}
     </div>
