@@ -5,7 +5,7 @@ import Avatar from "./Avatar";
 
 const M = ({ i }) => <span className="material-symbols-outlined">{i}</span>;
 
-export default function DashGrid({ briefing, inboxTop = [], actCount = 0, projectsTop = [], projectsCount = 0, todoTop = [], todoOpen = 0, dueTop = [], cleanupCount = 0, prioTop = [], prioCount = 0, contacts = [], split = {}, cleared = {}, suggestedTasks = [], children }) {
+export default function DashGrid({ briefing, inboxTop = [], actCount = 0, projectsTop = [], projectsCount = 0, todoTop = [], todoOpen = 0, dueTop = [], cleanupCount = 0, prioTop = [], prioCount = 0, contacts = [], split = {}, cleared = {}, suggestedTasks = [], sharedCats = [], sharedTotal = 0, children }) {
   const { setTab } = useTabs();
   const [briefOpen, setBriefOpen] = useState(false);
   const go = (t) => { setTab(t); window.scrollTo({ top: 0, behavior: "smooth" }); };
@@ -126,6 +126,20 @@ export default function DashGrid({ briefing, inboxTop = [], actCount = 0, projec
             <div className="wrow split"><span className="wrl">Tasks completed</span><span className="wrr">{cleared.tasks || 0}</span></div>
           </div>
           <div className="wfoot">View handled <M i="arrow_forward" /></div>
+        </div>
+
+        {/* Shared Media */}
+        <div className="widget">
+          <div className="whead"><span className="wicon"><M i="bookmark" /></span><span className="wtitle">Shared Media</span><span className="wcount">{sharedTotal}</span></div>
+          <div className="wbody">
+            {sharedCats.length === 0 && <div className="wmuted">Share links from your phone/browser — they'll be analyzed and filed here.</div>}
+            <div className="smchips">
+              {sharedCats.slice(0, 8).map((c) => (
+                <button className="smchip" key={c.name} onClick={() => { try { sessionStorage.setItem("savedFilter", c.name); } catch {} go("saved"); }}>{c.name}<span className="smc">{c.n}</span></button>
+              ))}
+            </div>
+          </div>
+          <div className="wfoot" onClick={() => go("saved")}>Open Saved <M i="arrow_forward" /></div>
         </div>
       </div>
 

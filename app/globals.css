@@ -805,3 +805,47 @@ body.focus .secnav .snlink[data-hide]{display:none}
 .bmlink:active{cursor:grabbing}
 .bmhint{font-size:12px !important;color:var(--muted) !important}
 .bmcode{display:block;background:#1e2233;color:#cdd3e6;border-radius:8px;padding:10px 12px;font-family:var(--font-mono);font-size:10.5px;word-break:break-all;line-height:1.5;max-height:120px;overflow:auto}
+
+/* ===== Shared Media — knowledge layer ===== */
+.catchips{display:flex;flex-wrap:wrap;gap:7px;margin-bottom:14px}
+.catchip{border:1px solid var(--line);background:#fff;border-radius:999px;font:inherit;font-size:12px;font-weight:600;color:var(--ink2);padding:5px 12px;cursor:pointer;display:flex;align-items:center;gap:6px}
+.catchip:hover{border-color:var(--acc);color:var(--acc-deep)}
+.catchip.on{background:var(--acc);border-color:var(--acc);color:#fff}
+.catchip .cc{font-size:10px;font-weight:800;opacity:.7}
+.smedia{border:1px solid var(--line);border-radius:12px;margin-bottom:8px;background:#fff;overflow:hidden}
+.smedia.ex{border-color:#d8d4e6;box-shadow:0 6px 18px rgba(20,22,40,.07)}
+.smedia-row{display:flex;align-items:center;gap:10px;padding:11px 14px;cursor:pointer}
+.smedia-row:hover{background:var(--paper)}
+.sm-ic{width:30px;height:30px;border-radius:8px;background:var(--acc-soft);color:var(--acc-deep);display:grid;place-items:center;flex:none}.sm-ic .material-symbols-outlined{font-size:18px}
+.sm-cat{font-size:9.5px;font-weight:800;background:var(--paper2);color:#6b7180;border-radius:6px;padding:2px 8px;flex:none;text-transform:uppercase;letter-spacing:.02em}
+.sm-cred{font-size:11px;font-weight:800;border-radius:6px;padding:2px 8px;flex:none;font-variant-numeric:tabular-nums}
+.c-95{background:#e7f6ee;color:#1a8a52}.c-80{background:#e6f7f3;color:#0c8074}.c-60{background:#fdf0d9;color:#9a6b00}.c-40{background:#fdecd0;color:#b5651d}.c-0{background:var(--error-soft);color:var(--error)}.c-na{background:var(--paper2);color:#6b7180}
+.sm-titles{flex:1;min-width:0}
+.sm-ai{font-weight:700;font-size:13.5px;color:var(--ink);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.sm-pending{font-style:normal;color:var(--muted);font-weight:500;font-size:11px}
+.sm-orig{font-size:11px;color:var(--muted);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.sm-time{font-size:11px;color:var(--muted);flex:none}
+.smedia-detail{padding:4px 16px 16px;border-top:1px solid var(--line)}
+.sm-summary{font-size:13.5px;color:var(--ink);line-height:1.55;margin:12px 0}
+.sm-chiprow{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:10px}
+.sm-tag{font-size:10px;font-weight:700;background:var(--acc-soft);color:var(--acc-deep);border-radius:6px;padding:2px 9px}
+.sm-sec{margin-bottom:12px}
+.sm-h{font-family:var(--font-mono);font-size:10px;font-weight:700;letter-spacing:.04em;text-transform:uppercase;color:var(--muted);margin-bottom:5px}
+.sm-sec ul{margin:0;padding-left:18px}.sm-sec li{font-size:13px;color:var(--ink2);line-height:1.55;margin-bottom:3px}
+.sm-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px}@media(max-width:600px){.sm-grid{grid-template-columns:1fr}}
+.sm-pills{display:flex;flex-wrap:wrap;gap:5px}
+.sm-pill{font-size:11.5px;background:var(--paper2);color:var(--ink2);border-radius:6px;padding:2px 9px}
+.sm-proj{font-size:11.5px;background:var(--acc-soft);color:var(--acc-deep);border-radius:6px;padding:2px 9px;font-weight:600}
+.sm-credline{font-size:12px;color:var(--ink2);background:var(--paper);border-radius:9px;padding:9px 12px;margin-bottom:12px}
+.sm-actions{display:flex;flex-wrap:wrap;gap:8px;align-items:center}
+.sm-actions .mbtn{display:inline-flex;align-items:center;gap:5px;text-decoration:none}
+.sm-actions .mbtn .material-symbols-outlined{font-size:15px}
+.sm-addproj{border:1px solid var(--line);border-radius:9px;padding:5px 10px;font:inherit;font-size:12px;background:#fff;color:var(--ink2);cursor:pointer}
+/* dashboard widget chips */
+.smchips{display:flex;flex-wrap:wrap;gap:6px}
+.smchip{border:1px solid var(--line);background:#fff;border-radius:999px;font:inherit;font-size:11.5px;font-weight:600;color:var(--ink2);padding:4px 10px;cursor:pointer;display:flex;gap:5px;align-items:center}
+.smchip:hover{border-color:var(--acc);color:var(--acc-deep)}.smchip .smc{font-size:9.5px;font-weight:800;opacity:.7}
+/* share lander richer */
+.sharecred{display:inline-block;font-size:11px;font-weight:800;background:var(--acc-soft);color:var(--acc-deep);border-radius:6px;padding:2px 9px;margin-bottom:8px}
+.shareitem-o{font-size:11.5px;color:var(--muted);margin-top:3px}
+.sharesum{font-size:13px;color:var(--ink2);line-height:1.5;margin-top:10px;text-align:left}

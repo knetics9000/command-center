@@ -15,6 +15,7 @@ import AssistantChat from "./AssistantChat";
 import SavedView from "./SavedView";
 import { cleanupCount } from "@/lib/cleanup";
 import { getPriorityInbox } from "@/lib/priority";
+import { categoryCounts } from "@/lib/share";
 import { TabsProvider, TabBar, TabPanel } from "./Tabs";
 
 export const dynamic = "force-dynamic";
@@ -93,6 +94,8 @@ export default async function Home() {
   const split = getSplit();
   const cleared = getClearedSummary();
   const suggestedTasks = (briefing && briefing.priorities || []).slice(0, 3).map((p) => p.title);
+  const sharedCats = categoryCounts();
+  const sharedTotal = sharedCats.reduce((n, c) => n + c.n, 0);
 
   return (
     <TabsProvider>
@@ -153,7 +156,7 @@ export default async function Home() {
       })()}
 
       <div style={{ marginTop: 18 }}>
-        <DashGrid briefing={briefing} inboxTop={actTop} actCount={stats.act} projectsTop={projTop} projectsCount={stats.projects} todoTop={todoTop} todoOpen={todo.openTotal} dueTop={upcoming} cleanupCount={clCount} prioTop={prioTop} prioCount={inbox.priorityCount} contacts={contacts} split={split} cleared={cleared} suggestedTasks={suggestedTasks}>
+        <DashGrid briefing={briefing} inboxTop={actTop} actCount={stats.act} projectsTop={projTop} projectsCount={stats.projects} todoTop={todoTop} todoOpen={todo.openTotal} dueTop={upcoming} cleanupCount={clCount} prioTop={prioTop} prioCount={inbox.priorityCount} contacts={contacts} split={split} cleared={cleared} suggestedTasks={suggestedTasks} sharedCats={sharedCats} sharedTotal={sharedTotal}>
           <Briefing briefing={briefing} existingTags={projectTags} />
         </DashGrid>
       </div>
@@ -241,7 +244,7 @@ export default async function Home() {
           </TabPanel>
 
           <TabPanel name="saved">
-            <SavedView />
+            <SavedView projects={projects.map((p) => p.tag)} />
           </TabPanel>
 
           <TabPanel name="inbox">

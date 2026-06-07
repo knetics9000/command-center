@@ -146,13 +146,23 @@ CREATE TABLE IF NOT EXISTS google_tokens (
   updated_at    TEXT DEFAULT (datetime('now'))
 );
 
--- Items shared into the Command Center via the Web Share Target.
+-- Items shared into the Command Center via the Web Share Target — AI knowledge layer.
 CREATE TABLE IF NOT EXISTS shared_items (
-  id         INTEGER PRIMARY KEY AUTOINCREMENT,
-  title      TEXT,
-  url        TEXT,
-  text       TEXT,
-  category   TEXT,
-  kind       TEXT,                        -- video|article|product|link|note|other
-  created_at TEXT DEFAULT (datetime('now'))
+  id          INTEGER PRIMARY KEY AUTOINCREMENT,
+  title       TEXT,                        -- original source title
+  url         TEXT,
+  text        TEXT,
+  kind        TEXT,                        -- video|article|social|pdf|podcast|link
+  ai_title    TEXT,                        -- AI "true title"
+  categories  TEXT DEFAULT '[]',           -- JSON array of content categories
+  summary     TEXT,                        -- executive summary
+  takeaways   TEXT DEFAULT '[]',           -- JSON array
+  insights    TEXT DEFAULT '[]',           -- JSON array (actionable)
+  tools       TEXT DEFAULT '[]',           -- JSON array
+  people      TEXT DEFAULT '[]',           -- JSON array
+  projects    TEXT DEFAULT '[]',           -- JSON array of suggested project tags
+  credibility INTEGER,                     -- 0-100 AI estimate
+  cred_reason TEXT,
+  analyzed    INTEGER DEFAULT 0,
+  created_at  TEXT DEFAULT (datetime('now'))
 );

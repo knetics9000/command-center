@@ -19,23 +19,22 @@ export default function ShareLander({ title, text, url }) {
   return (
     <div className="sharelander">
       <div className="sharecard">
-        <div className="shareicon">{status === "saving" ? <M i="hourglass_top" /> : status === "saved" ? <M i="bookmark_added" /> : <M i="error" />}</div>
+        <div className="shareicon">{status === "saving" ? <M i="neurology" /> : status === "saved" ? <M i="bookmark_added" /> : <M i="error" />}</div>
         <div className="sharemsg">
-          {status === "saving" && "Saving to Command Center…"}
+          {status === "saving" && "Analyzing & saving…"}
           {status === "saved" && "Saved to Command Center ✓"}
           {status === "error" && "Couldn't save that — try again."}
         </div>
         {item && (
           <div className="shareitem">
-            <div className="shareitem-t">{item.title}</div>
-            <div className="shareitem-m">
-              {item.kind && <span className="sharekind">{item.kind}</span>}
-              {item.category && <span className="sharecat">{item.category}</span>}
-            </div>
-            {item.url && <a className="shareurl" href={item.url} target="_blank" rel="noreferrer">{item.url}</a>}
+            {item.credibility != null && <div className="sharecred">Credibility {item.credibility}/100</div>}
+            <div className="shareitem-t">{item.ai_title || item.title}</div>
+            {item.ai_title && item.title && item.ai_title !== item.title && <div className="shareitem-o">Original: {item.title}</div>}
+            <div className="shareitem-m">{(item.categories || []).slice(0, 3).map((c) => <span className="sharecat" key={c}>{c}</span>)}</div>
+            {item.summary && <div className="sharesum">{item.summary}</div>}
           </div>
         )}
-        <a className="sharehome" href="/">Open Command Center →</a>
+        <a className="sharehome" href="/?tab=saved">Open Command Center →</a>
       </div>
     </div>
   );

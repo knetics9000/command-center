@@ -16,6 +16,18 @@ const COLUMNS = [
   ["tasks", "due", "TEXT"],
   ["projects", "notes", "TEXT"],
   ["standing_rules", "context_id", "TEXT"],
+  // shared_items AI knowledge layer (table may pre-exist in its basic form)
+  ["shared_items", "ai_title", "TEXT"],
+  ["shared_items", "categories", "TEXT DEFAULT '[]'"],
+  ["shared_items", "summary", "TEXT"],
+  ["shared_items", "takeaways", "TEXT DEFAULT '[]'"],
+  ["shared_items", "insights", "TEXT DEFAULT '[]'"],
+  ["shared_items", "tools", "TEXT DEFAULT '[]'"],
+  ["shared_items", "people", "TEXT DEFAULT '[]'"],
+  ["shared_items", "projects", "TEXT DEFAULT '[]'"],
+  ["shared_items", "credibility", "INTEGER"],
+  ["shared_items", "cred_reason", "TEXT"],
+  ["shared_items", "analyzed", "INTEGER DEFAULT 0"],
 ];
 
 let added = 0;
