@@ -11,7 +11,7 @@ export async function GET() {
 export async function POST(req) {
   try {
     const b = await req.json();
-    if (b.action === "done") { markDone(b.id, b.done ?? 1); return NextResponse.json({ ok: true }); }
+    if (b.action === "done") { await markDone(b.id, b.done ?? 1); return NextResponse.json({ ok: true }); }
     if (b.action === "delete") { deleteCapture(b.id); return NextResponse.json({ ok: true }); }
     if (b.action === "reprocess") { return NextResponse.json({ ok: true, capture: await processCapture(b.id) }); }
     // default: capture a brain-dump and process it instantly

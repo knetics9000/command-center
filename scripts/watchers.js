@@ -7,6 +7,7 @@ import { runAllRules } from "../lib/rules.js";
 import { generateCleanup, dataFingerprint, cleanupCount } from "../lib/cleanup.js";
 import { generateBriefing } from "../lib/briefing.js";
 import { getMeta, setMeta } from "../lib/meta.js";
+import { captureNewOffloadTasks, processUnprocessed } from "../lib/capture.js";
 
 try {
   const s = await syncAll();
@@ -16,6 +17,9 @@ try {
   const total = res.reduce((n, r) => n + (r.created ? r.created.length : 0), 0);
   console.log(`rules run: ${res.length}, events created: ${total}`);
   for (const r of res) console.log(`  rule ${r.ruleId}: ${r.error ? "ERROR " + r.error : (r.created?.length || 0) + " created — " + (r.summary || "")}`);
+
+  try { const n = await captureNewOffloadTasks(); if (n) console.log(`routed ${n} Offload dump(s) through the AI layer`); } catch {}
+  try { const n = await processUnprocessed(); if (n) console.log(`processed ${n} straggler capture(s)`); } catch {}
 
   // Auto-organize + re-brief only when something changed (saves API calls; keeps the briefing delta meaningful).
   const fp = dataFingerprint();

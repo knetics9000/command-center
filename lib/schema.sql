@@ -181,6 +181,8 @@ CREATE TABLE IF NOT EXISTS captures (
   suggested_action TEXT,                    -- concrete next step
   mood_energy     TEXT,                     -- quick win | deep focus | low energy | errand | creative
   done            INTEGER DEFAULT 0,
+  origin          TEXT DEFAULT 'app',       -- app | offload (which path captured it)
+  task_id         TEXT,                     -- linked Offload task (for offload-origin captures)
   created_at      TEXT DEFAULT (datetime('now')),
   processed_at    TEXT
 );

@@ -28,6 +28,8 @@ const COLUMNS = [
   ["shared_items", "credibility", "INTEGER"],
   ["shared_items", "cred_reason", "TEXT"],
   ["shared_items", "analyzed", "INTEGER DEFAULT 0"],
+  ["captures", "origin", "TEXT DEFAULT 'app'"],
+  ["captures", "task_id", "TEXT"],
 ];
 
 let added = 0;
