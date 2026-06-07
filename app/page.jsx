@@ -14,6 +14,7 @@ import CleanupView from "./CleanupView";
 import AssistantChat from "./AssistantChat";
 import SavedView from "./SavedView";
 import HealthCard from "./HealthCard";
+import Realign from "./Realign";
 import { cleanupCount } from "@/lib/cleanup";
 import { getPriorityInbox } from "@/lib/priority";
 import { categoryCounts } from "@/lib/share";
@@ -120,6 +121,8 @@ export default async function Home() {
               <div className="synced">{connected ? "both accounts connected ✓" : <a href="/connect">connect accounts →</a>}</div>
             </div>
           </header>
+
+      <Realign />
 
       <div className="stats">
         <HealthCard />

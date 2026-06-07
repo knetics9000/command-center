@@ -10,6 +10,7 @@ import { generateCleanup, dataFingerprint, cleanupCount } from "../lib/cleanup.j
 import { generateBriefing, briefingToHtml } from "../lib/briefing.js";
 import { sendSelf } from "../lib/google.js";
 import { getMeta, setMeta } from "../lib/meta.js";
+import { processUnprocessed } from "../lib/capture.js";
 
 const log = (...a) => console.log(new Date().toISOString(), ...a);
 
@@ -18,6 +19,8 @@ async function watcherCycle() {
   log("sync:", JSON.stringify(s));
   const res = await runAllRules();
   log(`rules: ${res.length} run, ${res.reduce((n, r) => n + (r.created ? r.created.length : 0), 0)} events created`);
+
+  try { const n = await processUnprocessed(); if (n) log(`processed ${n} straggler capture(s)`); } catch {}
 
   const fp = dataFingerprint();
   if (fp !== getMeta("data_fp")) {

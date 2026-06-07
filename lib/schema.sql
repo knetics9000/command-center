@@ -166,3 +166,21 @@ CREATE TABLE IF NOT EXISTS shared_items (
   analyzed    INTEGER DEFAULT 0,
   created_at  TEXT DEFAULT (datetime('now'))
 );
+
+-- ===== SPINOFF CANDIDATE: Offload capture (raw brain-dumps) =====
+-- Clean integration seam: Offload owns raw capture (id/timestamp/raw_text/source/
+-- status); Command Center writes the AI layer on top. raw_text is never overwritten.
+CREATE TABLE IF NOT EXISTS captures (
+  id              INTEGER PRIMARY KEY AUTOINCREMENT,
+  raw_text        TEXT NOT NULL,            -- the brain-dump, untouched
+  source          TEXT DEFAULT 'text',      -- mic | text
+  status          TEXT DEFAULT 'unprocessed', -- unprocessed | processed
+  category        TEXT,
+  priority        TEXT,                     -- high | medium | low
+  summary         TEXT,                     -- cleaned, de-noised
+  suggested_action TEXT,                    -- concrete next step
+  mood_energy     TEXT,                     -- quick win | deep focus | low energy | errand | creative
+  done            INTEGER DEFAULT 0,
+  created_at      TEXT DEFAULT (datetime('now')),
+  processed_at    TEXT
+);
