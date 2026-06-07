@@ -6,7 +6,7 @@ const Row = ({ label, val }) => <div className="hp-row"><span className="hp-lbl"
 
 export default function HealthCard() {
   const [h, setH] = useState(null);
-  const [shown, setShown] = useState(false);
+  const [shown, setShown] = useState(true); // auto-reveal
   const [loading, setLoading] = useState(false);
 
   useEffect(() => { fetch("/api/health").then((r) => r.json()).then(setH).catch(() => setH({ connected: false })); }, []);
