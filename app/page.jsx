@@ -122,7 +122,10 @@ export default async function Home() {
             </div>
           </header>
 
-      <Realign />
+      <Realign
+        emails={(inbox.byTier.act || []).slice(0, 8).map((e) => ({ id: e.id, subject: e.subject, sender: e.sender, action: e.action }))}
+        tasks={getDueTasks("2000-01-01", new Date(Date.now() + 8 * 86400e3).toISOString().slice(0, 10)).slice(0, 12)}
+      />
 
       <div className="stats">
         <HealthCard />
