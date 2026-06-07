@@ -46,13 +46,16 @@ export default function Realign({ emails = [], tasks = [] }) {
   const go = (t) => { setTab(t); window.scrollTo({ top: 0, behavior: "smooth" }); };
 
   const today = new Date().toLocaleDateString("en-CA");
+  const bucket = (s) => (s >= 70 ? "high" : s >= 40 ? "medium" : "low");
   const capturedTaskIds = new Set(items.map((c) => c.task_id).filter(Boolean)); // avoid showing a task twice
+  const capScore = (c) => (Number.isFinite(c.priority_score) ? c.priority_score : c.priority === "high" ? 80 : c.priority === "low" ? 30 : 55);
+  const taskScore = (t) => (t.due ? (t.due < today ? 92 : t.due === today ? 82 : 60) : 45);
   const merged = [
-    ...items.map((c) => ({ key: "c" + c.id, kind: "capture", priority: c.priority || "medium", title: c.summary, action: c.suggested_action, mood: c.mood_energy, tag: c.category, id: c.id })),
-    ...emails.map((e) => ({ key: "e" + e.id, kind: "email", priority: "high", title: e.subject, action: e.action || "Reply / handle", mood: "deep focus", tag: e.sender })),
-    ...tasks.filter((t) => !capturedTaskIds.has(t.id)).map((t) => ({ key: "t" + t.id, kind: "task", priority: t.due && t.due <= today ? "high" : "medium", title: t.text, action: t.due ? (t.due <= today ? "Overdue — handle it" : "Due " + t.due) : "Do it", mood: "quick win", tag: (t.tags || "").split(";")[0].trim() })),
+    ...items.map((c) => { const sc = capScore(c); return ({ key: "c" + c.id, kind: "capture", score: sc, priority: bucket(sc), title: c.summary, action: c.suggested_action, mood: c.mood_energy, tag: c.category, id: c.id }); }),
+    ...emails.map((e) => ({ key: "e" + e.id, kind: "email", score: 85, priority: "high", title: e.subject, action: e.action || "Reply / handle", mood: "deep focus", tag: e.sender })),
+    ...tasks.filter((t) => !capturedTaskIds.has(t.id)).map((t) => { const sc = taskScore(t); return ({ key: "t" + t.id, kind: "task", score: sc, priority: bucket(sc), title: t.text, action: t.due ? (t.due <= today ? "Overdue — handle it" : "Due " + t.due) : "Do it", mood: "quick win", tag: (t.tags || "").split(";")[0].trim() }); }),
   ];
-  const shown = merged.filter((i) => !mood || i.mood === mood).sort((a, b) => (RANK[a.priority] ?? 1) - (RANK[b.priority] ?? 1));
+  const shown = merged.filter((i) => !mood || i.mood === mood).sort((a, b) => b.score - a.score);
 
   return (
     <div className="realign">

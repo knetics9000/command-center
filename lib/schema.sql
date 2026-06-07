@@ -176,7 +176,8 @@ CREATE TABLE IF NOT EXISTS captures (
   source          TEXT DEFAULT 'text',      -- mic | text
   status          TEXT DEFAULT 'unprocessed', -- unprocessed | processed
   category        TEXT,
-  priority        TEXT,                     -- high | medium | low
+  priority        TEXT,                     -- high | medium | low (bucket derived from score)
+  priority_score  INTEGER,                  -- 0-100 AI importance, independent of recency
   summary         TEXT,                     -- cleaned, de-noised
   suggested_action TEXT,                    -- concrete next step
   mood_energy     TEXT,                     -- quick win | deep focus | low energy | errand | creative

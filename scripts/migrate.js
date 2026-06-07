@@ -30,6 +30,7 @@ const COLUMNS = [
   ["shared_items", "analyzed", "INTEGER DEFAULT 0"],
   ["captures", "origin", "TEXT DEFAULT 'app'"],
   ["captures", "task_id", "TEXT"],
+  ["captures", "priority_score", "INTEGER"],
 ];
 
 let added = 0;
