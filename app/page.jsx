@@ -13,6 +13,7 @@ import Buckets from "./Buckets";
 import CleanupView from "./CleanupView";
 import AssistantChat from "./AssistantChat";
 import SavedView from "./SavedView";
+import HealthCard from "./HealthCard";
 import { cleanupCount } from "@/lib/cleanup";
 import { getPriorityInbox } from "@/lib/priority";
 import { categoryCounts } from "@/lib/share";
@@ -121,6 +122,7 @@ export default async function Home() {
           </header>
 
       <div className="stats">
+        <HealthCard />
         {(() => {
           const taskPct = stats.openTasks + stats.doneTasks ? Math.round((stats.doneTasks / (stats.openTasks + stats.doneTasks)) * 100) : 0;
           const inboxPct = stats.inbox ? Math.round((stats.act / stats.inbox) * 100) : 0;
