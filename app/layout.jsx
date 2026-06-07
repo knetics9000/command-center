@@ -7,7 +7,7 @@ export const metadata = {
   description: "Autonomous personal command center",
   manifest: "/manifest.webmanifest",
   appleWebApp: { capable: true, title: "Command Center", statusBarStyle: "default" },
-  icons: { icon: "/icon.svg", apple: "/icon.svg" },
+  icons: { icon: "/icon-192.png", apple: "/icon-180.png" },
 };
 
 export const viewport = {
