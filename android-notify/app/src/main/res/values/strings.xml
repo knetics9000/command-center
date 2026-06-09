@@ -1,0 +1,15 @@
+<resources>
+    <string name="app_name">Notify → Command Center</string>
+    <string name="server_url">Command Center URL</string>
+    <string name="token">Notify token</string>
+    <string name="token_hint">Paste your NOTIFY_TOKEN</string>
+    <string name="save">Save</string>
+    <string name="test_connection">Test</string>
+    <string name="capture_enabled">Capture notifications</string>
+    <string name="allow_mode">Allow-list mode (capture only chosen apps)</string>
+    <string name="manage_apps">Manage apps</string>
+    <string name="permissions_hint">For reliable, always-on capture, grant notification access and exempt the app from battery optimization.</string>
+    <string name="grant_access">Grant notification access</string>
+    <string name="access_granted">Notification access ✓ (tap to review)</string>
+    <string name="ignore_battery">Ignore battery optimization</string>
+</resources>
