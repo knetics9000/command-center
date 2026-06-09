@@ -16,6 +16,7 @@ export default function Realign({ emails = [], tasks = [], dismissed = [] }) {
   const [busy, setBusy] = useState(false);
   const [mood, setMood] = useState(null);
   const [dis, setDis] = useState(new Set(dismissed));   // dismissed item keys
+  const [showDis, setShowDis] = useState(false);
   const [listening, setListening] = useState(false);
   const recRef = useRef(null);
 
@@ -52,6 +53,12 @@ export default function Realign({ emails = [], tasks = [], dismissed = [] }) {
     fetch("/api/dismiss", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ key: k }) });
     toast("Dismissed");
   }
+  function restoreItem(it) {
+    const k = dKey(it); if (!k) return;
+    setDis((s) => { const n = new Set(s); n.delete(k); return n; });
+    fetch("/api/dismiss", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ key: k, undo: true }) });
+    toast("Restored");
+  }
   const go = (t) => { setTab(t); window.scrollTo({ top: 0, behavior: "smooth" }); };
 
   const today = new Date().toLocaleDateString("en-CA");
@@ -65,6 +72,7 @@ export default function Realign({ emails = [], tasks = [], dismissed = [] }) {
     ...tasks.filter((t) => !capturedTaskIds.has(t.id)).map((t) => { const sc = taskScore(t); return ({ key: "t" + t.id, kind: "task", id: t.id, score: sc, priority: bucket(sc), title: t.text, action: t.due ? (t.due <= today ? "Overdue — handle it" : "Due " + t.due) : "Do it", mood: "quick win", tag: (t.tags || "").split(";")[0].trim() }); }),
   ];
   const shown = merged.filter((i) => !mood || i.mood === mood).filter((i) => { const k = dKey(i); return !k || !dis.has(k); }).sort((a, b) => b.score - a.score);
+  const dismissedItems = merged.filter((i) => { const k = dKey(i); return k && dis.has(k); });
 
   return (
     <div className="realign">
@@ -105,6 +113,23 @@ export default function Realign({ emails = [], tasks = [], dismissed = [] }) {
           </div>
         ))}
       </div>
+
+      {dismissedItems.length > 0 && (
+        <div className="dismissed-zone">
+          <button className="dismissed-toggle" onClick={() => setShowDis((v) => !v)}>{dismissedItems.length} dismissed {showDis ? "▴" : "▾"}</button>
+          {showDis && (
+            <div className="nowlist">
+              {dismissedItems.map((it) => (
+                <div className="nowitem dismissed" key={it.key}>
+                  <span className="now-kind"><M i={it.kind === "email" ? "mail" : "task_alt"} /></span>
+                  <div className="now-body"><div className="now-sum">{it.title}</div></div>
+                  <button className="now-dismiss" title="Restore to Right Now" onClick={() => restoreItem(it)}><M i="undo" /></button>
+                </div>
+              ))}
+            </div>
+          )}
+        </div>
+      )}
     </div>
   );
 }

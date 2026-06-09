@@ -19,7 +19,7 @@ import NotifyWidget from "./NotifyWidget";
 import { cleanupCount } from "@/lib/cleanup";
 import { getPriorityInbox } from "@/lib/priority";
 import { categoryCounts } from "@/lib/share";
-import { dismissalKeys, sig } from "@/lib/dismiss";
+import { dismissalKeys } from "@/lib/dismiss";
 import { TabsProvider, TabBar, TabPanel } from "./Tabs";
 
 export const dynamic = "force-dynamic";
@@ -64,7 +64,6 @@ export default async function Home() {
   const todo = getTodoGroups();
   const briefing = getLatestBriefing();
   const dismissed = dismissalKeys();
-  if (briefing && briefing.priorities) briefing.priorities = briefing.priorities.filter((p) => !dismissed.includes("brief:" + sig(p.title)));
   const projectTags = getProjectTags();
   const conn = connectionStatus();
   const now = new Date();
@@ -172,7 +171,7 @@ export default async function Home() {
 
       <div style={{ marginTop: 18 }}>
         <DashGrid briefing={briefing} inboxTop={actTop} actCount={stats.act} projectsTop={projTop} projectsCount={stats.projects} todoTop={todoTop} todoOpen={todo.openTotal} dueTop={upcoming} cleanupCount={clCount} prioTop={prioTop} prioCount={inbox.priorityCount} contacts={contacts} split={split} cleared={cleared} suggestedTasks={suggestedTasks} sharedCats={sharedCats} sharedTotal={sharedTotal}>
-          <Briefing briefing={briefing} existingTags={projectTags} />
+          <Briefing briefing={briefing} existingTags={projectTags} dismissed={dismissed} />
         </DashGrid>
       </div>
           </TabPanel>

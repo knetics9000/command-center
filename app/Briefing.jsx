@@ -9,7 +9,7 @@ const tagFor = (name) => (/project/i.test(name) ? name : name + " Project").toLo
 const sig = (s) => (s || "").toLowerCase().replace(/\s+/g, " ").trim().slice(0, 80);   // must match lib/dismiss.js
 const when = (ts) => { const d = new Date((ts || "").replace(" ", "T") + "Z"); return isNaN(d) ? "" : d.toLocaleTimeString([], { hour: "numeric", minute: "2-digit" }); };
 
-export default function Briefing({ briefing, existingTags = [] }) {
+export default function Briefing({ briefing, existingTags = [], dismissed = [] }) {
   const router = useRouter();
   const { toast } = useToast();
   const [busy, setBusy] = useState(false);
@@ -18,14 +18,21 @@ export default function Briefing({ briefing, existingTags = [] }) {
   const [deltaOpen, setDeltaOpen] = useState(false);
   const [openTheme, setOpenTheme] = useState(null);
   const [dbody, setDbody] = useState({});
-  const [hidden, setHidden] = useState(new Set());   // just-dismissed priorities (server filters persisted ones)
+  const [dis, setDis] = useState(new Set(dismissed.filter((k) => k.startsWith("brief:"))));
+  const [showDis, setShowDis] = useState(false);
   const b = briefing;
 
   function dismissPrio(p) {
-    const s = sig(p.title);
-    setHidden((h) => new Set(h).add(s));
-    fetch("/api/dismiss", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ key: "brief:" + s }) });
+    const k = "brief:" + sig(p.title);
+    setDis((s) => new Set(s).add(k));
+    fetch("/api/dismiss", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ key: k }) });
     toast("Dismissed");
+  }
+  function restorePrio(p) {
+    const k = "brief:" + sig(p.title);
+    setDis((s) => { const n = new Set(s); n.delete(k); return n; });
+    fetch("/api/dismiss", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ key: k, undo: true }) });
+    toast("Restored");
   }
 
   async function openDeltaItem(e) {
@@ -107,19 +114,37 @@ export default function Briefing({ briefing, existingTags = [] }) {
             </div>
           );
         })()}
-        <div className="prios">
-          {(b.priorities || []).filter((p) => !hidden.has(sig(p.title))).map((p, i) => (
-            <div key={i}>
-              <div className={"prio clickable" + (openPrio === i ? " open" : "")} onClick={() => setOpenPrio((x) => x === i ? null : i)}>
-                <span className="pnum">{i + 1}</span>
-                <div className="pgrow"><div className="pt">{p.title} {pill(p.urgency)}</div><div className="pd">{p.detail}</div></div>
-                <button className="prio-x" title="Dismiss" onClick={(e) => { e.stopPropagation(); dismissPrio(p); }}><span className="material-symbols-outlined">close</span></button>
-                <span className={"priocaret" + (openPrio === i ? " open" : "")}>▸</span>
-              </div>
-              {openPrio === i && <RelatedDrawer title={p.title + " — " + p.detail} />}
+        {(() => {
+          const all = b.priorities || [];
+          const visible = all.filter((p) => !dis.has("brief:" + sig(p.title)));
+          const gone = all.filter((p) => dis.has("brief:" + sig(p.title)));
+          return (
+            <div className="prios">
+              {visible.map((p, i) => (
+                <div key={i}>
+                  <div className={"prio clickable" + (openPrio === i ? " open" : "")} onClick={() => setOpenPrio((x) => x === i ? null : i)}>
+                    <span className="pnum">{i + 1}</span>
+                    <div className="pgrow"><div className="pt">{p.title} {pill(p.urgency)}</div><div className="pd">{p.detail}</div></div>
+                    <button className="prio-x" title="Dismiss" onClick={(e) => { e.stopPropagation(); dismissPrio(p); }}><span className="material-symbols-outlined">close</span></button>
+                    <span className={"priocaret" + (openPrio === i ? " open" : "")}>▸</span>
+                  </div>
+                  {openPrio === i && <RelatedDrawer title={p.title + " — " + p.detail} />}
+                </div>
+              ))}
+              {gone.length > 0 && (
+                <div className="dismissed-zone">
+                  <button className="dismissed-toggle" onClick={() => setShowDis((v) => !v)}>{gone.length} dismissed {showDis ? "▴" : "▾"}</button>
+                  {showDis && gone.map((p, i) => (
+                    <div className="prio dismissed" key={"d" + i}>
+                      <div className="pgrow"><div className="pt">{p.title}</div></div>
+                      <button className="prio-x restore" title="Restore" onClick={() => restorePrio(p)}><span className="material-symbols-outlined">undo</span></button>
+                    </div>
+                  ))}
+                </div>
+              )}
             </div>
-          ))}
-        </div>
+          );
+        })()}
 
         {(b.clusters || []).length > 0 && (
           <div className="clusters">
