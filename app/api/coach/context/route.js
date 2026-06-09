@@ -13,6 +13,8 @@ export async function GET(req) {
   }
   try {
     const now = new Date();
+    // Window is in SERVER-LOCAL time — correct for a self-hosted personal deployment in the
+    // user's own timezone. If ever hosted on UTC infra, "today" would be UTC midnight; add a tz param then.
     const startOfToday = new Date(now); startOfToday.setHours(0, 0, 0, 0);
     const endOfTomorrow = new Date(now); endOfTomorrow.setDate(endOfTomorrow.getDate() + 2); endOfTomorrow.setHours(0, 0, 0, 0);
     const timeMin = startOfToday.toISOString();
