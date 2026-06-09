@@ -213,3 +213,32 @@ CREATE TABLE IF NOT EXISTS dismissals (
   key        TEXT PRIMARY KEY,
   created_at TEXT DEFAULT (datetime('now'))
 );
+
+CREATE TABLE IF NOT EXISTS guru_influences (
+  id          INTEGER PRIMARY KEY AUTOINCREMENT,
+  name        TEXT NOT NULL,
+  why         TEXT,
+  style_notes TEXT,
+  created_at  INTEGER NOT NULL
+);
+
+CREATE TABLE IF NOT EXISTS guru_materials (
+  id           INTEGER PRIMARY KEY AUTOINCREMENT,
+  url          TEXT,
+  kind         TEXT,
+  title        TEXT,
+  text         TEXT,
+  ai_title     TEXT,
+  categories   TEXT,
+  summary      TEXT,
+  takeaways    TEXT,
+  insights     TEXT,
+  tools        TEXT,
+  people       TEXT,
+  credibility  INTEGER,
+  cred_reason  TEXT,
+  influence_id INTEGER,
+  source       TEXT,
+  analyzed     INTEGER DEFAULT 0,
+  created_at   INTEGER NOT NULL
+);
