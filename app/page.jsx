@@ -3,7 +3,6 @@ import { connectionStatus, listEvents } from "@/lib/google";
 import RefreshButton from "./RefreshButton";
 import TopUtility from "./TopUtility";
 import Fab from "./Fab";
-import Donut from "./Donut";
 import Briefing from "./Briefing";
 import Projects from "./Projects";
 import Todo from "./Todo";
@@ -13,9 +12,7 @@ import Buckets from "./Buckets";
 import CleanupView from "./CleanupView";
 import AssistantChat from "./AssistantChat";
 import SavedView from "./SavedView";
-import HealthCard from "./HealthCard";
 import Realign from "./Realign";
-import NotifyWidget from "./NotifyWidget";
 import { cleanupCount } from "@/lib/cleanup";
 import { getPriorityInbox } from "@/lib/priority";
 import { categoryCounts } from "@/lib/share";
@@ -86,21 +83,32 @@ export default async function Home() {
   const connected = conn.every((c) => c.connected);
   const personal = conn.find((c) => c.account === "personal") || {};
 
-  // dashboard widget summaries
-  const actTop = (inbox.byTier.act || []).slice(0, 3).map((e) => ({ sender: e.sender, subject: e.subject }));
-  const projTop = projects.slice(0, 3).map((p) => ({ name: p.name, open: p.open, pct: p.pct }));
-  const todoTop = todo.order.slice(0, 4).map((t) => ({ tag: t, count: todo.groups[t].length }));
+  // dashboard widget summaries (pass extra rows so the expanded tiles show more)
+  const actTop = (inbox.byTier.act || []).slice(0, 8).map((e) => ({ sender: e.sender, subject: e.subject }));
+  const projTop = projects.slice(0, 8).map((p) => ({ name: p.name, open: p.open, pct: p.pct }));
+  const todoTop = todo.order.slice(0, 8).map((t) => ({ tag: t, count: todo.groups[t].length }));
   const fmtWhen = (e) => { const d = new Date(e.start); return e.isTask ? "due " + d.toLocaleDateString([], { month: "short", day: "numeric" }) : d.toLocaleDateString([], { weekday: "short", month: "short", day: "numeric" }) + (e.allDay ? "" : " " + d.toLocaleTimeString([], { hour: "numeric" })); };
-  const upcoming = events.filter((e) => new Date(e.start) >= now).slice(0, 4).map((e) => ({ summary: e.summary, isTask: e.isTask, when: fmtWhen(e) }));
+  const upcoming = events.filter((e) => new Date(e.start) >= now).slice(0, 8).map((e) => ({ summary: e.summary, isTask: e.isTask, when: fmtWhen(e) }));
   const clCount = cleanupCount();
-  const prioList = getPriorityInbox(4);
-  const prioTop = prioList.map((e) => ({ sender: e.sender, subject: e.subject }));
-  const contacts = getRecentContacts(5).map((c) => ({ name: c.sender, addr: c.sender_addr, n: c.n }));
+  const prioTop = getPriorityInbox(8).map((e) => ({ sender: e.sender, subject: e.subject }));
+  const contacts = getRecentContacts(8).map((c) => ({ name: c.sender, addr: c.sender_addr, n: c.n }));
   const split = getSplit();
   const cleared = getClearedSummary();
-  const suggestedTasks = (briefing && briefing.priorities || []).slice(0, 3).map((p) => p.title);
+  const suggestedTasks = (briefing && briefing.priorities || []).slice(0, 6).map((p) => p.title);
   const sharedCats = categoryCounts();
   const sharedTotal = sharedCats.reduce((n, c) => n + c.n, 0);
+
+  // Overview numbers + performance, now rendered as grid tiles inside DashGrid.
+  const taskPct = stats.openTasks + stats.doneTasks ? Math.round((stats.doneTasks / (stats.openTasks + stats.doneTasks)) * 100) : 0;
+  const inboxPct = stats.inbox ? Math.round((stats.act / stats.inbox) * 100) : 0;
+  const evPct = Math.min(100, today.length * 20);
+  const overview = [
+    { n: stats.openTasks, l: "Open tasks", sub: taskPct + "% done", pct: taskPct, color: "#4648d4" },
+    { n: stats.inbox, l: "Inbox", sub: stats.act + " act now", pct: inboxPct, color: "#ba1a1a" },
+    { n: today.length, l: "Events today", sub: "this week", pct: evPct, color: "#14B8A6" },
+    { n: stats.projects, l: "Projects", sub: stats.avgProj + "% avg", pct: stats.avgProj, color: "#904900" },
+  ];
+  const perf = { done: stats.doneTasks, open: stats.openTasks, pct: taskPct };
 
   return (
     <TabsProvider>
@@ -131,46 +139,8 @@ export default async function Home() {
         dismissed={dismissed}
       />
 
-      <NotifyWidget />
-
-      <div className="stats">
-        <HealthCard />
-        {(() => {
-          const taskPct = stats.openTasks + stats.doneTasks ? Math.round((stats.doneTasks / (stats.openTasks + stats.doneTasks)) * 100) : 0;
-          const inboxPct = stats.inbox ? Math.round((stats.act / stats.inbox) * 100) : 0;
-          const evPct = Math.min(100, today.length * 20);
-          const cards = [
-            { n: stats.openTasks, l: "Open tasks", sub: taskPct + "% done", pct: taskPct, color: "#4648d4" },
-            { n: stats.inbox, l: "Inbox", sub: stats.act + " act now", pct: inboxPct, color: "#ba1a1a" },
-            { n: today.length, l: "Events today", sub: "this week", pct: evPct, color: "#14B8A6" },
-            { n: stats.projects, l: "Active projects", sub: stats.avgProj + "% avg", pct: stats.avgProj, color: "#904900" },
-          ];
-          return cards.map((c, i) => (
-            <div className="statcard card" key={i}>
-              <div className="statinfo"><div className="n"><b>{c.n}</b></div><div className="l">{c.l}</div><div className="sl">{c.sub}</div></div>
-              <Donut pct={c.pct} color={c.color}><span className="dpct">{c.pct}%</span></Donut>
-            </div>
-          ));
-        })()}
-      </div>
-
-      {(() => {
-        const tp = stats.openTasks + stats.doneTasks ? Math.round((stats.doneTasks / (stats.openTasks + stats.doneTasks)) * 100) : 0;
-        return (
-          <div className="perfcard" style={{ marginTop: 18 }}>
-            <div className="perf-main">
-              <div className="perf-h">Performance</div>
-              <div className="perf-sub">You've completed {tp}% of your tasks — {stats.doneTasks} done, {stats.openTasks} still open.</div>
-              <div className="perf-num"><b>{stats.doneTasks}</b><span>Tasks done</span></div>
-            </div>
-            <span className="material-symbols-outlined perf-ic">trending_up</span>
-            <span className="perf-blur" />
-          </div>
-        );
-      })()}
-
       <div style={{ marginTop: 18 }}>
-        <DashGrid briefing={briefing} inboxTop={actTop} actCount={stats.act} projectsTop={projTop} projectsCount={stats.projects} todoTop={todoTop} todoOpen={todo.openTotal} dueTop={upcoming} cleanupCount={clCount} prioTop={prioTop} prioCount={inbox.priorityCount} contacts={contacts} split={split} cleared={cleared} suggestedTasks={suggestedTasks} sharedCats={sharedCats} sharedTotal={sharedTotal}>
+        <DashGrid briefing={briefing} inboxTop={actTop} actCount={stats.act} projectsTop={projTop} projectsCount={stats.projects} todoTop={todoTop} todoOpen={todo.openTotal} dueTop={upcoming} cleanupCount={clCount} prioTop={prioTop} prioCount={inbox.priorityCount} contacts={contacts} split={split} cleared={cleared} suggestedTasks={suggestedTasks} sharedCats={sharedCats} sharedTotal={sharedTotal} overview={overview} perf={perf}>
           <Briefing briefing={briefing} existingTags={projectTags} dismissed={dismissed} />
         </DashGrid>
       </div>

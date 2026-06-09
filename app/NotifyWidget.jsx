@@ -1,6 +1,7 @@
 "use client";
 import { useState, useEffect } from "react";
 import { useToast } from "./Toast";
+import Widget from "./Widget";
 
 const M = ({ i }) => <span className="material-symbols-outlined">{i}</span>;
 // Pull a clean app label out of a package name (com.google.android.gm → Gm).
@@ -30,9 +31,10 @@ export default function NotifyWidget() {
   if (items === null) return null;            // first load — stay quiet
   if (items.length === 0) return null;        // nothing to triage — don't take up space
 
+  const preview = <span className="wmuted">{items.slice(0, 2).map((n) => n.title || n.body || appLabel(n.app)).join(" · ")}</span>;
+
   return (
-    <div className="card notifcard" style={{ marginTop: 18 }}>
-      <div className="sec-h"><M i="notifications_active" /> Phone notifications<span className="grow" /><span className="notif-count">{items.length}</span></div>
+    <Widget icon="notifications_active" accent="" title="Phone notifications" count={items.length} preview={preview}>
       <div className="notif-list">
         {items.map((n) => (
           <div className={"notif-row" + (openId === n.id ? " open" : "")} key={n.id}>
@@ -55,6 +57,6 @@ export default function NotifyWidget() {
           </div>
         ))}
       </div>
-    </div>
+    </Widget>
   );
 }

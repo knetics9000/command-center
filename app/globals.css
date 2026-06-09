@@ -945,3 +945,29 @@ body.focus .secnav .snlink[data-hide]{display:none}
 .sm-open{flex:none;display:grid;place-items:center;width:28px;height:28px;border-radius:8px;color:var(--acc-deep,#4648d4);text-decoration:none;transition:background .14s,color .14s}
 .sm-open:hover{background:var(--acc-soft,#e0e0fb)}
 .sm-open .material-symbols-outlined{font-size:18px}
+
+/* ===== Uniform expandable widget grid (dashboard) ===== */
+.w2grid{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;align-items:start}
+@media(max-width:900px){.w2grid{grid-template-columns:repeat(2,1fr)}}
+@media(max-width:600px){.w2grid{grid-template-columns:1fr}}
+.w2{background:var(--card);border:1px solid var(--line);border-radius:16px;box-shadow:0 4px 6px -1px rgba(20,22,40,.05),0 2px 4px -1px rgba(20,22,40,.03);transition:box-shadow .14s,border-color .14s;overflow:hidden}
+.w2:hover{box-shadow:0 12px 24px rgba(20,22,40,.1);border-color:#d8d4e6}
+.w2.open{grid-column:1/-1}                 /* expanded tile takes the full row for easy reading */
+.w2-head{display:flex;align-items:center;gap:9px;width:100%;padding:15px 17px;background:none;border:none;cursor:pointer;text-align:left;font:inherit;color:inherit}
+.w2-head .wtitle{flex:1}
+.w2-chev{color:var(--muted);font-size:13px;flex:none;transition:transform .16s ease}
+.w2-chev.open{transform:rotate(90deg)}
+.w2-body{padding:0 17px 15px;display:flex;flex-direction:column;gap:6px}
+.w2-prev{margin-top:-3px}
+.w2-open{align-self:flex-start;margin-top:10px;background:var(--acc-soft);color:var(--acc-deep);border:none;border-radius:9px;padding:7px 12px;font-weight:700;font-size:12px;cursor:pointer;display:inline-flex;align-items:center;gap:5px}
+.w2-open:hover{filter:brightness(.97)}
+.w2-open .material-symbols-outlined{font-size:15px}
+.hp-prev{font-size:13px;color:var(--ink2)}
+/* Overview donuts */
+.ov-donuts{display:grid;grid-template-columns:repeat(2,1fr);gap:16px}
+@media(min-width:700px){.w2.open .ov-donuts{grid-template-columns:repeat(4,1fr)}}
+.ov-cell{display:flex;align-items:center;gap:11px}
+.ov-meta{display:flex;flex-direction:column;line-height:1.25;min-width:0}
+.ov-meta b{font-family:var(--font-head);font-size:18px}
+.ov-meta span{font-size:12.5px;color:var(--ink2)}
+.ov-meta em{font-size:11px;color:var(--muted);font-style:normal}

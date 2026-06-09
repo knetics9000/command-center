@@ -1,149 +1,142 @@
 "use client";
-import { useState } from "react";
 import { useTabs } from "./Tabs";
+import Widget from "./Widget";
+import Donut from "./Donut";
 import Avatar from "./Avatar";
+import HealthCard from "./HealthCard";
+import NotifyWidget from "./NotifyWidget";
 
 const M = ({ i }) => <span className="material-symbols-outlined">{i}</span>;
+const Row = ({ children }) => <div className="wrow">{children}</div>;
+const Split = ({ l, r }) => <div className="wrow split"><span className="wrl">{l}</span><span className="wrr">{r}</span></div>;
+const emailRows = (arr, n) => arr.slice(0, n).map((e, i) => <Row key={i}><b>{e.sender}</b> · {e.subject}</Row>);
 
-export default function DashGrid({ briefing, inboxTop = [], actCount = 0, projectsTop = [], projectsCount = 0, todoTop = [], todoOpen = 0, dueTop = [], cleanupCount = 0, prioTop = [], prioCount = 0, contacts = [], split = {}, cleared = {}, suggestedTasks = [], sharedCats = [], sharedTotal = 0, children }) {
+export default function DashGrid({
+  briefing, inboxTop = [], actCount = 0, projectsTop = [], projectsCount = 0, todoTop = [], todoOpen = 0,
+  dueTop = [], cleanupCount = 0, prioTop = [], prioCount = 0, contacts = [], split = {}, cleared = {},
+  suggestedTasks = [], sharedCats = [], sharedTotal = 0, overview = [], perf = {}, children,
+}) {
   const { setTab } = useTabs();
-  const [briefOpen, setBriefOpen] = useState(false);
   const go = (t) => { setTab(t); window.scrollTo({ top: 0, behavior: "smooth" }); };
 
+  const ew = split.emailWork || 0, ep = split.emailPersonal || 0, te = ew + ep || 1;
+  const tw = split.taskWork || 0, tp = split.taskPersonal || 0, tt = tw + tp || 1;
+
   return (
-    <>
-      <div className="wgrid">
-        {/* Today's Briefing — expands inline */}
-        <div className="widget wbrief">
-          <div className="whead">
-            <span className="wicon brief"><M i="auto_awesome" /></span>
-            <span className="wtitle">Today's Briefing</span>
-            <button className="wexpand" onClick={() => setBriefOpen((o) => !o)}>{briefOpen ? "Hide ▲" : "Open ▾"}</button>
-          </div>
-          <div className="wbody">
+    <div className="w2grid">
+
+      {/* Overview — key numbers + donuts */}
+      <Widget icon="space_dashboard" accent="" title="Overview"
+        preview={<span className="wmuted">{overview.map((c) => `${c.n} ${c.l.toLowerCase()}`).join(" · ")}</span>}>
+        <div className="ov-donuts">
+          {overview.map((c, i) => (
+            <div className="ov-cell" key={i}>
+              <Donut pct={c.pct} color={c.color}><span className="dpct">{c.pct}%</span></Donut>
+              <div className="ov-meta"><b>{c.n}</b><span>{c.l}</span><em>{c.sub}</em></div>
+            </div>
+          ))}
+        </div>
+      </Widget>
+
+      <HealthCard />
+      <NotifyWidget />
+
+      {/* Today's Briefing — full briefing in the expansion */}
+      <Widget icon="auto_awesome" accent="brief" title="Today's Briefing"
+        preview={
+          <>
             <div className="wbrief-greet">{briefing ? briefing.greeting : "No briefing yet."}</div>
             {(briefing && briefing.priorities || []).slice(0, 3).map((p, i) => (
               <div className="wbrief-p" key={i}><span className="wpn">{i + 1}</span><span className="wbrief-pt">{p.title}</span></div>
             ))}
-          </div>
-        </div>
+          </>
+        }>
+        {children}
+      </Widget>
 
-        {/* AI Cleanup organizer */}
-        <div className="widget waccent wclick" onClick={() => go("cleanup")}>
-          <div className="whead"><span className="wicon accent"><M i="auto_fix_high" /></span><span className="wtitle">AI Cleanup</span>{cleanupCount > 0 && <span className="wcount accent">{cleanupCount}</span>}</div>
-          <div className="wbody"><div className="wmuted">{cleanupCount > 0 ? `${cleanupCount} suggestions to organize your tasks & spot new projects.` : "Tasks look organized. Open to re-scan."}</div></div>
-          <div className="wfoot light">Open organizer <M i="arrow_forward" /></div>
-        </div>
+      {/* Priority Emails */}
+      <Widget icon="star" accent="gold" title="Priority Emails" count={prioCount} countTone="gold" openTab="inbox" openLabel="Open Priority"
+        preview={prioTop.length ? emailRows(prioTop, 2) : <div className="wmuted">No priority emails.</div>}>
+        {prioTop.length ? emailRows(prioTop, 8) : <div className="wmuted">No priority emails right now.</div>}
+      </Widget>
 
-        {/* Priority Emails */}
-        <div className="widget wclick" onClick={() => go("inbox")}>
-          <div className="whead"><span className="wicon gold"><M i="star" /></span><span className="wtitle">Priority Emails</span><span className="wcount gold">{prioCount}</span></div>
-          <div className="wbody">
-            {prioTop.length === 0 && <div className="wmuted">No priority emails right now.</div>}
-            {prioTop.map((e, i) => <div className="wrow" key={i}><b>{e.sender}</b> · {e.subject}</div>)}
-          </div>
-          <div className="wfoot">Open Priority <M i="arrow_forward" /></div>
-        </div>
+      {/* Needs Attention */}
+      <Widget icon="priority_high" accent="red" title="Needs Attention" count={actCount} countTone="red" openTab="inbox" openLabel="Open Inbox"
+        preview={inboxTop.length ? emailRows(inboxTop, 2) : <div className="wmuted">Inbox is clear 🌿</div>}>
+        {inboxTop.length ? emailRows(inboxTop, 8) : <div className="wmuted">Inbox is clear 🌿</div>}
+      </Widget>
 
-        {/* Needs Attention */}
-        <div className="widget wclick" onClick={() => go("inbox")}>
-          <div className="whead"><span className="wicon red"><M i="priority_high" /></span><span className="wtitle">Needs Attention</span><span className="wcount red">{actCount}</span></div>
-          <div className="wbody">
-            {inboxTop.length === 0 && <div className="wmuted">Inbox is clear 🌿</div>}
-            {inboxTop.map((e, i) => <div className="wrow" key={i}><b>{e.sender}</b> · {e.subject}</div>)}
-          </div>
-          <div className="wfoot">Open Inbox <M i="arrow_forward" /></div>
-        </div>
+      {/* Active Projects */}
+      <Widget icon="account_tree" title="Active Projects" count={projectsCount} openTab="projects" openLabel="Open Projects"
+        preview={projectsTop.slice(0, 2).map((p, i) => <Split key={i} l={p.name} r={`${p.open} open · ${p.pct}%`} />)}>
+        {projectsTop.map((p, i) => <Split key={i} l={p.name} r={`${p.open} open · ${p.pct}%`} />)}
+      </Widget>
 
-        {/* Active Projects */}
-        <div className="widget wclick" onClick={() => go("projects")}>
-          <div className="whead"><span className="wicon"><M i="account_tree" /></span><span className="wtitle">Active Projects</span><span className="wcount">{projectsCount}</span></div>
-          <div className="wbody">
-            {projectsTop.map((p, i) => <div className="wrow split" key={i}><span className="wrl">{p.name}</span><span className="wrr">{p.open} open · {p.pct}%</span></div>)}
-          </div>
-          <div className="wfoot">Open Projects <M i="arrow_forward" /></div>
-        </div>
+      {/* To-Do */}
+      <Widget icon="checklist" title="To-Do" count={todoOpen} openTab="todo" openLabel="Open To-Do"
+        preview={todoTop.slice(0, 3).map((t, i) => <Split key={i} l={t.tag} r={t.count} />)}>
+        {todoTop.map((t, i) => <Split key={i} l={t.tag} r={t.count} />)}
+      </Widget>
 
-        {/* To-Do */}
-        <div className="widget wclick" onClick={() => go("todo")}>
-          <div className="whead"><span className="wicon"><M i="checklist" /></span><span className="wtitle">To-Do</span><span className="wcount">{todoOpen}</span></div>
-          <div className="wbody">
-            {todoTop.map((t, i) => <div className="wrow split" key={i}><span className="wrl">{t.tag}</span><span className="wrr">{t.count}</span></div>)}
-          </div>
-          <div className="wfoot">Open To-Do <M i="arrow_forward" /></div>
-        </div>
+      {/* Upcoming */}
+      <Widget icon="event_upcoming" accent="teal" title="Upcoming" openTab="calendar" openLabel="Open Calendar"
+        preview={dueTop.length ? dueTop.slice(0, 2).map((d, i) => <Split key={i} l={`${d.isTask ? "✓ " : ""}${d.summary}`} r={d.when} />) : <div className="wmuted">Nothing on the horizon.</div>}>
+        {dueTop.length ? dueTop.map((d, i) => <Split key={i} l={`${d.isTask ? "✓ " : ""}${d.summary}`} r={d.when} />) : <div className="wmuted">Nothing on the horizon.</div>}
+      </Widget>
 
-        {/* Upcoming Deadlines */}
-        <div className="widget wclick" onClick={() => go("calendar")}>
-          <div className="whead"><span className="wicon teal"><M i="event_upcoming" /></span><span className="wtitle">Upcoming</span></div>
-          <div className="wbody">
-            {dueTop.length === 0 && <div className="wmuted">Nothing on the horizon.</div>}
-            {dueTop.map((d, i) => <div className="wrow split" key={i}><span className="wrl">{d.isTask ? "✓ " : ""}{d.summary}</span><span className="wrr">{d.when}</span></div>)}
-          </div>
-          <div className="wfoot">Open Calendar <M i="arrow_forward" /></div>
-        </div>
+      {/* AI Cleanup */}
+      <Widget icon="auto_fix_high" accent="accent" title="AI Cleanup" count={cleanupCount || null} countTone="accent" openTab="cleanup" openLabel="Open organizer"
+        preview={<div className="wmuted">{cleanupCount > 0 ? `${cleanupCount} suggestions ready.` : "Tasks look organized."}</div>}>
+        <div className="wmuted">{cleanupCount > 0 ? `${cleanupCount} suggestions to organize your tasks & spot new projects.` : "Tasks look organized. Open to re-scan."}</div>
+      </Widget>
 
-        {/* AI-Suggested next actions */}
-        <div className="widget wclick" onClick={() => go("todo")}>
-          <div className="whead"><span className="wicon brief"><M i="lightbulb" /></span><span className="wtitle">AI-Suggested Tasks</span></div>
-          <div className="wbody">
-            {suggestedTasks.length === 0 && <div className="wmuted">No suggestions right now.</div>}
-            {suggestedTasks.map((t, i) => <div className="wrow" key={i}>○ {t}</div>)}
-          </div>
-          <div className="wfoot">Open To-Do <M i="arrow_forward" /></div>
-        </div>
+      {/* AI-Suggested next actions */}
+      <Widget icon="lightbulb" accent="brief" title="AI-Suggested Tasks" openTab="todo" openLabel="Open To-Do"
+        preview={suggestedTasks.length ? suggestedTasks.slice(0, 2).map((t, i) => <Row key={i}>○ {t}</Row>) : <div className="wmuted">No suggestions right now.</div>}>
+        {suggestedTasks.length ? suggestedTasks.map((t, i) => <Row key={i}>○ {t}</Row>) : <div className="wmuted">No suggestions right now.</div>}
+      </Widget>
 
-        {/* Recently Updated Contacts */}
-        <div className="widget wclick" onClick={() => go("inbox")}>
-          <div className="whead"><span className="wicon"><M i="group" /></span><span className="wtitle">Recent Contacts</span></div>
-          <div className="wbody wcontacts">
-            {contacts.length === 0 && <div className="wmuted">No recent contacts.</div>}
-            {contacts.map((c, i) => <div className="wcontact" key={i}><Avatar name={c.name} size={26} /><span className="wcname">{c.name}</span>{c.n > 1 && <span className="wcn">{c.n}</span>}</div>)}
-          </div>
+      {/* Shared Media */}
+      <Widget icon="bookmark" title="Shared Media" count={sharedTotal} openTab="saved" openLabel="Open Saved"
+        preview={sharedCats.length ? <span className="wmuted">{sharedCats.slice(0, 3).map((c) => c.name).join(" · ")}</span> : <div className="wmuted">Nothing shared yet.</div>}>
+        {sharedCats.length === 0 && <div className="wmuted">Share links from your phone/browser — they'll be analyzed and filed here.</div>}
+        <div className="smchips">
+          {sharedCats.slice(0, 10).map((c) => (
+            <button className="smchip" key={c.name} onClick={() => { try { sessionStorage.setItem("savedFilter", c.name); } catch {} go("saved"); }}>{c.name}<span className="smc">{c.n}</span></button>
+          ))}
         </div>
+      </Widget>
 
-        {/* Work / Personal Split */}
-        <div className="widget">
-          <div className="whead"><span className="wicon teal"><M i="balance" /></span><span className="wtitle">Work / Personal</span></div>
-          <div className="wbody">
-            {(() => {
-              const ew = split.emailWork || 0, ep = split.emailPersonal || 0, te = ew + ep || 1;
-              const tw = split.taskWork || 0, tp = split.taskPersonal || 0, tt = tw + tp || 1;
-              return <>
-                <div className="splitrow"><span className="splitlbl">Email</span><div className="splitbar"><span className="sbw" style={{ width: (ew / te * 100) + "%" }} /><span className="sbp" style={{ width: (ep / te * 100) + "%" }} /></div><span className="splitnum">{ew}/{ep}</span></div>
-                <div className="splitrow"><span className="splitlbl">Tasks</span><div className="splitbar"><span className="sbw" style={{ width: (tw / tt * 100) + "%" }} /><span className="sbp" style={{ width: (tp / tt * 100) + "%" }} /></div><span className="splitnum">{tw}/{tp}</span></div>
-                <div className="splitlegend"><span><span className="sbw dot" /> Work</span><span><span className="sbp dot" /> Personal</span></div>
-              </>;
-            })()}
-          </div>
+      {/* Recent Contacts */}
+      <Widget icon="group" title="Recent Contacts" openTab="inbox" openLabel="Open Inbox"
+        preview={contacts.length ? <span className="wmuted">{contacts.slice(0, 3).map((c) => c.name).join(", ")}</span> : <div className="wmuted">No recent contacts.</div>}>
+        <div className="wcontacts">
+          {contacts.map((c, i) => <div className="wcontact" key={i}><Avatar name={c.name} size={26} /><span className="wcname">{c.name}</span>{c.n > 1 && <span className="wcn">{c.n}</span>}</div>)}
         </div>
+      </Widget>
 
-        {/* Archived / Cleared */}
-        <div className="widget wclick" onClick={() => go("inbox")}>
-          <div className="whead"><span className="wicon"><M i="inventory_2" /></span><span className="wtitle">Cleared</span></div>
-          <div className="wbody">
-            <div className="wrow split"><span className="wrl">Emails archived/done</span><span className="wrr">{cleared.emails || 0}</span></div>
-            <div className="wrow split"><span className="wrl">Tasks completed</span><span className="wrr">{cleared.tasks || 0}</span></div>
-          </div>
-          <div className="wfoot">View handled <M i="arrow_forward" /></div>
-        </div>
+      {/* Work / Personal split */}
+      <Widget icon="balance" accent="teal" title="Work / Personal"
+        preview={<span className="wmuted">Email {ew}/{ep} · Tasks {tw}/{tp}</span>}>
+        <div className="splitrow"><span className="splitlbl">Email</span><div className="splitbar"><span className="sbw" style={{ width: (ew / te * 100) + "%" }} /><span className="sbp" style={{ width: (ep / te * 100) + "%" }} /></div><span className="splitnum">{ew}/{ep}</span></div>
+        <div className="splitrow"><span className="splitlbl">Tasks</span><div className="splitbar"><span className="sbw" style={{ width: (tw / tt * 100) + "%" }} /><span className="sbp" style={{ width: (tp / tt * 100) + "%" }} /></div><span className="splitnum">{tw}/{tp}</span></div>
+        <div className="splitlegend"><span><span className="sbw dot" /> Work</span><span><span className="sbp dot" /> Personal</span></div>
+      </Widget>
 
-        {/* Shared Media */}
-        <div className="widget">
-          <div className="whead"><span className="wicon"><M i="bookmark" /></span><span className="wtitle">Shared Media</span><span className="wcount">{sharedTotal}</span></div>
-          <div className="wbody">
-            {sharedCats.length === 0 && <div className="wmuted">Share links from your phone/browser — they'll be analyzed and filed here.</div>}
-            <div className="smchips">
-              {sharedCats.slice(0, 8).map((c) => (
-                <button className="smchip" key={c.name} onClick={() => { try { sessionStorage.setItem("savedFilter", c.name); } catch {} go("saved"); }}>{c.name}<span className="smc">{c.n}</span></button>
-              ))}
-            </div>
-          </div>
-          <div className="wfoot" onClick={() => go("saved")}>Open Saved <M i="arrow_forward" /></div>
-        </div>
-      </div>
+      {/* Cleared */}
+      <Widget icon="inventory_2" title="Cleared" openTab="inbox" openLabel="View handled"
+        preview={<span className="wmuted">{cleared.emails || 0} emails · {cleared.tasks || 0} tasks</span>}>
+        <Split l="Emails archived/done" r={cleared.emails || 0} />
+        <Split l="Tasks completed" r={cleared.tasks || 0} />
+      </Widget>
 
-      {briefOpen && <div className="briefexpand">{children}</div>}
-    </>
+      {/* Performance */}
+      <Widget icon="trending_up" accent="accent" title="Performance"
+        preview={<span className="wmuted">{perf.pct || 0}% of tasks done</span>}>
+        <div className="perf-sub">You've completed {perf.pct || 0}% of your tasks — {perf.done || 0} done, {perf.open || 0} still open.</div>
+        <div className="perf-num"><b>{perf.done || 0}</b><span>Tasks done</span></div>
+      </Widget>
+
+    </div>
   );
 }
