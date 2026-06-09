@@ -239,6 +239,7 @@ CREATE TABLE IF NOT EXISTS guru_materials (
   cred_reason  TEXT,
   influence_id INTEGER,
   source       TEXT,
+  type         TEXT DEFAULT 'material',
   analyzed     INTEGER DEFAULT 0,
   created_at   INTEGER NOT NULL
 );
