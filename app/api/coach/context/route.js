@@ -2,13 +2,13 @@ import { NextResponse } from "next/server";
 import { listEvents } from "@/lib/google";
 import { getOpenTasks, getProjects, getLatestBriefing } from "@/lib/queries";
 import { assembleCoachBundle } from "@/lib/coachContext";
+import { requireCoachToken } from "@/lib/coachAuth";
 
 export const dynamic = "force-dynamic";
 export const maxDuration = 30;
 
 export async function GET(req) {
-  const token = req.headers.get("x-coach-token");
-  if (!process.env.COACH_TOKEN || token !== process.env.COACH_TOKEN) {
+  if (!requireCoachToken(req)) {
     return NextResponse.json({ ok: false, error: "unauthorized" }, { status: 401 });
   }
   try {
