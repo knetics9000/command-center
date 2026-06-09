@@ -187,3 +187,17 @@ CREATE TABLE IF NOT EXISTS captures (
   created_at      TEXT DEFAULT (datetime('now')),
   processed_at    TEXT
 );
+
+-- Phone notifications captured by the Android NotificationListener app.
+CREATE TABLE IF NOT EXISTS notifications (
+  id           INTEGER PRIMARY KEY AUTOINCREMENT,
+  app          TEXT,                      -- source app (package/label)
+  title        TEXT,
+  body         TEXT,
+  link         TEXT,
+  posted_at    TEXT,                      -- device timestamp (ISO)
+  status       TEXT DEFAULT 'new',        -- new | dismissed | snoozed | tasked
+  snooze_until TEXT,
+  created_at   TEXT DEFAULT (datetime('now'))
+);
+CREATE INDEX IF NOT EXISTS idx_notif_status ON notifications(status, id);

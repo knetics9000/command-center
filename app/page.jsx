@@ -15,6 +15,7 @@ import AssistantChat from "./AssistantChat";
 import SavedView from "./SavedView";
 import HealthCard from "./HealthCard";
 import Realign from "./Realign";
+import NotifyWidget from "./NotifyWidget";
 import { cleanupCount } from "@/lib/cleanup";
 import { getPriorityInbox } from "@/lib/priority";
 import { categoryCounts } from "@/lib/share";
@@ -126,6 +127,8 @@ export default async function Home() {
         emails={(inbox.byTier.act || []).slice(0, 8).map((e) => ({ id: e.id, subject: e.subject, sender: e.sender, action: e.action }))}
         tasks={getDueTasks("2000-01-01", new Date(Date.now() + 8 * 86400e3).toISOString().slice(0, 10)).slice(0, 12)}
       />
+
+      <NotifyWidget />
 
       <div className="stats">
         <HealthCard />

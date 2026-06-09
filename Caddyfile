@@ -5,9 +5,19 @@
 # then paste it after the username).
 
 {$CC_DOMAIN} {
-	reverse_proxy app:3000
+	# The Android notification app posts to /api/notify. It can't pass the
+	# password wall, so this one path skips basic_auth — it's protected by the
+	# NOTIFY_TOKEN bearer token instead (checked in the route handler).
+	@notify path /api/notify
+	handle @notify {
+		reverse_proxy app:3000
+	}
 
-	# basic_auth {
-	# 	kurt PASTE_BCRYPT_HASH_HERE
-	# }
+	# Everything else (the UI + all other APIs) sits behind the password.
+	handle {
+		# basic_auth {
+		# 	kurt PASTE_BCRYPT_HASH_HERE
+		# }
+		reverse_proxy app:3000
+	}
 }
