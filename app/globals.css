@@ -1,5 +1,6 @@
 @import url('https://fonts.googleapis.com/css2?family=Hanken+Grotesk:wght@400;500;600;700;800&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@500;600&display=swap');
 @import url('https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200&display=block');
+@import url('https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,600;9..144,700&display=swap');
 
 :root{
   --bg:#F6F7FA; --card:#fff; --ink:#1b1b23; --ink2:#464554; --muted:#767586;
@@ -977,3 +978,113 @@ body.focus .secnav .snlink[data-hide]{display:none}
 .notif-flag{color:#E5484D;display:inline-flex;vertical-align:-3px;margin-right:3px}
 .notif-flag .material-symbols-outlined{font-size:15px}
 .now-kind.flagged{background:var(--error-soft,#ffe0e0);color:#E5484D}
+
+/* ============================================================
+   EXECUTIVE DARK (v2) — opt-in via html[data-theme="exec"].
+   v1 untouched: every rule below is scoped to the theme attr.
+   Charcoal planes, one gold accent, Fraunces display numerals.
+   ============================================================ */
+html[data-theme="exec"]{
+  --bg:#0E0F12; --card:#15171C; --ink:#EAE6DE; --ink2:#A39F96; --muted:#6F6C66;
+  --line:rgba(255,255,255,.07);
+  --acc:#8A8FBE; --acc-deep:#B9BDDF; --acc-soft:rgba(138,143,190,.16);
+  --paper:#1B1E24; --paper2:#21242B;
+  --error:#E06C6C; --error-soft:rgba(224,108,108,.14);
+  --tertiary:#C98B4E; --tertiary-soft:rgba(201,139,78,.15); --teal:#3FB8A8;
+  --gold:#C9A55C;
+  --font-display:'Fraunces',Georgia,serif;
+  color-scheme:dark;
+}
+[data-theme="exec"] body{background:var(--bg);color:var(--ink)}
+
+/* planes: page < card < raised; depth via separation, shadows near-invisible */
+[data-theme="exec"] .card,[data-theme="exec"] .w2,[data-theme="exec"] .realign{
+  border-radius:14px;box-shadow:0 10px 30px rgba(0,0,0,.35);background:var(--card)}
+[data-theme="exec"] .w2:hover{border-color:rgba(255,255,255,.12);box-shadow:0 14px 36px rgba(0,0,0,.45)}
+[data-theme="exec"] .apptop,[data-theme="exec"] .tabstrip{background:rgba(14,15,18,.88)}
+[data-theme="exec"] .ah-name{color:var(--ink)}
+
+/* serif display numerals + greeting — the only places Fraunces appears */
+[data-theme="exec"] h1.hello,[data-theme="exec"] .greet{font-family:var(--font-display);font-weight:600;letter-spacing:0}
+[data-theme="exec"] .ov-meta b{font-family:var(--font-display);font-weight:600;font-size:27px;line-height:1.1}
+[data-theme="exec"] .perf-num b{font-family:var(--font-display);font-weight:600}
+[data-theme="exec"] .dpct{font-family:var(--font-display);font-weight:600}
+
+/* gold — exactly four signals */
+[data-theme="exec"] .tabbtn.on{color:var(--gold);border-bottom-color:var(--gold)}
+[data-theme="exec"] .tabbtn.on .material-symbols-outlined{color:var(--gold)}
+[data-theme="exec"] .prios > div:first-child .pnum{background:var(--gold);color:#15171C}
+[data-theme="exec"] .ov-cell:first-child .ov-meta b{color:var(--gold)}
+[data-theme="exec"] .now-count{background:transparent;border:1px solid var(--gold);color:var(--gold)}
+
+/* hardcoded-light patches */
+[data-theme="exec"] .cap-ta:focus{background:var(--paper2)}
+[data-theme="exec"] .cap-mic,[data-theme="exec"] .moodchip{background:var(--paper)}
+[data-theme="exec"] .cap-btn{background:#2A2D36;color:var(--ink)}
+[data-theme="exec"] .cap-btn:hover{background:#333742}
+[data-theme="exec"] .moodchip.on{background:var(--ink);border-color:var(--ink);color:var(--bg)}
+[data-theme="exec"] .nowitem{background:var(--paper)}
+[data-theme="exec"] .now-title .material-symbols-outlined{color:var(--ink2)}
+[data-theme="exec"] .now-pri.p-med{background:rgba(201,165,92,.14);color:#D8BC85}
+[data-theme="exec"] .now-pri.p-low{background:rgba(96,170,127,.14);color:#7FBF99}
+[data-theme="exec"] .now-cat,[data-theme="exec"] .now-mood{color:var(--ink2)}
+[data-theme="exec"] .prio.clickable:hover,[data-theme="exec"] .prio.open{background:var(--paper)}
+[data-theme="exec"] .clmain.clickable:hover{background:var(--paper)}
+[data-theme="exec"] .notif-row{background:var(--paper)}
+[data-theme="exec"] .notif-row.open{background:var(--paper2);box-shadow:inset 0 0 0 1px rgba(201,165,92,.25)}
+[data-theme="exec"] .notif-app{background:rgba(255,255,255,.07);color:var(--ink2)}
+[data-theme="exec"] .smchip{background:var(--paper);color:var(--ink2);border-color:var(--line)}
+[data-theme="exec"] .w2-open{background:rgba(255,255,255,.06);color:var(--ink)}
+[data-theme="exec"] .wicon{background:rgba(255,255,255,.06);color:var(--ink2)}
+[data-theme="exec"] .wicon.gold{background:rgba(201,165,92,.14);color:var(--gold)}
+[data-theme="exec"] .wicon.red{background:var(--error-soft);color:var(--error)}
+[data-theme="exec"] .wicon.teal{background:rgba(63,184,168,.12);color:var(--teal)}
+[data-theme="exec"] .wicon.brief,[data-theme="exec"] .wicon.accent{background:var(--acc-soft);color:var(--acc-deep)}
+[data-theme="exec"] .wcount{background:rgba(255,255,255,.07);color:var(--ink2)}
+[data-theme="exec"] .wcount.gold{background:rgba(201,165,92,.14);color:var(--gold)}
+[data-theme="exec"] .wcount.red{background:var(--error-soft);color:var(--error)}
+[data-theme="exec"] .sm-open:hover{background:rgba(255,255,255,.08)}
+[data-theme="exec"] .notif-flag{color:var(--error)}
+[data-theme="exec"] .now-kind.flagged{background:var(--error-soft);color:var(--error)}
+[data-theme="exec"] .emptyhero,[data-theme="exec"] .wbrief-p{color:var(--ink2)}
+[data-theme="exec"] .wpn{background:rgba(255,255,255,.08);color:var(--ink2)}
+[data-theme="exec"] .synced{color:var(--muted)}
+[data-theme="exec"] .searchwrap input,[data-theme="exec"] .cmdk{background:var(--paper);color:var(--ink)}
+
+/* exec widget flow: daily → supporting → low-frequency */
+[data-theme="exec"] .w2.wk-brief{order:1}
+[data-theme="exec"] .w2.wk-upcoming{order:2}
+[data-theme="exec"] .w2.wk-prio{order:3}
+[data-theme="exec"] .w2.wk-act{order:4}
+[data-theme="exec"] .w2.wk-todo{order:5}
+[data-theme="exec"] .w2.wk-notify{order:6}
+[data-theme="exec"] .w2.wk-projects{order:7}
+[data-theme="exec"] .w2.wk-health{order:8}
+[data-theme="exec"] .w2.wk-overview{order:9}
+[data-theme="exec"] .w2.wk-suggest{order:10}
+[data-theme="exec"] .w2.wk-cleanup{order:11}
+[data-theme="exec"] .w2.wk-shared{order:12}
+[data-theme="exec"] .w2.wk-contacts{order:13}
+[data-theme="exec"] .w2.wk-split{order:14}
+[data-theme="exec"] .w2.wk-cleared{order:15}
+[data-theme="exec"] .w2.wk-perf{order:16}
+
+/* theme toggle pill (both themes) */
+.themetoggle{margin-left:auto;display:inline-flex;align-items:center;gap:6px;border:1px solid var(--line);background:none;color:var(--ink2);font:inherit;font-size:12px;font-weight:600;border-radius:999px;padding:5px 13px;cursor:pointer;white-space:nowrap;transition:color .14s,border-color .14s}
+.themetoggle:hover{color:var(--ink);border-color:rgba(127,127,127,.45)}
+.themetoggle .tt-diamond{font-size:9px;color:#C9A55C}
+[data-theme="exec"] .themetoggle{color:var(--ink2)}
+
+/* exec: header chrome */
+[data-theme="exec"] .tsearch{background:var(--paper);border-color:var(--line);color:var(--muted)}
+[data-theme="exec"] .tsearch:hover{border-color:rgba(255,255,255,.16)}
+[data-theme="exec"] .tsearch-kbd{background:rgba(255,255,255,.08);color:var(--ink2)}
+[data-theme="exec"] .rbtn{background:var(--paper);color:var(--ink2)}
+[data-theme="exec"] .rbtn:hover{background:var(--paper2)}
+[data-theme="exec"] .fab{background:#2A2D36;color:var(--ink);box-shadow:0 10px 28px rgba(0,0,0,.5)}
+[data-theme="exec"] .fab:hover{box-shadow:0 14px 34px rgba(0,0,0,.6)}
+@media(max-width:900px){.themetoggle{padding:5px 9px}.themetoggle .tt-label{display:none}}
+
+/* responsive fix (both themes): search text never wraps into a blob; collapses to icon at tablet widths */
+.tsearch-ph{white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+@media(max-width:920px){.tsearch{flex:0 0 auto}.tsearch-ph,.tsearch-kbd{display:none}}

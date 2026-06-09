@@ -20,7 +20,7 @@ export default function HealthCard() {
       : <span className="hp-prev">{h.steps != null ? Number(h.steps).toLocaleString() + " steps" : "—"}{h.restingHr != null ? " · " + h.restingHr + " bpm" : ""}</span>;
 
   return (
-    <Widget icon="favorite" accent="red" title="Health Pulse" preview={preview}>
+    <Widget wkey="health" icon="favorite" accent="red" title="Health Pulse" preview={preview}>
       {connected ? (
         <>
           <Row label="Steps" val={h.steps != null ? Number(h.steps).toLocaleString() : null} />

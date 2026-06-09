@@ -21,6 +21,8 @@ export default function RootLayout({ children }) {
   return (
     <html lang="en">
       <body>
+        {/* apply the saved theme before paint so there's no light flash */}
+        <script dangerouslySetInnerHTML={{ __html: `try{if(localStorage.getItem('cc-theme')==='exec')document.documentElement.setAttribute('data-theme','exec')}catch(e){}` }} />
         <ToastProvider>
           {children}
           <CommandBar />

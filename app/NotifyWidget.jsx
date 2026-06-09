@@ -36,7 +36,7 @@ export default function NotifyWidget() {
   const preview = <span className="wmuted">{flaggedCount > 0 ? `🚩 ${flaggedCount} flagged · ` : ""}{sorted.slice(0, 2).map((n) => n.title || n.body || appLabel(n.app)).join(" · ")}</span>;
 
   return (
-    <Widget icon="notifications_active" accent="" title="Phone notifications" count={items.length} countTone={flaggedCount ? "red" : ""} preview={preview}>
+    <Widget wkey="notify" icon="notifications_active" accent="" title="Phone notifications" count={items.length} countTone={flaggedCount ? "red" : ""} preview={preview}>
       <div className="notif-list">
         {sorted.map((n) => (
           <div className={"notif-row" + (openId === n.id ? " open" : "") + (n.flagged ? " flagged" : "")} key={n.id}>

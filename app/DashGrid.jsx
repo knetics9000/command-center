@@ -26,7 +26,7 @@ export default function DashGrid({
     <div className="w2grid">
 
       {/* Overview — key numbers + donuts */}
-      <Widget icon="space_dashboard" accent="" title="Overview"
+      <Widget wkey="overview" icon="space_dashboard" accent="" title="Overview"
         preview={<span className="wmuted">{overview.map((c) => `${c.n} ${c.l.toLowerCase()}`).join(" · ")}</span>}>
         <div className="ov-donuts">
           {overview.map((c, i) => (
@@ -42,7 +42,7 @@ export default function DashGrid({
       <NotifyWidget />
 
       {/* Today's Briefing — full briefing in the expansion */}
-      <Widget icon="auto_awesome" accent="brief" title="Today's Briefing"
+      <Widget wkey="brief" icon="auto_awesome" accent="brief" title="Today's Briefing"
         preview={
           <>
             <div className="wbrief-greet">{briefing ? briefing.greeting : "No briefing yet."}</div>
@@ -55,49 +55,49 @@ export default function DashGrid({
       </Widget>
 
       {/* Priority Emails */}
-      <Widget icon="star" accent="gold" title="Priority Emails" count={prioCount} countTone="gold" openTab="inbox" openLabel="Open Priority"
+      <Widget wkey="prio" icon="star" accent="gold" title="Priority Emails" count={prioCount} countTone="gold" openTab="inbox" openLabel="Open Priority"
         preview={prioTop.length ? emailRows(prioTop, 2) : <div className="wmuted">No priority emails.</div>}>
         {prioTop.length ? emailRows(prioTop, 8) : <div className="wmuted">No priority emails right now.</div>}
       </Widget>
 
       {/* Needs Attention */}
-      <Widget icon="priority_high" accent="red" title="Needs Attention" count={actCount} countTone="red" openTab="inbox" openLabel="Open Inbox"
+      <Widget wkey="act" icon="priority_high" accent="red" title="Needs Attention" count={actCount} countTone="red" openTab="inbox" openLabel="Open Inbox"
         preview={inboxTop.length ? emailRows(inboxTop, 2) : <div className="wmuted">Inbox is clear 🌿</div>}>
         {inboxTop.length ? emailRows(inboxTop, 8) : <div className="wmuted">Inbox is clear 🌿</div>}
       </Widget>
 
       {/* Active Projects */}
-      <Widget icon="account_tree" title="Active Projects" count={projectsCount} openTab="projects" openLabel="Open Projects"
+      <Widget wkey="projects" icon="account_tree" title="Active Projects" count={projectsCount} openTab="projects" openLabel="Open Projects"
         preview={projectsTop.slice(0, 2).map((p, i) => <Split key={i} l={p.name} r={`${p.open} open · ${p.pct}%`} />)}>
         {projectsTop.map((p, i) => <Split key={i} l={p.name} r={`${p.open} open · ${p.pct}%`} />)}
       </Widget>
 
       {/* To-Do */}
-      <Widget icon="checklist" title="To-Do" count={todoOpen} openTab="todo" openLabel="Open To-Do"
+      <Widget wkey="todo" icon="checklist" title="To-Do" count={todoOpen} openTab="todo" openLabel="Open To-Do"
         preview={todoTop.slice(0, 3).map((t, i) => <Split key={i} l={t.tag} r={t.count} />)}>
         {todoTop.map((t, i) => <Split key={i} l={t.tag} r={t.count} />)}
       </Widget>
 
       {/* Upcoming */}
-      <Widget icon="event_upcoming" accent="teal" title="Upcoming" openTab="calendar" openLabel="Open Calendar"
+      <Widget wkey="upcoming" icon="event_upcoming" accent="teal" title="Upcoming" openTab="calendar" openLabel="Open Calendar"
         preview={dueTop.length ? dueTop.slice(0, 2).map((d, i) => <Split key={i} l={`${d.isTask ? "✓ " : ""}${d.summary}`} r={d.when} />) : <div className="wmuted">Nothing on the horizon.</div>}>
         {dueTop.length ? dueTop.map((d, i) => <Split key={i} l={`${d.isTask ? "✓ " : ""}${d.summary}`} r={d.when} />) : <div className="wmuted">Nothing on the horizon.</div>}
       </Widget>
 
       {/* AI Cleanup */}
-      <Widget icon="auto_fix_high" accent="accent" title="AI Cleanup" count={cleanupCount || null} countTone="accent" openTab="cleanup" openLabel="Open organizer"
+      <Widget wkey="cleanup" icon="auto_fix_high" accent="accent" title="AI Cleanup" count={cleanupCount || null} countTone="accent" openTab="cleanup" openLabel="Open organizer"
         preview={<div className="wmuted">{cleanupCount > 0 ? `${cleanupCount} suggestions ready.` : "Tasks look organized."}</div>}>
         <div className="wmuted">{cleanupCount > 0 ? `${cleanupCount} suggestions to organize your tasks & spot new projects.` : "Tasks look organized. Open to re-scan."}</div>
       </Widget>
 
       {/* AI-Suggested next actions */}
-      <Widget icon="lightbulb" accent="brief" title="AI-Suggested Tasks" openTab="todo" openLabel="Open To-Do"
+      <Widget wkey="suggest" icon="lightbulb" accent="brief" title="AI-Suggested Tasks" openTab="todo" openLabel="Open To-Do"
         preview={suggestedTasks.length ? suggestedTasks.slice(0, 2).map((t, i) => <Row key={i}>○ {t}</Row>) : <div className="wmuted">No suggestions right now.</div>}>
         {suggestedTasks.length ? suggestedTasks.map((t, i) => <Row key={i}>○ {t}</Row>) : <div className="wmuted">No suggestions right now.</div>}
       </Widget>
 
       {/* Shared Media */}
-      <Widget icon="bookmark" title="Shared Media" count={sharedTotal} openTab="saved" openLabel="Open Saved"
+      <Widget wkey="shared" icon="bookmark" title="Shared Media" count={sharedTotal} openTab="saved" openLabel="Open Saved"
         preview={sharedCats.length ? <span className="wmuted">{sharedCats.slice(0, 3).map((c) => c.name).join(" · ")}</span> : <div className="wmuted">Nothing shared yet.</div>}>
         {sharedCats.length === 0 && <div className="wmuted">Share links from your phone/browser — they'll be analyzed and filed here.</div>}
         <div className="smchips">
@@ -108,7 +108,7 @@ export default function DashGrid({
       </Widget>
 
       {/* Recent Contacts */}
-      <Widget icon="group" title="Recent Contacts" openTab="inbox" openLabel="Open Inbox"
+      <Widget wkey="contacts" icon="group" title="Recent Contacts" openTab="inbox" openLabel="Open Inbox"
         preview={contacts.length ? <span className="wmuted">{contacts.slice(0, 3).map((c) => c.name).join(", ")}</span> : <div className="wmuted">No recent contacts.</div>}>
         <div className="wcontacts">
           {contacts.map((c, i) => <div className="wcontact" key={i}><Avatar name={c.name} size={26} /><span className="wcname">{c.name}</span>{c.n > 1 && <span className="wcn">{c.n}</span>}</div>)}
@@ -116,7 +116,7 @@ export default function DashGrid({
       </Widget>
 
       {/* Work / Personal split */}
-      <Widget icon="balance" accent="teal" title="Work / Personal"
+      <Widget wkey="split" icon="balance" accent="teal" title="Work / Personal"
         preview={<span className="wmuted">Email {ew}/{ep} · Tasks {tw}/{tp}</span>}>
         <div className="splitrow"><span className="splitlbl">Email</span><div className="splitbar"><span className="sbw" style={{ width: (ew / te * 100) + "%" }} /><span className="sbp" style={{ width: (ep / te * 100) + "%" }} /></div><span className="splitnum">{ew}/{ep}</span></div>
         <div className="splitrow"><span className="splitlbl">Tasks</span><div className="splitbar"><span className="sbw" style={{ width: (tw / tt * 100) + "%" }} /><span className="sbp" style={{ width: (tp / tt * 100) + "%" }} /></div><span className="splitnum">{tw}/{tp}</span></div>
@@ -124,14 +124,14 @@ export default function DashGrid({
       </Widget>
 
       {/* Cleared */}
-      <Widget icon="inventory_2" title="Cleared" openTab="inbox" openLabel="View handled"
+      <Widget wkey="cleared" icon="inventory_2" title="Cleared" openTab="inbox" openLabel="View handled"
         preview={<span className="wmuted">{cleared.emails || 0} emails · {cleared.tasks || 0} tasks</span>}>
         <Split l="Emails archived/done" r={cleared.emails || 0} />
         <Split l="Tasks completed" r={cleared.tasks || 0} />
       </Widget>
 
       {/* Performance */}
-      <Widget icon="trending_up" accent="accent" title="Performance"
+      <Widget wkey="perf" icon="trending_up" accent="accent" title="Performance"
         preview={<span className="wmuted">{perf.pct || 0}% of tasks done</span>}>
         <div className="perf-sub">You've completed {perf.pct || 0}% of your tasks — {perf.done || 0} done, {perf.open || 0} still open.</div>
         <div className="perf-num"><b>{perf.done || 0}</b><span>Tasks done</span></div>

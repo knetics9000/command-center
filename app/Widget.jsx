@@ -12,14 +12,14 @@ const M = ({ i }) => <span className="material-symbols-outlined">{i}</span>;
 export default function Widget({
   icon, accent = "", title, count = null, countTone = "",
   preview = null, children = null, openTab = null, openLabel = "Open",
-  defaultOpen = false, span = 1,
+  defaultOpen = false, span = 1, wkey = "",
 }) {
   const [open, setOpen] = useState(defaultOpen);
   const { setTab } = useTabs();
   const go = () => { setTab(openTab); window.scrollTo({ top: 0, behavior: "smooth" }); };
 
   return (
-    <div className={"w2" + (open ? " open" : "") + (span === 2 ? " w2-wide" : "")}>
+    <div className={"w2" + (open ? " open" : "") + (span === 2 ? " w2-wide" : "") + (wkey ? " wk-" + wkey : "")}>
       <button className="w2-head" onClick={() => setOpen((o) => !o)}>
         <span className={"wicon " + accent}>{icon && <M i={icon} />}</span>
         <span className="wtitle">{title}</span>

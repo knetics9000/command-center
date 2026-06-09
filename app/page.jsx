@@ -2,6 +2,7 @@ import { getStats, getInbox, getHandledInbox, getProjects, getTodoGroups, getLat
 import { connectionStatus, listEvents } from "@/lib/google";
 import RefreshButton from "./RefreshButton";
 import TopUtility from "./TopUtility";
+import ThemeToggle from "./ThemeToggle";
 import Fab from "./Fab";
 import Briefing from "./Briefing";
 import Projects from "./Projects";
@@ -120,6 +121,7 @@ export default async function Home() {
       <div className="appwrap">
         <header className="apptop">
           <div className="ah-brand"><span className="ah-logo material-symbols-outlined">bolt</span><span className="ah-name">Command Center</span></div>
+          <ThemeToggle />
           <TopUtility actCount={stats.act} pic={personal.picture} email={personal.email} />
         </header>
         <div className="tabstrip"><TabBar /></div>
