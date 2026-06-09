@@ -9,5 +9,6 @@ export async function GET(req) {
   const { searchParams } = new URL(req.url);
   const q = searchParams.get("q") || undefined;
   const influenceId = searchParams.get("influenceId") || undefined;
-  return NextResponse.json({ materials: listMaterials({ q, influenceId: influenceId ? Number(influenceId) : undefined }) });
+  const type = searchParams.get("type") || undefined;
+  return NextResponse.json({ materials: listMaterials({ q, influenceId: influenceId ? Number(influenceId) : undefined, type }) });
 }
