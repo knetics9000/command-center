@@ -31,14 +31,16 @@ export default function NotifyWidget() {
   if (items === null) return null;            // first load — stay quiet
   if (items.length === 0) return null;        // nothing to triage — don't take up space
 
-  const preview = <span className="wmuted">{items.slice(0, 2).map((n) => n.title || n.body || appLabel(n.app)).join(" · ")}</span>;
+  const sorted = [...items].sort((a, b) => (b.flagged ? 1 : 0) - (a.flagged ? 1 : 0) || (b.importance || 0) - (a.importance || 0) || b.id - a.id);
+  const flaggedCount = items.filter((n) => n.flagged).length;
+  const preview = <span className="wmuted">{flaggedCount > 0 ? `🚩 ${flaggedCount} flagged · ` : ""}{sorted.slice(0, 2).map((n) => n.title || n.body || appLabel(n.app)).join(" · ")}</span>;
 
   return (
-    <Widget icon="notifications_active" accent="" title="Phone notifications" count={items.length} preview={preview}>
+    <Widget icon="notifications_active" accent="" title="Phone notifications" count={items.length} countTone={flaggedCount ? "red" : ""} preview={preview}>
       <div className="notif-list">
-        {items.map((n) => (
-          <div className={"notif-row" + (openId === n.id ? " open" : "")} key={n.id}>
-            <span className="notif-app">{appLabel(n.app)}</span>
+        {sorted.map((n) => (
+          <div className={"notif-row" + (openId === n.id ? " open" : "") + (n.flagged ? " flagged" : "")} key={n.id}>
+            <span className="notif-app">{n.flagged && <span className="notif-flag" title={n.why || "Needs attention"}><M i="flag" /></span>}{appLabel(n.app)}</span>
             <div className="notif-body" onClick={() => setOpenId(openId === n.id ? null : n.id)} title="Tap to expand">
               {n.title && <div className="notif-title">{n.title}</div>}
               {n.body && <div className={"notif-text" + (openId === n.id ? " open" : "")}>{n.body}</div>}

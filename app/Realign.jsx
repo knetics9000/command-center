@@ -8,7 +8,9 @@ const MOODS = ["quick win", "deep focus", "low energy", "errand", "creative"];
 const PRIO = { high: "p-high", medium: "p-med", low: "p-low" };
 const RANK = { high: 0, medium: 1, low: 2 };
 
-export default function Realign({ emails = [], tasks = [], dismissed = [] }) {
+const appLabel = (a) => { const s = (a || "").split(".").pop() || "Phone"; return s.charAt(0).toUpperCase() + s.slice(1); };
+
+export default function Realign({ emails = [], tasks = [], dismissed = [], notifs = [] }) {
   const { toast } = useToast();
   const { setTab } = useTabs();
   const [items, setItems] = useState([]);     // processed captures
@@ -16,6 +18,7 @@ export default function Realign({ emails = [], tasks = [], dismissed = [] }) {
   const [busy, setBusy] = useState(false);
   const [mood, setMood] = useState(null);
   const [dis, setDis] = useState(new Set(dismissed));   // dismissed item keys
+  const [nDis, setNDis] = useState(new Set());          // dismissed flagged-notification ids
   const [showDis, setShowDis] = useState(false);
   const [listening, setListening] = useState(false);
   const recRef = useRef(null);
@@ -46,8 +49,14 @@ export default function Realign({ emails = [], tasks = [], dismissed = [] }) {
 
   function doneCapture(id) { setItems((x) => x.filter((i) => i.id !== id)); fetch("/api/capture", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ action: "done", id }) }); toast("Done ✓"); }
   // Non-destructive: hide an email/task from Right Now (the item itself is untouched).
-  const dKey = (it) => (it.kind === "capture" ? null : "now:" + it.kind[0] + it.id);
+  const dKey = (it) => (it.kind === "capture" || it.kind === "notification" ? null : "now:" + it.kind[0] + it.id);
   function dismissItem(it) {
+    if (it.kind === "notification") {   // dismiss the actual notification
+      setNDis((s) => new Set(s).add(it.id));
+      fetch("/api/notifications", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ action: "dismiss", id: it.id }) });
+      toast("Dismissed");
+      return;
+    }
     const k = dKey(it); if (!k) return;
     setDis((s) => new Set(s).add(k));
     fetch("/api/dismiss", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ key: k }) });
@@ -67,6 +76,7 @@ export default function Realign({ emails = [], tasks = [], dismissed = [] }) {
   const capScore = (c) => (Number.isFinite(c.priority_score) ? c.priority_score : c.priority === "high" ? 80 : c.priority === "low" ? 30 : 55);
   const taskScore = (t) => (t.due ? (t.due < today ? 92 : t.due === today ? 82 : 60) : 45);
   const merged = [
+    ...notifs.filter((n) => !nDis.has(n.id)).map((n) => { const sc = Number.isFinite(n.importance) ? n.importance : 85; return ({ key: "n" + n.id, kind: "notification", id: n.id, score: sc, priority: bucket(sc), title: (n.title ? n.title + ": " : "") + (n.body || ""), action: n.why || ("from " + appLabel(n.app)), mood: "errand", tag: n.category || appLabel(n.app) }); }),
     ...items.map((c) => { const sc = capScore(c); return ({ key: "c" + c.id, kind: "capture", score: sc, priority: bucket(sc), title: c.summary, action: c.suggested_action, mood: c.mood_energy, tag: c.category, id: c.id }); }),
     ...emails.map((e) => ({ key: "e" + e.id, kind: "email", id: e.id, score: 85, priority: "high", title: e.subject, action: e.action || "Reply / handle", mood: "deep focus", tag: e.sender })),
     ...tasks.filter((t) => !capturedTaskIds.has(t.id)).map((t) => { const sc = taskScore(t); return ({ key: "t" + t.id, kind: "task", id: t.id, score: sc, priority: bucket(sc), title: t.text, action: t.due ? (t.due <= today ? "Overdue — handle it" : "Due " + t.due) : "Do it", mood: "quick win", tag: (t.tags || "").split(";")[0].trim() }); }),
@@ -98,8 +108,8 @@ export default function Realign({ emails = [], tasks = [], dismissed = [] }) {
           <div className={"nowitem " + (PRIO[it.priority] || "p-med")} key={it.key}>
             {it.kind === "capture"
               ? <button className="now-done" title="Mark done" onClick={() => doneCapture(it.id)}><M i="radio_button_unchecked" /></button>
-              : <span className="now-kind"><M i={it.kind === "email" ? "mail" : "task_alt"} /></span>}
-            <div className={"now-body" + (it.kind !== "capture" ? " clickable" : "")} onClick={() => { if (it.kind === "email") go("inbox"); if (it.kind === "task") go("todo"); }}>
+              : <span className={"now-kind" + (it.kind === "notification" ? " flagged" : "")}><M i={it.kind === "email" ? "mail" : it.kind === "notification" ? "notifications_active" : "task_alt"} /></span>}
+            <div className={"now-body" + (it.kind === "email" || it.kind === "task" ? " clickable" : "")} onClick={() => { if (it.kind === "email") go("inbox"); if (it.kind === "task") go("todo"); }}>
               <div className="now-sum">{it.title}</div>
               {it.action && <div className="now-act">→ {it.action}</div>}
               <div className="now-meta">

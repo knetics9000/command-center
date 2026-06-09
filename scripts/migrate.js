@@ -31,6 +31,11 @@ const COLUMNS = [
   ["captures", "origin", "TEXT DEFAULT 'app'"],
   ["captures", "task_id", "TEXT"],
   ["captures", "priority_score", "INTEGER"],
+  ["notifications", "category", "TEXT"],
+  ["notifications", "importance", "INTEGER"],
+  ["notifications", "flagged", "INTEGER DEFAULT 0"],
+  ["notifications", "why", "TEXT"],
+  ["notifications", "analyzed", "INTEGER DEFAULT 0"],
 ];
 
 let added = 0;

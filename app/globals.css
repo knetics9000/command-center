@@ -971,3 +971,9 @@ body.focus .secnav .snlink[data-hide]{display:none}
 .ov-meta b{font-family:var(--font-head);font-size:18px}
 .ov-meta span{font-size:12.5px;color:var(--ink2)}
 .ov-meta em{font-size:11px;color:var(--muted);font-style:normal}
+
+/* Flagged notifications (AI says "needs Kurt") */
+.notif-row.flagged{box-shadow:inset 3px 0 0 #E5484D}
+.notif-flag{color:#E5484D;display:inline-flex;vertical-align:-3px;margin-right:3px}
+.notif-flag .material-symbols-outlined{font-size:15px}
+.now-kind.flagged{background:var(--error-soft,#ffe0e0);color:#E5484D}

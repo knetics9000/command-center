@@ -198,6 +198,11 @@ CREATE TABLE IF NOT EXISTS notifications (
   posted_at    TEXT,                      -- device timestamp (ISO)
   status       TEXT DEFAULT 'new',        -- new | dismissed | snoozed | tasked
   snooze_until TEXT,
+  category     TEXT,                      -- AI tag: message|alert|finance|calendar|delivery|social|promo|media|app|other
+  importance   INTEGER,                   -- AI 0-100
+  flagged      INTEGER DEFAULT 0,         -- AI says this needs Kurt's attention
+  why          TEXT,                      -- short AI reason
+  analyzed     INTEGER DEFAULT 0,
   created_at   TEXT DEFAULT (datetime('now'))
 );
 CREATE INDEX IF NOT EXISTS idx_notif_status ON notifications(status, id);

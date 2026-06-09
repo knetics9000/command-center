@@ -17,6 +17,7 @@ import { cleanupCount } from "@/lib/cleanup";
 import { getPriorityInbox } from "@/lib/priority";
 import { categoryCounts } from "@/lib/share";
 import { dismissalKeys } from "@/lib/dismiss";
+import { listFlaggedNotifications, analyzeNotifications } from "@/lib/notify";
 import { TabsProvider, TabBar, TabPanel } from "./Tabs";
 
 export const dynamic = "force-dynamic";
@@ -98,6 +99,10 @@ export default async function Home() {
   const sharedCats = categoryCounts();
   const sharedTotal = sharedCats.reduce((n, c) => n + c.n, 0);
 
+  // AI-read incoming phone notifications, then surface flagged ones in Right Now.
+  try { await analyzeNotifications(15); } catch {}
+  const flaggedNotifs = listFlaggedNotifications(8).map((n) => ({ id: n.id, app: n.app, title: n.title, body: n.body, why: n.why, category: n.category, importance: n.importance }));
+
   // Overview numbers + performance, now rendered as grid tiles inside DashGrid.
   const taskPct = stats.openTasks + stats.doneTasks ? Math.round((stats.doneTasks / (stats.openTasks + stats.doneTasks)) * 100) : 0;
   const inboxPct = stats.inbox ? Math.round((stats.act / stats.inbox) * 100) : 0;
@@ -137,6 +142,7 @@ export default async function Home() {
         emails={(inbox.byTier.act || []).slice(0, 8).map((e) => ({ id: e.id, subject: e.subject, sender: e.sender, action: e.action }))}
         tasks={getDueTasks("2000-01-01", new Date(Date.now() + 8 * 86400e3).toISOString().slice(0, 10)).slice(0, 12)}
         dismissed={dismissed}
+        notifs={flaggedNotifs}
       />
 
       <div style={{ marginTop: 18 }}>
