@@ -8,6 +8,7 @@ import { generateCleanup, dataFingerprint, cleanupCount } from "../lib/cleanup.j
 import { generateBriefing } from "../lib/briefing.js";
 import { getMeta, setMeta } from "../lib/meta.js";
 import { captureNewOffloadTasks, processUnprocessed } from "../lib/capture.js";
+import { dedupeAll } from "../lib/dedupe.js";
 
 try {
   const s = await syncAll();
@@ -20,6 +21,7 @@ try {
 
   try { const n = await captureNewOffloadTasks(); if (n) console.log(`routed ${n} Offload dump(s) through the AI layer`); } catch {}
   try { const n = await processUnprocessed(); if (n) console.log(`processed ${n} straggler capture(s)`); } catch {}
+  try { const d = dedupeAll(); const t = d.notifications + d.captures + d.shared; if (t) console.log(`deduped: ${d.notifications} notifs, ${d.captures} captures, ${d.shared} shared`); } catch {}
 
   // Auto-organize + re-brief only when something changed (saves API calls; keeps the briefing delta meaningful).
   const fp = dataFingerprint();

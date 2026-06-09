@@ -11,6 +11,7 @@ import { generateBriefing, briefingToHtml } from "../lib/briefing.js";
 import { sendSelf } from "../lib/google.js";
 import { getMeta, setMeta } from "../lib/meta.js";
 import { processUnprocessed, captureNewOffloadTasks } from "../lib/capture.js";
+import { dedupeAll } from "../lib/dedupe.js";
 
 const log = (...a) => console.log(new Date().toISOString(), ...a);
 
@@ -22,6 +23,7 @@ async function watcherCycle() {
 
   try { const n = await captureNewOffloadTasks(); if (n) log(`routed ${n} Offload dump(s) through the AI layer`); } catch {}
   try { const n = await processUnprocessed(); if (n) log(`processed ${n} straggler capture(s)`); } catch {}
+  try { const d = dedupeAll(); const t = d.notifications + d.captures + d.shared; if (t) log(`deduped: ${d.notifications} notifs, ${d.captures} captures, ${d.shared} shared`); } catch (e) { log("dedupe failed:", e.message); }
 
   const fp = dataFingerprint();
   if (fp !== getMeta("data_fp")) {

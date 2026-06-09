@@ -2,11 +2,13 @@
 // The dashboard widget lists notifications and acts on them.
 import { NextResponse } from "next/server";
 import { listNotifications, dismissNotification, snoozeNotification, notificationToTask } from "@/lib/notify";
+import { dedupeNotifications } from "@/lib/dedupe";
 
 export const dynamic = "force-dynamic";
 export const maxDuration = 30;
 
 export async function GET() {
+  try { dedupeNotifications(); } catch {}   // self-clean any duplicate pile-up before listing
   return NextResponse.json({ ok: true, notifications: listNotifications() });
 }
 
