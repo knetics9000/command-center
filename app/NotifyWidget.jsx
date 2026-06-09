@@ -13,6 +13,7 @@ const appLabel = (a) => {
 export default function NotifyWidget() {
   const { toast } = useToast();
   const [items, setItems] = useState(null);
+  const [openId, setOpenId] = useState(null);   // expanded notification
 
   const load = () => fetch("/api/notifications").then((r) => r.json()).then((j) => setItems(j.ok ? j.notifications : [])).catch(() => setItems([]));
   useEffect(() => { load(); const t = setInterval(load, 60000); return () => clearInterval(t); }, []);
@@ -34,11 +35,17 @@ export default function NotifyWidget() {
       <div className="sec-h"><M i="notifications_active" /> Phone notifications<span className="grow" /><span className="notif-count">{items.length}</span></div>
       <div className="notif-list">
         {items.map((n) => (
-          <div className="notif-row" key={n.id}>
+          <div className={"notif-row" + (openId === n.id ? " open" : "")} key={n.id}>
             <span className="notif-app">{appLabel(n.app)}</span>
-            <div className="notif-body">
+            <div className="notif-body" onClick={() => setOpenId(openId === n.id ? null : n.id)} title="Tap to expand">
               {n.title && <div className="notif-title">{n.title}</div>}
-              {n.body && <div className="notif-text">{n.body}</div>}
+              {n.body && <div className={"notif-text" + (openId === n.id ? " open" : "")}>{n.body}</div>}
+              {openId === n.id && (
+                <div className="notif-detail">
+                  {n.link && <a href={n.link} target="_blank" rel="noreferrer" onClick={(e) => e.stopPropagation()}>{n.link}</a>}
+                  <span className="notif-when">{n.app}{n.posted_at ? " · " + new Date(n.posted_at).toLocaleString() : ""}</span>
+                </div>
+              )}
             </div>
             <div className="notif-acts">
               <button className="iconbtn" title="Make it a task" onClick={() => act(n.id, "task")}><M i="add_task" /></button>
