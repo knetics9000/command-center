@@ -1,11 +1,11 @@
 "use client";
 import { useState, useEffect } from "react";
 
-/** v1 ⇄ Executive Dark preview switch. v1 stays the default until the redesign
- *  is approved; the choice persists per device via localStorage. */
+/** Executive Dark ⇄ Classic switch. Executive Dark is the default (approved);
+ *  Classic remains an opt-out, persisted per device via localStorage. */
 export default function ThemeToggle() {
-  const [exec, setExec] = useState(false);
-  useEffect(() => { try { setExec(localStorage.getItem("cc-theme") === "exec"); } catch {} }, []);
+  const [exec, setExec] = useState(true);
+  useEffect(() => { try { setExec(localStorage.getItem("cc-theme") !== "v1"); } catch {} }, []);
 
   function flip() {
     const next = !exec;

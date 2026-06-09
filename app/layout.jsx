@@ -11,7 +11,7 @@ export const metadata = {
 };
 
 export const viewport = {
-  themeColor: "#4648d4",
+  themeColor: "#0E0F12",
   width: "device-width",
   initialScale: 1,
   maximumScale: 1,
@@ -19,10 +19,10 @@ export const viewport = {
 
 export default function RootLayout({ children }) {
   return (
-    <html lang="en">
+    <html lang="en" data-theme="exec">
       <body>
-        {/* apply the saved theme before paint so there's no light flash */}
-        <script dangerouslySetInnerHTML={{ __html: `try{if(localStorage.getItem('cc-theme')==='exec')document.documentElement.setAttribute('data-theme','exec')}catch(e){}` }} />
+        {/* Executive Dark is the default; honor a saved Classic opt-out before paint */}
+        <script dangerouslySetInnerHTML={{ __html: `try{if(localStorage.getItem('cc-theme')==='v1')document.documentElement.removeAttribute('data-theme')}catch(e){}` }} />
         <ToastProvider>
           {children}
           <CommandBar />
