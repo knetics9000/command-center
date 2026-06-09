@@ -940,3 +940,8 @@ body.focus .secnav .snlink[data-hide]{display:none}
 .prio.dismissed .pt{font-weight:600;font-size:13px;text-decoration:line-through;text-decoration-color:var(--muted)}
 .prio-x.restore,.now-dismiss[title^="Restore"]{opacity:.7}
 .prio-x.restore:hover,.now-dismiss[title^="Restore"]:hover{opacity:1 !important;color:#1a8a52}
+
+/* Direct "open source" link on a saved-item row */
+.sm-open{flex:none;display:grid;place-items:center;width:28px;height:28px;border-radius:8px;color:var(--acc-deep,#4648d4);text-decoration:none;transition:background .14s,color .14s}
+.sm-open:hover{background:var(--acc-soft,#e0e0fb)}
+.sm-open .material-symbols-outlined{font-size:18px}

@@ -86,6 +86,7 @@ export default function SavedView({ projects = [] }) {
                 <div className="sm-orig">Original: {it.title}</div>
               </div>
               <span className="sm-time">{rel(it.created_at)}</span>
+              {it.url && <a className="sm-open" href={it.url} target="_blank" rel="noreferrer" title="Open the saved video/site" onClick={(e) => e.stopPropagation()}><M i="open_in_new" /></a>}
               <span className={"priocaret" + (ex ? " open" : "")}>▸</span>
             </div>
 
