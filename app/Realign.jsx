@@ -8,13 +8,14 @@ const MOODS = ["quick win", "deep focus", "low energy", "errand", "creative"];
 const PRIO = { high: "p-high", medium: "p-med", low: "p-low" };
 const RANK = { high: 0, medium: 1, low: 2 };
 
-export default function Realign({ emails = [], tasks = [] }) {
+export default function Realign({ emails = [], tasks = [], dismissed = [] }) {
   const { toast } = useToast();
   const { setTab } = useTabs();
   const [items, setItems] = useState([]);     // processed captures
   const [text, setText] = useState("");
   const [busy, setBusy] = useState(false);
   const [mood, setMood] = useState(null);
+  const [dis, setDis] = useState(new Set(dismissed));   // dismissed item keys
   const [listening, setListening] = useState(false);
   const recRef = useRef(null);
 
@@ -43,6 +44,14 @@ export default function Realign({ emails = [], tasks = [] }) {
   }
 
   function doneCapture(id) { setItems((x) => x.filter((i) => i.id !== id)); fetch("/api/capture", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ action: "done", id }) }); toast("Done ✓"); }
+  // Non-destructive: hide an email/task from Right Now (the item itself is untouched).
+  const dKey = (it) => (it.kind === "capture" ? null : "now:" + it.kind[0] + it.id);
+  function dismissItem(it) {
+    const k = dKey(it); if (!k) return;
+    setDis((s) => new Set(s).add(k));
+    fetch("/api/dismiss", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ key: k }) });
+    toast("Dismissed");
+  }
   const go = (t) => { setTab(t); window.scrollTo({ top: 0, behavior: "smooth" }); };
 
   const today = new Date().toLocaleDateString("en-CA");
@@ -52,10 +61,10 @@ export default function Realign({ emails = [], tasks = [] }) {
   const taskScore = (t) => (t.due ? (t.due < today ? 92 : t.due === today ? 82 : 60) : 45);
   const merged = [
     ...items.map((c) => { const sc = capScore(c); return ({ key: "c" + c.id, kind: "capture", score: sc, priority: bucket(sc), title: c.summary, action: c.suggested_action, mood: c.mood_energy, tag: c.category, id: c.id }); }),
-    ...emails.map((e) => ({ key: "e" + e.id, kind: "email", score: 85, priority: "high", title: e.subject, action: e.action || "Reply / handle", mood: "deep focus", tag: e.sender })),
-    ...tasks.filter((t) => !capturedTaskIds.has(t.id)).map((t) => { const sc = taskScore(t); return ({ key: "t" + t.id, kind: "task", score: sc, priority: bucket(sc), title: t.text, action: t.due ? (t.due <= today ? "Overdue — handle it" : "Due " + t.due) : "Do it", mood: "quick win", tag: (t.tags || "").split(";")[0].trim() }); }),
+    ...emails.map((e) => ({ key: "e" + e.id, kind: "email", id: e.id, score: 85, priority: "high", title: e.subject, action: e.action || "Reply / handle", mood: "deep focus", tag: e.sender })),
+    ...tasks.filter((t) => !capturedTaskIds.has(t.id)).map((t) => { const sc = taskScore(t); return ({ key: "t" + t.id, kind: "task", id: t.id, score: sc, priority: bucket(sc), title: t.text, action: t.due ? (t.due <= today ? "Overdue — handle it" : "Due " + t.due) : "Do it", mood: "quick win", tag: (t.tags || "").split(";")[0].trim() }); }),
   ];
-  const shown = merged.filter((i) => !mood || i.mood === mood).sort((a, b) => b.score - a.score);
+  const shown = merged.filter((i) => !mood || i.mood === mood).filter((i) => { const k = dKey(i); return !k || !dis.has(k); }).sort((a, b) => b.score - a.score);
 
   return (
     <div className="realign">
@@ -92,6 +101,7 @@ export default function Realign({ emails = [], tasks = [] }) {
                 {it.tag && <span className="now-cat">{it.tag}</span>}
               </div>
             </div>
+            {it.kind !== "capture" && <button className="now-dismiss" title="Dismiss from Right Now" onClick={(e) => { e.stopPropagation(); dismissItem(it); }}><M i="close" /></button>}
           </div>
         ))}
       </div>

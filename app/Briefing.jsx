@@ -6,6 +6,7 @@ import Icon from "./Icon";
 import RelatedDrawer from "./RelatedDrawer";
 
 const tagFor = (name) => (/project/i.test(name) ? name : name + " Project").toLowerCase();
+const sig = (s) => (s || "").toLowerCase().replace(/\s+/g, " ").trim().slice(0, 80);   // must match lib/dismiss.js
 const when = (ts) => { const d = new Date((ts || "").replace(" ", "T") + "Z"); return isNaN(d) ? "" : d.toLocaleTimeString([], { hour: "numeric", minute: "2-digit" }); };
 
 export default function Briefing({ briefing, existingTags = [] }) {
@@ -17,7 +18,15 @@ export default function Briefing({ briefing, existingTags = [] }) {
   const [deltaOpen, setDeltaOpen] = useState(false);
   const [openTheme, setOpenTheme] = useState(null);
   const [dbody, setDbody] = useState({});
+  const [hidden, setHidden] = useState(new Set());   // just-dismissed priorities (server filters persisted ones)
   const b = briefing;
+
+  function dismissPrio(p) {
+    const s = sig(p.title);
+    setHidden((h) => new Set(h).add(s));
+    fetch("/api/dismiss", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ key: "brief:" + s }) });
+    toast("Dismissed");
+  }
 
   async function openDeltaItem(e) {
     if (!e.id || !e.account) return;
@@ -99,11 +108,12 @@ export default function Briefing({ briefing, existingTags = [] }) {
           );
         })()}
         <div className="prios">
-          {(b.priorities || []).map((p, i) => (
+          {(b.priorities || []).filter((p) => !hidden.has(sig(p.title))).map((p, i) => (
             <div key={i}>
               <div className={"prio clickable" + (openPrio === i ? " open" : "")} onClick={() => setOpenPrio((x) => x === i ? null : i)}>
                 <span className="pnum">{i + 1}</span>
                 <div className="pgrow"><div className="pt">{p.title} {pill(p.urgency)}</div><div className="pd">{p.detail}</div></div>
+                <button className="prio-x" title="Dismiss" onClick={(e) => { e.stopPropagation(); dismissPrio(p); }}><span className="material-symbols-outlined">close</span></button>
                 <span className={"priocaret" + (openPrio === i ? " open" : "")}>▸</span>
               </div>
               {openPrio === i && <RelatedDrawer title={p.title + " — " + p.detail} />}

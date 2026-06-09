@@ -201,3 +201,10 @@ CREATE TABLE IF NOT EXISTS notifications (
   created_at   TEXT DEFAULT (datetime('now'))
 );
 CREATE INDEX IF NOT EXISTS idx_notif_status ON notifications(status, id);
+
+-- Non-destructive "dismiss from view" — hides an item from Right Now / the briefing
+-- without touching the underlying email/task. key = e.g. now:e<id>, now:t<id>, brief:<sig>.
+CREATE TABLE IF NOT EXISTS dismissals (
+  key        TEXT PRIMARY KEY,
+  created_at TEXT DEFAULT (datetime('now'))
+);

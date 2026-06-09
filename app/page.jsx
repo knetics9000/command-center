@@ -19,6 +19,7 @@ import NotifyWidget from "./NotifyWidget";
 import { cleanupCount } from "@/lib/cleanup";
 import { getPriorityInbox } from "@/lib/priority";
 import { categoryCounts } from "@/lib/share";
+import { dismissalKeys, sig } from "@/lib/dismiss";
 import { TabsProvider, TabBar, TabPanel } from "./Tabs";
 
 export const dynamic = "force-dynamic";
@@ -62,6 +63,8 @@ export default async function Home() {
   const projects = getProjects();
   const todo = getTodoGroups();
   const briefing = getLatestBriefing();
+  const dismissed = dismissalKeys();
+  if (briefing && briefing.priorities) briefing.priorities = briefing.priorities.filter((p) => !dismissed.includes("brief:" + sig(p.title)));
   const projectTags = getProjectTags();
   const conn = connectionStatus();
   const now = new Date();
@@ -126,6 +129,7 @@ export default async function Home() {
       <Realign
         emails={(inbox.byTier.act || []).slice(0, 8).map((e) => ({ id: e.id, subject: e.subject, sender: e.sender, action: e.action }))}
         tasks={getDueTasks("2000-01-01", new Date(Date.now() + 8 * 86400e3).toISOString().slice(0, 10)).slice(0, 12)}
+        dismissed={dismissed}
       />
 
       <NotifyWidget />

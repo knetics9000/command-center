@@ -920,3 +920,12 @@ body.focus .secnav .snlink[data-hide]{display:none}
 .notif-row.open { background: var(--surface, #fff); box-shadow: inset 0 0 0 1px rgba(70, 72, 212, .18); }
 .notif-acts { flex: 0 0 auto; display: flex; gap: 2px; }
 .notif-acts .iconbtn .material-symbols-outlined { font-size: 19px; }
+
+/* Dismiss (×) buttons on Right Now items and briefing priorities */
+.now-dismiss{border:none;background:none;cursor:pointer;color:var(--muted);padding:1px;flex:none;align-self:flex-start;opacity:.55;transition:opacity .14s,color .14s}
+.now-dismiss:hover{opacity:1;color:#E5484D}
+.now-dismiss .material-symbols-outlined{font-size:19px}
+.prio-x{border:none;background:none;cursor:pointer;color:var(--muted);padding:0 2px;align-self:center;opacity:0;transition:opacity .14s,color .14s}
+.prio.clickable:hover .prio-x{opacity:.6}
+.prio-x:hover{opacity:1 !important;color:#E5484D}
+.prio-x .material-symbols-outlined{font-size:18px;vertical-align:middle}
