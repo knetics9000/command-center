@@ -1105,3 +1105,5 @@ html[data-theme="exec"]{
 .kid-meta{font-size:11px;color:var(--muted);margin-top:2px}
 .kid-foot{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-top:4px}
 [data-theme="exec"] .kid-name{color:var(--gold)}
+.kid-clearbtn{border:none;background:none;cursor:pointer;color:var(--muted);font:inherit;font-size:11px;font-weight:600;padding:1px 6px;margin-left:6px;border-radius:6px}
+.kid-clearbtn:hover{color:var(--error);background:var(--error-soft)}
