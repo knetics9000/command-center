@@ -2,6 +2,7 @@ import { NextResponse } from "next/server";
 import { listEvents } from "@/lib/google";
 import { getOpenTasks, getProjects, getLatestBriefing } from "@/lib/queries";
 import { assembleCoachBundle } from "@/lib/coachContext";
+import { ensureLifeDigest } from "@/lib/coachDigest";
 import { requireCoachToken } from "@/lib/coachAuth";
 
 export const dynamic = "force-dynamic";
@@ -31,12 +32,14 @@ export async function GET(req) {
       }
     }
 
+    const lifeDigest = await ensureLifeDigest().catch(() => null);
     const bundle = assembleCoachBundle({
       now: now.toISOString(),
       eventsByAccount,
       tasks: getOpenTasks(),
       projects: getProjects(),
       briefing: getLatestBriefing(),
+      lifeDigest,
     });
     return NextResponse.json(bundle);
   } catch (e) {
