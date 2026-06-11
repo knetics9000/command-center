@@ -1053,21 +1053,22 @@ html[data-theme="exec"]{
 
 /* exec widget flow: daily → supporting → low-frequency */
 [data-theme="exec"] .w2.wk-brief{order:1}
-[data-theme="exec"] .w2.wk-upcoming{order:2}
-[data-theme="exec"] .w2.wk-prio{order:3}
-[data-theme="exec"] .w2.wk-act{order:4}
-[data-theme="exec"] .w2.wk-todo{order:5}
-[data-theme="exec"] .w2.wk-notify{order:6}
-[data-theme="exec"] .w2.wk-projects{order:7}
-[data-theme="exec"] .w2.wk-health{order:8}
-[data-theme="exec"] .w2.wk-overview{order:9}
-[data-theme="exec"] .w2.wk-suggest{order:10}
-[data-theme="exec"] .w2.wk-cleanup{order:11}
-[data-theme="exec"] .w2.wk-shared{order:12}
-[data-theme="exec"] .w2.wk-contacts{order:13}
-[data-theme="exec"] .w2.wk-split{order:14}
-[data-theme="exec"] .w2.wk-cleared{order:15}
-[data-theme="exec"] .w2.wk-perf{order:16}
+[data-theme="exec"] .w2.wk-kids{order:2}
+[data-theme="exec"] .w2.wk-upcoming{order:3}
+[data-theme="exec"] .w2.wk-prio{order:4}
+[data-theme="exec"] .w2.wk-act{order:5}
+[data-theme="exec"] .w2.wk-todo{order:6}
+[data-theme="exec"] .w2.wk-notify{order:7}
+[data-theme="exec"] .w2.wk-projects{order:8}
+[data-theme="exec"] .w2.wk-health{order:9}
+[data-theme="exec"] .w2.wk-overview{order:10}
+[data-theme="exec"] .w2.wk-suggest{order:11}
+[data-theme="exec"] .w2.wk-cleanup{order:12}
+[data-theme="exec"] .w2.wk-shared{order:13}
+[data-theme="exec"] .w2.wk-contacts{order:14}
+[data-theme="exec"] .w2.wk-split{order:15}
+[data-theme="exec"] .w2.wk-cleared{order:16}
+[data-theme="exec"] .w2.wk-perf{order:17}
 
 /* theme toggle pill (both themes) */
 .themetoggle{margin-left:auto;display:inline-flex;align-items:center;gap:6px;border:1px solid var(--line);background:none;color:var(--ink2);font:inherit;font-size:12px;font-weight:600;border-radius:999px;padding:5px 13px;cursor:pointer;white-space:nowrap;transition:color .14s,border-color .14s}
@@ -1088,3 +1089,19 @@ html[data-theme="exec"]{
 /* responsive fix (both themes): search text never wraps into a blob; collapses to icon at tablet widths */
 .tsearch-ph{white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 @media(max-width:920px){.tsearch{flex:0 0 auto}.tsearch-ph,.tsearch-kbd{display:none}}
+
+/* Kids co-parent widget */
+.kw-prev{font-size:13px;color:var(--ink2);font-weight:600}
+.kidbucket{border:1px solid var(--line);border-radius:11px;padding:10px 12px;margin-bottom:8px}
+.kid-h{display:flex;align-items:center;gap:8px;margin-bottom:6px}
+.kid-name{font-family:var(--font-head);font-weight:800;font-size:13px;text-transform:uppercase;letter-spacing:.03em}
+.kid-count{font-size:11px;color:var(--muted);font-weight:600;margin-left:auto}
+.kid-clear{font-size:12px;padding:2px 0}
+.kid-item{display:flex;gap:9px;align-items:flex-start;padding:7px 0;border-top:1px solid var(--line)}
+.kid-item:first-of-type{border-top:none}
+.kid-body{flex:1;min-width:0}
+.kid-subj{font-weight:600;font-size:13.5px;line-height:1.35}
+.kid-why{font-size:12.5px;color:var(--acc-deep);margin-top:1px}
+.kid-meta{font-size:11px;color:var(--muted);margin-top:2px}
+.kid-foot{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-top:4px}
+[data-theme="exec"] .kid-name{color:var(--gold)}

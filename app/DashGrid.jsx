@@ -5,6 +5,7 @@ import Donut from "./Donut";
 import Avatar from "./Avatar";
 import HealthCard from "./HealthCard";
 import NotifyWidget from "./NotifyWidget";
+import KidsWidget from "./KidsWidget";
 
 const M = ({ i }) => <span className="material-symbols-outlined">{i}</span>;
 const Row = ({ children }) => <div className="wrow">{children}</div>;
@@ -53,6 +54,8 @@ export default function DashGrid({
         }>
         {children}
       </Widget>
+
+      <KidsWidget />
 
       {/* Priority Emails */}
       <Widget wkey="prio" icon="star" accent="gold" title="Priority Emails" count={prioCount} countTone="gold" openTab="inbox" openLabel="Open Priority"

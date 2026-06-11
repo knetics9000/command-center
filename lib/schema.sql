@@ -254,3 +254,24 @@ CREATE TABLE IF NOT EXISTS coach_interactions (
   deep            TEXT,
   created_at      INTEGER NOT NULL
 );
+
+-- Co-parent inbox (kmriedel0214@gmail.com) — shared kid-logistics account.
+-- Kept separate from `emails` so it never mixes into the main inbox/briefing.
+CREATE TABLE IF NOT EXISTS coparent_emails (
+  id           TEXT PRIMARY KEY,          -- gmail message id
+  thread_id    TEXT,
+  sender       TEXT,
+  sender_addr  TEXT,
+  subject      TEXT,
+  snippet      TEXT,
+  received_at  TEXT,
+  kid          TEXT,                      -- Kurt | Nova | Jayden | All
+  important    INTEGER DEFAULT 0,         -- AI: Kurt needs to know this
+  why          TEXT,                      -- short AI reason
+  action       TEXT,                      -- concrete next step, if any
+  analyzed     INTEGER DEFAULT 0,
+  seen         INTEGER DEFAULT 0,         -- Kurt tapped "got it"
+  created_at   TEXT DEFAULT (datetime('now')),
+  updated_at   TEXT DEFAULT (datetime('now'))
+);
+CREATE INDEX IF NOT EXISTS idx_coparent_kid ON coparent_emails(kid, important, seen);

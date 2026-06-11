@@ -7,7 +7,7 @@ export async function GET(req) {
   const u = new URL(req.url);
   const code = u.searchParams.get("code");
   const account = u.searchParams.get("state");
-  if (!code || (account !== "personal" && account !== "work")) {
+  if (!code || !["personal", "work", "coparent"].includes(account)) {
     return NextResponse.redirect(new URL("/connect?error=missing_code_or_state", u.origin));
   }
   try {

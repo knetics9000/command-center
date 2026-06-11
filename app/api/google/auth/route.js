@@ -5,8 +5,8 @@ export const dynamic = "force-dynamic";
 
 export async function GET(req) {
   const account = new URL(req.url).searchParams.get("account");
-  if (account !== "personal" && account !== "work") {
-    return NextResponse.json({ error: "account must be 'personal' or 'work'" }, { status: 400 });
+  if (!["personal", "work", "coparent"].includes(account)) {
+    return NextResponse.json({ error: "unknown account" }, { status: 400 });
   }
   return NextResponse.redirect(getAuthUrl(account));
 }

@@ -5,6 +5,7 @@ export const dynamic = "force-dynamic";
 const LABEL = {
   personal: process.env.ACCOUNT_PERSONAL || "Personal",
   work: process.env.ACCOUNT_WORK || "Work",
+  coparent: (process.env.ACCOUNT_COPARENT || "kmriedel0214@gmail.com") + " (kids)",
 };
 
 export default function Connect({ searchParams }) {
