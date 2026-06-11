@@ -11,6 +11,7 @@ export default function KidsWidget() {
   const { toast } = useToast();
   const [b, setB] = useState(null);
   const [busy, setBusy] = useState(false);
+  const [showRoutine, setShowRoutine] = useState(false);
 
   const load = () => fetch("/api/kids").then((r) => r.json()).then(setB).catch(() => setB({ connected: false, kids: [] }));
   useEffect(() => { load(); }, []);
@@ -26,6 +27,11 @@ export default function KidsWidget() {
     fetch("/api/kids", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ action: "seenAll", kid: kid || undefined }) })
       .then((r) => r.json()).then((j) => { if (j.ok) setB(j); });   // server state corrects counts (incl. shared "All" items)
     toast(kid ? `Cleared ${kid}'s bucket` : "All cleared");
+  }
+  function promote(id) {
+    fetch("/api/kids", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ action: "promote", id }) })
+      .then((r) => r.json()).then((j) => { if (j.ok) setB(j); });
+    toast("Moved to the bucket ✓");
   }
   async function addCal(id) {
     toast("Reading the email for a date…");
@@ -75,11 +81,22 @@ export default function KidsWidget() {
             </div>
           ))}
           <div className="kid-foot">
-            <span className="wmuted">{b.noise} routine emails filtered out</span>
+            <button className="kid-clearbtn" onClick={() => setShowRoutine((v) => !v)}>{b.noise} routine emails filtered out {showRoutine ? "▴" : "▾"}</button>
             <span className="grow" />
             {b.toReview > 1 && <button className="mbtn" onClick={() => clearAll(null)}><M i="clear_all" /> Dismiss all</button>}
             <button className="mbtn" onClick={refresh} disabled={busy}>{busy ? "…" : <><M i="refresh" /> Check now</>}</button>
           </div>
+          {showRoutine && (b.routine || []).length > 0 && (
+            <div className="kid-routine">
+              {b.routine.map((e) => (
+                <div className="kid-ritem" key={e.id}>
+                  <span className="kid-rmeta">{when(e.received_at)}</span>
+                  <span className="kid-rsubj">{e.subject}</span>
+                  <button className="kid-clearbtn" title="The AI got this wrong — it matters" onClick={() => promote(e.id)}>flag ↑</button>
+                </div>
+              ))}
+            </div>
+          )}
         </>
       )}
     </Widget>

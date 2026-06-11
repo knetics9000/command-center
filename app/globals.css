@@ -1107,3 +1107,7 @@ html[data-theme="exec"]{
 [data-theme="exec"] .kid-name{color:var(--gold)}
 .kid-clearbtn{border:none;background:none;cursor:pointer;color:var(--muted);font:inherit;font-size:11px;font-weight:600;padding:1px 6px;margin-left:6px;border-radius:6px}
 .kid-clearbtn:hover{color:var(--error);background:var(--error-soft)}
+.kid-routine{margin-top:6px;border-top:1px solid var(--line);padding-top:6px}
+.kid-ritem{display:flex;align-items:center;gap:8px;padding:3px 0;font-size:12px;color:var(--muted)}
+.kid-rmeta{flex:none;font-variant-numeric:tabular-nums}
+.kid-rsubj{flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
