@@ -243,3 +243,14 @@ CREATE TABLE IF NOT EXISTS guru_materials (
   analyzed     INTEGER DEFAULT 0,
   created_at   INTEGER NOT NULL
 );
+
+CREATE TABLE IF NOT EXISTS coach_interactions (
+  id              INTEGER PRIMARY KEY AUTOINCREMENT,
+  conversation_id TEXT,
+  situation       TEXT,
+  short_answer    TEXT,
+  retrieved_ids   TEXT,
+  source_ids      TEXT,
+  deep            TEXT,
+  created_at      INTEGER NOT NULL
+);
