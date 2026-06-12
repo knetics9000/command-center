@@ -1052,23 +1052,8 @@ html[data-theme="exec"]{
 [data-theme="exec"] .searchwrap input,[data-theme="exec"] .cmdk{background:var(--paper);color:var(--ink)}
 
 /* exec widget flow: daily → supporting → low-frequency */
-[data-theme="exec"] .w2.wk-brief{order:1}
-[data-theme="exec"] .w2.wk-kids{order:2}
-[data-theme="exec"] .w2.wk-upcoming{order:3}
-[data-theme="exec"] .w2.wk-prio{order:4}
-[data-theme="exec"] .w2.wk-act{order:5}
-[data-theme="exec"] .w2.wk-todo{order:6}
-[data-theme="exec"] .w2.wk-notify{order:7}
-[data-theme="exec"] .w2.wk-projects{order:8}
-[data-theme="exec"] .w2.wk-health{order:9}
-[data-theme="exec"] .w2.wk-overview{order:10}
-[data-theme="exec"] .w2.wk-suggest{order:11}
-[data-theme="exec"] .w2.wk-cleanup{order:12}
-[data-theme="exec"] .w2.wk-shared{order:13}
-[data-theme="exec"] .w2.wk-contacts{order:14}
-[data-theme="exec"] .w2.wk-split{order:15}
-[data-theme="exec"] .w2.wk-cleared{order:16}
-[data-theme="exec"] .w2.wk-perf{order:17}
+/* consolidated grid renders in DOM order (brief, kids, upcoming, inbox,
+   tasks, notify, health, stats) — no per-theme reordering needed */
 
 /* theme toggle pill (both themes) */
 .themetoggle{margin-left:auto;display:inline-flex;align-items:center;gap:6px;border:1px solid var(--line);background:none;color:var(--ink2);font:inherit;font-size:12px;font-weight:600;border-radius:999px;padding:5px 13px;cursor:pointer;white-space:nowrap;transition:color .14s,border-color .14s}
@@ -1111,3 +1096,11 @@ html[data-theme="exec"]{
 .kid-ritem{display:flex;align-items:center;gap:8px;padding:3px 0;font-size:12px;color:var(--muted)}
 .kid-rmeta{flex:none;font-variant-numeric:tabular-nums}
 .kid-rsubj{flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+
+/* consolidated-widget internals */
+.wsec{margin-top:10px;padding-top:8px;border-top:1px solid var(--line)}
+.wsec:first-child{margin-top:0;padding-top:0;border-top:none}
+.wsec-h{font-family:var(--font-mono);font-weight:600;font-size:10.5px;text-transform:uppercase;letter-spacing:.05em;color:var(--muted);margin-bottom:5px}
+.wsec-link{font-size:12px;font-weight:600;margin-top:4px}
+.wfine{margin-top:10px;padding-top:8px;border-top:1px solid var(--line);font-size:11.5px}
+.linklike{border:none;background:none;cursor:pointer;color:var(--acc-deep);font:inherit;padding:0}
