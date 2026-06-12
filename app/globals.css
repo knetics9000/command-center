@@ -1104,3 +1104,11 @@ html[data-theme="exec"]{
 .wsec-link{font-size:12px;font-weight:600;margin-top:4px}
 .wfine{margin-top:10px;padding-top:8px;border-top:1px solid var(--line);font-size:11.5px}
 .linklike{border:none;background:none;cursor:pointer;color:var(--acc-deep);font:inherit;padding:0}
+
+/* Right Now — collapsible (collapsed by default) */
+.rn-head{display:flex;align-items:center;gap:10px;width:100%;background:none;border:none;cursor:pointer;padding:0;font:inherit;color:inherit;text-align:left}
+.rn-peek{flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;color:var(--muted);font-size:12.5px}
+.rn-head .w2-chev{margin-left:auto}
+.rn-head .now-count{margin-left:0}
+.realign.closed{padding:13px 18px}
+.realign:not(.closed) .rn-head{margin-bottom:12px}

@@ -17,6 +17,7 @@ export default function Realign({ emails = [], tasks = [], dismissed = [], notif
   const [text, setText] = useState("");
   const [busy, setBusy] = useState(false);
   const [mood, setMood] = useState(null);
+  const [open, setOpen] = useState(false);              // collapsed by default — calmer page
   const [dis, setDis] = useState(new Set(dismissed));   // dismissed item keys
   const [nDis, setNDis] = useState(new Set());          // dismissed flagged-notification ids
   const [showDis, setShowDis] = useState(false);
@@ -85,7 +86,15 @@ export default function Realign({ emails = [], tasks = [], dismissed = [], notif
   const dismissedItems = merged.filter((i) => { const k = dKey(i); return k && dis.has(k); });
 
   return (
-    <div className="realign">
+    <div className={"realign" + (open ? "" : " closed")}>
+      <button className="rn-head" onClick={() => setOpen((o) => !o)}>
+        <span className="now-title"><M i="bolt" /> Right now</span>
+        <span className="now-count">{shown.length}</span>
+        {!open && <span className="rn-peek">{shown[0] ? shown[0].title : "You're clear."}</span>}
+        <span className={"w2-chev" + (open ? " open" : "")}>▸</span>
+      </button>
+
+      {open && <>
       <div className="cap-box">
         <textarea className="cap-ta" rows={2} placeholder="Brain-dump… get the thought out before it's gone. (Enter to capture)" value={text} disabled={busy}
           onChange={(e) => setText(e.target.value)} onKeyDown={(e) => { if (e.key === "Enter" && !e.shiftKey) { e.preventDefault(); capture(); } }} />
@@ -95,7 +104,7 @@ export default function Realign({ emails = [], tasks = [], dismissed = [], notif
         </div>
       </div>
 
-      <div className="now-h"><span className="now-title"><M i="bolt" /> Right now</span><span className="now-count">{shown.length}</span><span className="grow" />
+      <div className="now-h"><span className="grow" />
         <div className="moodchips">
           <button className={"moodchip" + (!mood ? " on" : "")} onClick={() => setMood(null)}>All</button>
           {MOODS.map((m) => <button key={m} className={"moodchip" + (mood === m ? " on" : "")} onClick={() => setMood(mood === m ? null : m)}>{m}</button>)}
@@ -140,6 +149,7 @@ export default function Realign({ emails = [], tasks = [], dismissed = [], notif
           )}
         </div>
       )}
+      </>}
     </div>
   );
 }
