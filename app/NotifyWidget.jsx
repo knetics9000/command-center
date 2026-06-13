@@ -2,6 +2,7 @@
 import { useState, useEffect } from "react";
 import { useToast } from "./Toast";
 import Widget from "./Widget";
+import SnoozeMenu from "./SnoozeMenu";
 
 const M = ({ i }) => <span className="material-symbols-outlined">{i}</span>;
 // Pull a clean app label out of a package name (com.google.android.gm → Gm).
@@ -19,12 +20,11 @@ export default function NotifyWidget() {
   const load = () => fetch("/api/notifications").then((r) => r.json()).then((j) => setItems(j.ok ? j.notifications : [])).catch(() => setItems([]));
   useEffect(() => { load(); const t = setInterval(load, 60000); return () => clearInterval(t); }, []);
 
-  async function act(id, action, hours) {
+  async function act(id, action, extra = {}) {
     setItems((x) => x.filter((n) => n.id !== id)); // optimistic
     try {
-      await fetch("/api/notifications", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ action, id, hours }) });
+      await fetch("/api/notifications", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ action, id, ...extra }) });
       if (action === "task") toast("Sent to Right Now ✓");
-      else if (action === "snooze") toast("Snoozed");
     } catch { toast({ message: "Failed", tone: "error" }); load(); }
   }
 
@@ -53,7 +53,7 @@ export default function NotifyWidget() {
             </div>
             <div className="notif-acts">
               <button className="iconbtn" title="Make it a task" onClick={() => act(n.id, "task")}><M i="add_task" /></button>
-              <button className="iconbtn" title="Snooze 3h" onClick={() => act(n.id, "snooze", 3)}><M i="snooze" /></button>
+              <SnoozeMenu onPick={(until) => { act(n.id, "snooze", { until }); toast("Snoozed"); }} />
               <button className="iconbtn" title="Dismiss" onClick={() => act(n.id, "dismiss")}><M i="close" /></button>
             </div>
           </div>

@@ -1122,3 +1122,11 @@ html[data-theme="exec"]{
 .sb-err{color:#E5484D}
 .sb-off .sb-dot{background:var(--muted);opacity:.4}
 .sb-off{opacity:.6}
+
+/* Snooze preset menu */
+.snz{position:relative;display:inline-flex;flex:none}
+.snz-menu{position:absolute;right:0;top:calc(100% + 4px);z-index:30;background:var(--card);border:1px solid var(--line);border-radius:11px;box-shadow:0 12px 30px rgba(0,0,0,.18);padding:5px;display:flex;flex-direction:column;min-width:130px}
+.snz-menu button{border:none;background:none;cursor:pointer;font:inherit;font-size:13px;color:var(--ink);text-align:left;padding:7px 11px;border-radius:7px;white-space:nowrap}
+.snz-menu button:hover{background:var(--paper)}
+.now-snz{flex:none}
+[data-theme="exec"] .snz-menu{box-shadow:0 12px 34px rgba(0,0,0,.5)}

@@ -37,6 +37,8 @@ const COLUMNS = [
   ["notifications", "why", "TEXT"],
   ["notifications", "analyzed", "INTEGER DEFAULT 0"],
   ["guru_materials", "type", "TEXT DEFAULT 'material'"],
+  ["dismissals", "until", "TEXT"],
+  ["coparent_emails", "snooze_until", "TEXT"],
 ];
 
 let added = 0;

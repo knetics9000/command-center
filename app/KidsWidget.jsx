@@ -2,6 +2,7 @@
 import { useState, useEffect } from "react";
 import { useToast } from "./Toast";
 import Widget from "./Widget";
+import SnoozeMenu from "./SnoozeMenu";
 
 const M = ({ i }) => <span className="material-symbols-outlined">{i}</span>;
 const when = (ts) => { const d = new Date(ts); return isNaN(d) ? "" : d.toLocaleDateString([], { month: "short", day: "numeric" }); };
@@ -27,6 +28,11 @@ export default function KidsWidget() {
     fetch("/api/kids", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ action: "seenAll", kid: kid || undefined }) })
       .then((r) => r.json()).then((j) => { if (j.ok) setB(j); });   // server state corrects counts (incl. shared "All" items)
     toast(kid ? `Cleared ${kid}'s bucket` : "All cleared");
+  }
+  function snooze(id, until, label) {
+    setB((x) => drop(x, id));
+    fetch("/api/kids", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ action: "snooze", id, until }) });
+    toast("Snoozed · " + label);
   }
   function promote(id) {
     fetch("/api/kids", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ action: "promote", id }) })
@@ -75,6 +81,7 @@ export default function KidsWidget() {
                     <div className="kid-meta">{e.sender} · {when(e.received_at)}{e.kid === "All" ? " · all kids" : ""}</div>
                   </div>
                   <button className="iconbtn" title="Add to Google Calendar" onClick={() => addCal(e.id)}><M i="event" /></button>
+                  <SnoozeMenu onPick={(until, label) => snooze(e.id, until, label)} />
                   <button className="iconbtn" title="Got it — dismiss" onClick={() => gotIt(e.id)}><M i="check_circle" /></button>
                 </div>
               ))}

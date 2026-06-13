@@ -2,6 +2,7 @@
 import { useState, useEffect, useRef } from "react";
 import { useTabs } from "./Tabs";
 import { useToast } from "./Toast";
+import SnoozeMenu from "./SnoozeMenu";
 
 const M = ({ i }) => <span className="material-symbols-outlined">{i}</span>;
 const MOODS = ["quick win", "deep focus", "low energy", "errand", "creative"];
@@ -69,6 +70,18 @@ export default function Realign({ emails = [], tasks = [], dismissed = [], notif
     fetch("/api/dismiss", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ key: k, undo: true }) });
     toast("Restored");
   }
+  // Snooze hides the item until `until` (auto-returns). Works for every kind.
+  function snoozeItem(it, until, label) {
+    if (it.kind === "notification") {
+      setNDis((s) => new Set(s).add(it.id));
+      fetch("/api/notifications", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ action: "snooze", id: it.id, until }) });
+    } else {
+      const k = "now:" + it.kind[0] + it.id;
+      setDis((s) => new Set(s).add(k));
+      fetch("/api/dismiss", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ key: k, until }) });
+    }
+    toast("Snoozed · " + label);
+  }
   const go = (t) => { setTab(t); window.scrollTo({ top: 0, behavior: "smooth" }); };
 
   const today = new Date().toLocaleDateString("en-CA");
@@ -82,7 +95,7 @@ export default function Realign({ emails = [], tasks = [], dismissed = [], notif
     ...emails.map((e) => ({ key: "e" + e.id, kind: "email", id: e.id, score: 85, priority: "high", title: e.subject, action: e.action || "Reply / handle", mood: "deep focus", tag: e.sender })),
     ...tasks.filter((t) => !capturedTaskIds.has(t.id)).map((t) => { const sc = taskScore(t); return ({ key: "t" + t.id, kind: "task", id: t.id, score: sc, priority: bucket(sc), title: t.text, action: t.due ? (t.due <= today ? "Overdue — handle it" : "Due " + t.due) : "Do it", mood: "quick win", tag: (t.tags || "").split(";")[0].trim() }); }),
   ];
-  const shown = merged.filter((i) => !mood || i.mood === mood).filter((i) => { const k = dKey(i); return !k || !dis.has(k); }).sort((a, b) => b.score - a.score);
+  const shown = merged.filter((i) => !mood || i.mood === mood).filter((i) => i.kind === "notification" || !dis.has("now:" + i.kind[0] + i.id)).sort((a, b) => b.score - a.score);
   const dismissedItems = merged.filter((i) => { const k = dKey(i); return k && dis.has(k); });
 
   return (
@@ -128,6 +141,7 @@ export default function Realign({ emails = [], tasks = [], dismissed = [], notif
                 {it.tag && <span className="now-cat">{it.tag}</span>}
               </div>
             </div>
+            <span className="now-snz"><SnoozeMenu onPick={(until, label) => snoozeItem(it, until, label)} /></span>
             {it.kind !== "capture" && <button className="now-dismiss" title="Dismiss from Right Now" onClick={(e) => { e.stopPropagation(); dismissItem(it); }}><M i="close" /></button>}
           </div>
         ))}

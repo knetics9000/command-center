@@ -11,7 +11,7 @@ export async function POST(req) {
   try {
     const b = await req.json();
     if (b.undo) removeDismissal(b.key);
-    else addDismissal(b.key);
+    else addDismissal(b.key, b.until || null);   // until set = snooze
     return NextResponse.json({ ok: true });
   } catch (e) {
     return NextResponse.json({ ok: false, error: e.message }, { status: 400 });

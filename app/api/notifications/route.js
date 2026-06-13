@@ -16,7 +16,7 @@ export async function POST(req) {
   try {
     const b = await req.json();
     if (b.action === "dismiss") return NextResponse.json(dismissNotification(b.id));
-    if (b.action === "snooze") return NextResponse.json(snoozeNotification(b.id, b.hours));
+    if (b.action === "snooze") return NextResponse.json(snoozeNotification(b.id, b.hours, b.until));
     if (b.action === "task") return NextResponse.json(await notificationToTask(b.id));
     return NextResponse.json({ ok: false, error: "unknown action" }, { status: 400 });
   } catch (e) {
