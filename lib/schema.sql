@@ -275,3 +275,13 @@ CREATE TABLE IF NOT EXISTS coparent_emails (
   updated_at   TEXT DEFAULT (datetime('now'))
 );
 CREATE INDEX IF NOT EXISTS idx_coparent_kid ON coparent_emails(kid, important, seen);
+
+-- Generalized learning loop: Kurt's corrections teach the classifiers.
+-- domain = notif|kids|...  key = app package / sender addr.  score accumulates.
+CREATE TABLE IF NOT EXISTS feedback (
+  domain     TEXT NOT NULL,
+  key        TEXT NOT NULL,
+  score      INTEGER DEFAULT 0,
+  updated_at TEXT DEFAULT (datetime('now')),
+  PRIMARY KEY (domain, key)
+);
