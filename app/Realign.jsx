@@ -6,6 +6,22 @@ import SnoozeMenu from "./SnoozeMenu";
 
 const M = ({ i }) => <span className="material-symbols-outlined">{i}</span>;
 const MOODS = ["quick win", "deep focus", "low energy", "errand", "creative"];
+
+// Conservative cross-source merge: the same real event can arrive as both a
+// flagged notification and an act email. Collapse only near-identical titles
+// from DIFFERENT sources — keep the higher-scored card, note the other source.
+const sigTokens = (s) => new Set((s || "").toLowerCase().replace(/[^a-z0-9 ]/g, " ").split(/\s+/).filter((w) => w.length > 3));
+const jaccard = (a, b) => { if (!a.size || !b.size) return 0; let i = 0; for (const x of a) if (b.has(x)) i++; return i / (a.size + b.size - i); };
+function mergeCrossSource(items) {
+  const kept = [];
+  for (const it of items) {
+    const tok = sigTokens((it.title || "") + " " + (it.tag || ""));
+    const dup = kept.find((k) => k.kind !== it.kind && jaccard(k._tok, tok) >= 0.6 && [...k._tok].filter((x) => tok.has(x)).length >= 2);
+    if (dup) { dup.also = [...new Set([...(dup.also || []), it.kind])]; continue; }
+    kept.push({ ...it, _tok: tok });
+  }
+  return kept;
+}
 const PRIO = { high: "p-high", medium: "p-med", low: "p-low" };
 const RANK = { high: 0, medium: 1, low: 2 };
 
@@ -95,7 +111,7 @@ export default function Realign({ emails = [], tasks = [], dismissed = [], notif
     ...emails.map((e) => ({ key: "e" + e.id, kind: "email", id: e.id, score: 85, priority: "high", title: e.subject, action: e.action || "Reply / handle", mood: "deep focus", tag: e.sender })),
     ...tasks.filter((t) => !capturedTaskIds.has(t.id)).map((t) => { const sc = taskScore(t); return ({ key: "t" + t.id, kind: "task", id: t.id, score: sc, priority: bucket(sc), title: t.text, action: t.due ? (t.due <= today ? "Overdue — handle it" : "Due " + t.due) : "Do it", mood: "quick win", tag: (t.tags || "").split(";")[0].trim() }); }),
   ];
-  const shown = merged.filter((i) => !mood || i.mood === mood).filter((i) => i.kind === "notification" || !dis.has("now:" + i.kind[0] + i.id)).sort((a, b) => b.score - a.score);
+  const shown = mergeCrossSource(merged.filter((i) => !mood || i.mood === mood).filter((i) => i.kind === "notification" || !dis.has("now:" + i.kind[0] + i.id)).sort((a, b) => b.score - a.score));
   const dismissedItems = merged.filter((i) => { const k = dKey(i); return k && dis.has(k); });
 
   return (
@@ -137,6 +153,7 @@ export default function Realign({ emails = [], tasks = [], dismissed = [], notif
               <div className="now-meta">
                 <span className={"now-pri " + (PRIO[it.priority] || "p-med")}>{it.priority}</span>
                 <span className="now-cat">{it.kind}</span>
+                {it.also && it.also.length > 0 && <span className="now-also" title="Same thing arrived from another source">+ {it.also.join(", ")}</span>}
                 {it.mood && <span className="now-mood">{it.mood}</span>}
                 {it.tag && <span className="now-cat">{it.tag}</span>}
               </div>

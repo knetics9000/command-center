@@ -1137,3 +1137,5 @@ html[data-theme="exec"]{
 .fam-row b{color:var(--ink)}
 .fam-ic{flex:none}
 .fam-why{color:var(--muted)}
+.now-also{font-size:9.5px;font-weight:700;background:rgba(201,165,92,.16);color:#9a6b00;border-radius:5px;padding:1px 7px}
+[data-theme="exec"] .now-also{background:rgba(201,165,92,.16);color:var(--gold)}
