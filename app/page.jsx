@@ -3,6 +3,7 @@ import { connectionStatus, listEvents } from "@/lib/google";
 import RefreshButton from "./RefreshButton";
 import TopUtility from "./TopUtility";
 import ThemeToggle from "./ThemeToggle";
+import StatusBar from "./StatusBar";
 import Fab from "./Fab";
 import Briefing from "./Briefing";
 import Projects from "./Projects";
@@ -244,6 +245,7 @@ export default async function Home() {
           </TabPanel>
 
           </div>
+          <StatusBar />
         </main>
         <Fab />
       </div>

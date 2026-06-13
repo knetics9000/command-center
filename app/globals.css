@@ -1112,3 +1112,13 @@ html[data-theme="exec"]{
 .rn-head .now-count{margin-left:0}
 .realign.closed{padding:13px 18px}
 .realign:not(.closed) .rn-head{margin-bottom:12px}
+
+/* System-health footer */
+.statusbar{display:flex;flex-wrap:wrap;gap:14px;justify-content:center;margin:34px auto 0;padding:12px 0 4px;border-top:1px solid var(--line)}
+.sb-item{display:inline-flex;align-items:center;gap:6px;font-size:11px;font-weight:600;color:var(--muted);font-variant-numeric:tabular-nums;letter-spacing:.01em}
+.sb-dot{width:7px;height:7px;border-radius:50%;background:#3FB8A8;flex:none}
+.sb-warn .sb-dot{background:#C2851E}
+.sb-err .sb-dot{background:#E5484D}
+.sb-err{color:#E5484D}
+.sb-off .sb-dot{background:var(--muted);opacity:.4}
+.sb-off{opacity:.6}
