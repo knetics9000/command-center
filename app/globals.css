@@ -1130,3 +1130,10 @@ html[data-theme="exec"]{
 .snz-menu button:hover{background:var(--paper)}
 .now-snz{flex:none}
 [data-theme="exec"] .snz-menu{box-shadow:0 12px 34px rgba(0,0,0,.5)}
+
+/* Briefing — Family & alerts block */
+.brief-fam{margin:10px 0 4px;padding:10px 0;border-top:1px solid var(--line);border-bottom:1px solid var(--line)}
+.fam-row{font-size:13px;color:var(--ink2);line-height:1.5;display:flex;gap:6px;align-items:baseline}
+.fam-row b{color:var(--ink)}
+.fam-ic{flex:none}
+.fam-why{color:var(--muted)}

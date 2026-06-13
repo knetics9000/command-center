@@ -114,6 +114,13 @@ export default function Briefing({ briefing, existingTags = [], dismissed = [] }
             </div>
           );
         })()}
+        {b.family && ((b.family.kids || []).length > 0 || (b.family.alerts || []).length > 0) && (
+          <div className="brief-fam">
+            <div className="clbl">Family &amp; alerts</div>
+            {(b.family.kids || []).map((k, i) => <div className="fam-row" key={"k" + i}><span className="fam-ic">👪</span><b>{k.kid}</b> — {k.subject}{k.why ? <span className="fam-why"> · {k.why}</span> : null}</div>)}
+            {(b.family.alerts || []).map((a, i) => <div className="fam-row" key={"a" + i}><span className="fam-ic">🚩</span>{a.title}{a.why ? <span className="fam-why"> · {a.why}</span> : null}</div>)}
+          </div>
+        )}
         {(() => {
           const all = b.priorities || [];
           const visible = all.filter((p) => !dis.has("brief:" + sig(p.title)));
