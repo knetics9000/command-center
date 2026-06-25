@@ -285,3 +285,16 @@ CREATE TABLE IF NOT EXISTS feedback (
   updated_at TEXT DEFAULT (datetime('now')),
   PRIMARY KEY (domain, key)
 );
+
+-- Offload "thoughts": long-form voice/typed captures, AI-cleaned + bullet-summarized,
+-- pulled from the Offload Apps Script Web App ('Thoughts' tab). Upsert by id.
+CREATE TABLE IF NOT EXISTS thoughts (
+  id                 TEXT PRIMARY KEY,     -- t_<uuid> from the sheet
+  created_at         TEXT,                 -- 'yyyy-MM-dd HH:mm' (capture time, local)
+  raw_text           TEXT,                 -- original verbatim capture
+  retextualized_text TEXT,                 -- AI-cleaned full prose
+  summary            TEXT,                 -- newline-separated '• ' bullets
+  source             TEXT,                 -- voice | typed
+  synced_at          TEXT DEFAULT (datetime('now'))
+);
+CREATE INDEX IF NOT EXISTS idx_thoughts_created ON thoughts(created_at);
