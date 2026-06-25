@@ -121,6 +121,9 @@ export default function Briefing({ briefing, existingTags = [], dismissed = [] }
             {(b.family.alerts || []).map((a, i) => <div className="fam-row" key={"a" + i}><span className="fam-ic">🚩</span>{a.title}{a.why ? <span className="fam-why"> · {a.why}</span> : null}</div>)}
           </div>
         )}
+        {b.thoughts && b.thoughts.count > 0 && (
+          <div className="fam-row brief-thoughts"><span className="fam-ic">💭</span>{b.thoughts.count} recent thought{b.thoughts.count > 1 ? "s" : ""}{(b.thoughts.recent || [])[0]?.bullet ? <span className="fam-why"> · {b.thoughts.recent[0].bullet}</span> : null}</div>
+        )}
         {(() => {
           const all = b.priorities || [];
           const visible = all.filter((p) => !dis.has("brief:" + sig(p.title)));
