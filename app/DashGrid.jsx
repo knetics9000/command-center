@@ -6,6 +6,7 @@ import Avatar from "./Avatar";
 import HealthCard from "./HealthCard";
 import NotifyWidget from "./NotifyWidget";
 import KidsWidget from "./KidsWidget";
+import ThoughtsWidget from "./ThoughtsWidget";
 
 const M = ({ i }) => <span className="material-symbols-outlined">{i}</span>;
 const Row = ({ children }) => <div className="wrow">{children}</div>;
@@ -90,7 +91,10 @@ export default function DashGrid({
         </div>
       </Widget>
 
-      {/* 6 · Phone notifications (self-contained; hides when empty) */}
+      {/* 6 · Thoughts (Offload long-form captures; reference) */}
+      <ThoughtsWidget />
+
+      {/* 7 · Phone notifications (self-contained; hides when empty) */}
       <NotifyWidget />
 
       {/* 7 · Health (self-contained) */}

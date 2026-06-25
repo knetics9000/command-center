@@ -1139,3 +1139,19 @@ html[data-theme="exec"]{
 .fam-why{color:var(--muted)}
 .now-also{font-size:9.5px;font-weight:700;background:rgba(201,165,92,.16);color:#9a6b00;border-radius:5px;padding:1px 7px}
 [data-theme="exec"] .now-also{background:rgba(201,165,92,.16);color:var(--gold)}
+
+/* Thoughts widget */
+.thoughts-list{display:flex;flex-direction:column;gap:10px}
+.thought{border:1px solid var(--line);border-radius:12px;padding:11px 13px;background:var(--paper)}
+.thought-head{display:flex;align-items:center;gap:8px;margin-bottom:6px}
+.thought-src{display:inline-flex;align-items:center;gap:4px;font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.03em;color:var(--ink2);background:rgba(0,0,0,.05);border-radius:6px;padding:2px 7px}
+.thought-src .material-symbols-outlined{font-size:13px}
+.thought-src.voice{color:var(--acc-deep);background:var(--acc-soft)}
+.thought-when{font-size:11px;color:var(--muted);margin-left:auto;font-variant-numeric:tabular-nums}
+.thought-bullets{margin:0;padding-left:18px;font-size:13.5px;color:var(--ink);line-height:1.5}
+.thought-bullets li{margin:2px 0}
+.thought-prose{font-size:13px;color:var(--ink2);line-height:1.5}
+.thought-prose.open{margin-top:8px;padding-top:8px;border-top:1px solid var(--line)}
+.thought-raw{margin-top:8px;padding-top:8px;border-top:1px dashed var(--line);font-size:12px;color:var(--muted);line-height:1.5;font-style:italic}
+.thought-acts{display:flex;gap:14px;margin-top:7px}
+[data-theme="exec"] .thought-src{background:rgba(255,255,255,.07)}
