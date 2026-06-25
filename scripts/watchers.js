@@ -11,6 +11,7 @@ import { captureNewOffloadTasks, processUnprocessed } from "../lib/capture.js";
 import { dedupeAll } from "../lib/dedupe.js";
 import { analyzeNotifications } from "../lib/notify.js";
 import { syncCoparent } from "../lib/coparent.js";
+import { syncThoughts } from "../lib/sync-thoughts.js";
 
 try {
   const s = await syncAll();
@@ -26,6 +27,7 @@ try {
   try { const d = dedupeAll(); const t = d.notifications + d.captures + d.shared; if (t) console.log(`deduped: ${d.notifications} notifs, ${d.captures} captures, ${d.shared} shared`); } catch {}
   try { let n = 0; while (await analyzeNotifications(15)) { n += 15; if (n >= 90) break; } if (n) console.log(`analyzed phone notifications`); } catch {}
   try { const c = await syncCoparent(); if (c.connected) console.log(`coparent: ${c.pulled} pulled, ${c.analyzed} classified`); } catch {}
+  try { const t = await syncThoughts(); if (t.configured) console.log(`thoughts: ${t.pulled} pulled`); } catch {}
 
   // Auto-organize + re-brief only when something changed (saves API calls; keeps the briefing delta meaningful).
   const fp = dataFingerprint();
