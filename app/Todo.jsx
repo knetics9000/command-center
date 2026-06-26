@@ -8,6 +8,16 @@ import { useToast } from "./Toast";
 
 const dotFor = (t) => tagClass(t) === "personal" ? "#7E9A86" : tagClass(t) === "work" ? "#C2851E" : tagClass(t) === "project" ? "#6b5a8e" : "#b5ae9f";
 
+// Fixed-position the tag dropdown from the button's rect so it escapes the
+// group's overflow:hidden — right-aligned, flips up when near the viewport bottom.
+function tagMenuStyle(a) {
+  if (!a || typeof window === "undefined") return {};
+  const style = { right: Math.max(8, window.innerWidth - a.right) };
+  if (a.bottom + 270 > window.innerHeight && a.top > 270) style.bottom = window.innerHeight - a.top + 4;
+  else style.top = a.bottom + 4;
+  return style;
+}
+
 export default function Todo({ order, groups, openTotal }) {
   const router = useRouter();
   const { toast } = useToast();
@@ -44,6 +54,7 @@ export default function Todo({ order, groups, openTotal }) {
   }
   const [dueFor, setDueFor] = useState(null);  // taskId with open date picker
   const [tagMenu, setTagMenu] = useState(null); // taskId with open tag dropdown
+  const [tagAnchor, setTagAnchor] = useState(null); // button rect, for fixed positioning
   const [collapsed, setCollapsed] = useState({}); // tag -> collapsed
 
   useEffect(() => { try { setCollapsed(JSON.parse(localStorage.getItem("cc_todo_collapsed") || "{}")); } catch {} }, []);
@@ -148,9 +159,9 @@ export default function Todo({ order, groups, openTotal }) {
                       </span>
                     ))}
                     <span className="tagmenuwrap">
-                      <button className="addtag" onClick={() => setTagMenu((m) => m === it.id ? null : it.id)}>+ tag ▾</button>
+                      <button className="addtag" onClick={(e) => { const opening = tagMenu !== it.id; setTagAnchor(opening ? e.currentTarget.getBoundingClientRect() : null); setTagMenu(opening ? it.id : null); }}>+ tag ▾</button>
                       {tagMenu === it.id && (
-                        <span className="tagmenu">
+                        <span className="tagmenu" style={tagMenuStyle(tagAnchor)}>
                           {availableTags(it).map((t) => (
                             <button key={t} className="tagmenu-opt" onClick={() => addExistingTag(it, t)}>
                               <span className="dot" style={{ background: dotFor(t) }} /> {t}
