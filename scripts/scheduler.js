@@ -43,6 +43,9 @@ async function primaryBriefing() {
   await syncAll();
   const b = await generateBriefing({ primary: true });
   log(`PRIMARY briefing: ${b.priorities?.length || 0} priorities`);
+  // The 7:30 email is opt-in — set BRIEFING_EMAIL=on to receive it. Default: off
+  // (the briefing still updates in-app on the dashboard).
+  if (process.env.BRIEFING_EMAIL !== "on") { log("briefing email disabled (BRIEFING_EMAIL != on)"); return; }
   try {
     const dateLabel = new Date().toLocaleDateString("en-US", { weekday: "long", month: "long", day: "numeric" });
     await sendSelf("personal", `☀ Your briefing — ${dateLabel}`, briefingToHtml(b, dateLabel));

@@ -12,8 +12,8 @@ try {
   const b = await generateBriefing({ primary });
   console.log(`briefing generated (${primary ? "PRIMARY" : "hourly"}):`, b.priorities?.length || 0, "priorities,", b.clusters?.length || 0, "clusters");
 
-  // Deliver the primary (7:30) briefing to Kurt's own inbox.
-  if (primary) {
+  // Deliver the primary (7:30) briefing to Kurt's own inbox — opt-in via BRIEFING_EMAIL=on.
+  if (primary && process.env.BRIEFING_EMAIL === "on") {
     try {
       const dateLabel = new Date().toLocaleDateString("en-US", { weekday: "long", month: "long", day: "numeric" });
       await sendSelf("personal", `☀ Your briefing — ${dateLabel}`, briefingToHtml(b, dateLabel));
