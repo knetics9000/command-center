@@ -1156,3 +1156,9 @@ html[data-theme="exec"]{
 .thought-acts{display:flex;gap:14px;margin-top:7px}
 [data-theme="exec"] .thought-src{background:rgba(255,255,255,.07)}
 .brief-thoughts{margin-top:6px;font-size:12.5px;color:var(--ink2)}
+
+/* Prime pin (star) on To-Do tasks */
+.taskstar{border:none;background:none;cursor:pointer;color:var(--muted);padding:0 1px;flex:none;display:inline-flex;align-items:center;opacity:.45;transition:opacity .14s,color .14s}
+.taskstar:hover{opacity:1;color:#C9A55C}
+.taskstar.on{opacity:1;color:#C9A55C}
+.taskstar .material-symbols-outlined{font-size:19px}

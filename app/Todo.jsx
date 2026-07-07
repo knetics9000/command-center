@@ -55,6 +55,7 @@ export default function Todo({ order, groups, openTotal }) {
   const [dueFor, setDueFor] = useState(null);  // taskId with open date picker
   const [tagMenu, setTagMenu] = useState(null); // taskId with open tag dropdown
   const [tagAnchor, setTagAnchor] = useState(null); // button rect, for fixed positioning
+  const [primed, setPrimed] = useState({}); // id -> 0/1 optimistic prime override
   const [collapsed, setCollapsed] = useState({}); // tag -> collapsed
 
   useEffect(() => { try { setCollapsed(JSON.parse(localStorage.getItem("cc_todo_collapsed") || "{}")); } catch {} }, []);
@@ -77,6 +78,13 @@ export default function Todo({ order, groups, openTotal }) {
     const r = await fetch("/api/task", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify(body) });
     if (!r.ok) { const j = await r.json().catch(() => ({})); toast({ message: "Task action failed: " + (j.error || r.status), tone: "error" }); }
     router.refresh();
+  }
+  const isPrime = (it) => (primed[it.id] !== undefined ? primed[it.id] : (it.prime ? 1 : 0));
+  function togglePrime(it) {
+    const next = isPrime(it) ? 0 : 1;
+    setPrimed((p) => ({ ...p, [it.id]: next }));
+    post({ action: "prime", id: it.id, prime: next });
+    toast(next ? "Pinned to Prime ★" : "Unpinned");
   }
   async function check(id) {
     setBusy((b) => ({ ...b, [id]: true }));          // marks checkbox + triggers strike/collapse
@@ -139,8 +147,9 @@ export default function Todo({ order, groups, openTotal }) {
             {isOpen && !organized[t] && <>
             {list.map((it) => (
               <div key={it.id}>
-                <div className={"task" + (busy[it.id] ? " done" : "")}>
+                <div className={"task" + (busy[it.id] ? " done" : "") + (isPrime(it) ? " primed" : "")}>
                   <span className={"cbx" + (busy[it.id] ? " on" : "")} role="button" onClick={() => check(it.id)} title="Mark done" />
+                  <button className={"taskstar" + (isPrime(it) ? " on" : "")} title={isPrime(it) ? "Unpin from Prime" : "Pin to Prime"} onClick={(e) => { e.stopPropagation(); togglePrime(it); }}><span className="material-symbols-outlined">{isPrime(it) ? "star" : "star_border"}</span></button>
                   {editing[it.id] !== undefined ? (
                     <span className="editwrap">
                       <input className="editinp" autoFocus value={editing[it.id]}

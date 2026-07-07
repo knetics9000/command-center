@@ -49,6 +49,11 @@ export async function POST(req) {
       return NextResponse.json({ ok: true });
     }
 
+    if (b.action === "prime") {   // local-only pin to the Prime list
+      db.prepare("UPDATE tasks SET prime=?, updated_at=datetime('now') WHERE id=?").run(b.prime ? 1 : 0, b.id);
+      return NextResponse.json({ ok: true });
+    }
+
     if (b.action === "retag") {
       const tags = (b.tags || "").trim();
       if (isReal(b.id)) await retagTask(b.id, tags);
