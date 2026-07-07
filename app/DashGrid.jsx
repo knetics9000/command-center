@@ -7,6 +7,7 @@ import HealthCard from "./HealthCard";
 import NotifyWidget from "./NotifyWidget";
 import KidsWidget from "./KidsWidget";
 import ThoughtsWidget from "./ThoughtsWidget";
+import PrimeWidget from "./PrimeWidget";
 
 const M = ({ i }) => <span className="material-symbols-outlined">{i}</span>;
 const Row = ({ children }) => <div className="wrow">{children}</div>;
@@ -43,7 +44,10 @@ export default function DashGrid({
         {children}
       </Widget>
 
-      {/* 2 · Kids (self-contained) */}
+      {/* 2 · Prime — hand-pinned top to-dos */}
+      <PrimeWidget />
+
+      {/* 3 · Kids (self-contained) */}
       <KidsWidget />
 
       {/* 3 · Upcoming */}

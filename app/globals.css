@@ -1162,3 +1162,12 @@ html[data-theme="exec"]{
 .taskstar:hover{opacity:1;color:#C9A55C}
 .taskstar.on{opacity:1;color:#C9A55C}
 .taskstar .material-symbols-outlined{font-size:19px}
+
+/* Prime widget */
+.prime-list{display:flex;flex-direction:column;gap:2px}
+.prime-item{display:flex;align-items:flex-start;gap:9px;padding:7px 0;border-top:1px solid var(--line)}
+.prime-item:first-child{border-top:none}
+.prime-body{flex:1;min-width:0}
+.prime-text{font-size:14px;font-weight:600;color:var(--ink);line-height:1.35}
+.prime-meta{font-size:11.5px;color:var(--muted);margin-top:2px}
+.prime-item .taskstar{opacity:1;color:#C9A55C}
